@@ -7,16 +7,16 @@ install.packages("JAMP", repos = NULL, type="source", dependencies=T)
 # load the package into R
 library("JAMP")
 
-#setwd("")
+setwd("Tutorial")
 # creating configuration file and batch downloading reads
 
 
 
-Core("afd")
-
-
-
-
+Core(module="Hello")
+Core(module="Mellofd")
+Core(module="NEw script")
+Core(module="this is a test")
+Core(module="Glumanda!!!")
 
 
 
