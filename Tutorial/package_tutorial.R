@@ -1,0 +1,22 @@
+# 161111 - JAMP tutorial!
+setwd("~/Documents/UNI_und_VORLESUNGEN/GitHub/JAMP/") # set the path to the PrimerMinder folder you just downloaded
+
+# install the PrimerMiner package icl dependencies
+install.packages("JAMP", repos = NULL, type="source", dependencies=T)
+
+# load the package into R
+library("JAMP")
+
+#setwd("")
+# creating configuration file and batch downloading reads
+
+
+
+Core("afd")
+
+
+
+
+
+
+
