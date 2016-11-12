@@ -36,11 +36,9 @@ cat(file="robots.txt", "delete_data=", delete_data, "\n", "last_data=\"", temp, 
 
 
 
-warning("Hello World")
+message(paste("Runing module:", module))
 
-
-setwd("../") # remove and implement into modules!!!
-
+ 
 }
 
 

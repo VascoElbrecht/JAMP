@@ -7,16 +7,19 @@ install.packages("JAMP", repos = NULL, type="source", dependencies=T)
 # load the package into R
 library("JAMP")
 
-setwd("Tutorial")
+setwd("~/Desktop/package_test")
 # creating configuration file and batch downloading reads
 
 
+Demultiplexing_shifted("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta ANNA chiro/2 Ak15 DATA/Ak15_1.fastq.gz", "~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta ANNA chiro/2 Ak15 DATA/Ak15_2.fastq.gz", tags="BF_BR", combinations="../AK_demulti_used.csv")
 
-Core(module="Hello")
-Core(module="Mellofd")
-Core(module="NEw script")
-Core(module="this is a test")
-Core(module="Glumanda!!!")
+getwd()
+
+
+file1 <- "~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta ANNA chiro/2 Ak15 DATA/Ak15_1.fastq.gz"
+file2 <- "~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta ANNA chiro/2 Ak15 DATA/Ak15_2.fastq.gz"
+tags="BF_BR"
+combinations="../AK_demulti_used.csv"
 
 
 
