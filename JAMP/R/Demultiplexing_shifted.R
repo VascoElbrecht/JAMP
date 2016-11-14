@@ -48,7 +48,7 @@ con2 <- gzfile(file2[i], "rt")
 con1 <- bzfile(file1[i], "rt")
 con2 <- bzfile(file2[i], "rt")
 } else if(compression=="fastq"){
-con1 <- file(file2[i], "rt")
+con1 <- file(file1[i], "rt")
 con2 <- file(file2[i], "rt")
 } else {
 warning("Raw data has to be compressed in \".gz\" or \".bz2\" or uncompressed in \".fastq\" format! Processing was stopped, please check your raw data format.")
