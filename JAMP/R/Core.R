@@ -17,7 +17,7 @@ step <- which(log=="PROCESSING MODULE:") # detect processing modules
 # ADD routine to remove deleted folders from log!
 
 
-new_folder <- paste(ABC[length(step)+1], ") ", module, sep="")
+new_folder <- paste(ABC[length(step)+1], "_", module, sep="")
 dir.create(new_folder)
 dir.create(paste(new_folder, "_data", sep="/"))
 dir.create(paste(new_folder, "_stats", sep="/"))

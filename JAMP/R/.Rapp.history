@@ -1,0 +1,17 @@
+files <- lift.files("~/Desktop/package_test/A_Demultiplexing_shifted/_data")
+files <- list.files("~/Desktop/package_test/A_Demultiplexing_shifted/_data")
+files
+files <- list.files("~/Desktop/package_test/A_Demultiplexing_shifted/_data", full.names=T)
+fastq=T
+if(fastq){#
+cmd <- paste("", files, " | wc -l", sep="")#
+#
+A <- NULL#
+for (i in 1:length(files)){#
+A[i] <- system2("cat", cmd[i], stdout=T)#
+print(i)#
+}
+abundance <- as.numeric(sub(" ", "", A))#
+#
+} else {}
+abundance
