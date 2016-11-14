@@ -24,9 +24,9 @@ dir.create(paste(new_folder, "_stats", sep="/"))
 setwd(new_folder)
 
 # write mudule name in log
-temp <- paste("##########", Sys.time(), "PROCESSING MODULE:", new_folder,"\n", sep="\n")
+temp <- paste("##########", Sys.time(), "PROCESSING MODULE:", new_folder, sep="\n")
 
-cat(file="../log.txt", temp, append=T, sep="\n")
+cat(file="../log.txt", temp, append=T, sep="")
 
 if(is.null(step)){temp <- NA} else {temp <- log[step[length(step)]+1]}
 cat(file="robots.txt", "delete_data=", delete_data, "\n", "last_data=\"", temp, "\"\n", append=T, sep="")

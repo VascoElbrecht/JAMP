@@ -3,6 +3,8 @@
 Demultiplexing_shifted <- function(file1, file2, tags=NA, combinations=NA, md5=T){
 
 Core(module="Demultiplexing_shifted")
+cat(file="../log.txt", c("\n", "Version v0.1", "\n"), append=T, sep="\n")
+
 
 # get file compression
 compression <- gsub(".*\\.(.*)$", "\\1", file1)
@@ -16,7 +18,7 @@ barcodes <- read.csv(paste(system.file(package="JAMP"), "/BF_BR.csv", sep=""), s
 combos <- read.csv(combinations, stringsAsFactors=F)
 
 #basic log stats
-temp <- paste(Sys.time(), "Starting demultiplexing using:", paste("Barcode table:", tags, sep=""), paste("Searching for ", nrow(combos)/2, " samples as given in table: ", combinations, sep=""), paste("Raw data format: ", compression, sep=""), paste("Read 1 RAW data: ", paste(file1), sep=""), paste("Read 2 RAW data: ", paste(file2), sep=""), "\n", sep="\n")
+temp <- paste(Sys.time(), "Starting demultiplexing using:", paste("Barcode table:", tags, sep=""), paste("Searching for ", nrow(combos)/2, " samples as given in table: ", combinations, sep=""), paste("Raw data format: ", paste(unique(compression), collapse=" "), sep=""), paste("Read 1 RAW data: ", paste(file1, collapse=" "), sep=""), paste("Read 2 RAW data: ", paste(file2, collapse=" "), sep=""), "\n", sep="\n")
 cat(file="../log.txt", temp, append=T, sep="\n")
 
 
@@ -58,13 +60,13 @@ mytime <- Sys.time()
 
 for (i in 1:length(file1)){
 
-if(compression=="gz"){
+if(compression[i]=="gz"){
 con1 <- gzfile(file1[i], "rt")
 con2 <- gzfile(file2[i], "rt")
-} else if(compression=="bz2"){
+} else if(compression[i]=="bz2"){
 con1 <- bzfile(file1[i], "rt")
 con2 <- bzfile(file2[i], "rt")
-} else if(compression=="fastq"){
+} else if(compression[i]=="fastq"){
 con1 <- file(file1[i], "rt")
 con2 <- file(file2[i], "rt")
 } else {
@@ -115,14 +117,17 @@ if(length(A)>0){savesequ("N_debris_r1.txt", "N_debris_r2.txt", 0, 0)}
 
 # repeat loop enede
 } # looping all sequence files!
-
-}
-
-print("done in:")
-print(mytime - Sys.time())
-print("")
 close(con1)
 close(con2)
+}
+
+temp <- paste(Sys.time(), paste("Done in:", message(mytime - Sys.time()), collapse=""), sep="\n")
+cat(file="../log.txt", temp, append=T, sep="\n")
+
+
+message("done in:")
+message(mytime - Sys.time())
+message(" ")
 
 # count number of reads in each file
 abundance <- Count_sequences(list.files("_data", full.names=T))
@@ -132,14 +137,17 @@ write.csv(temp, "_stats/read_abundance.csv")
 
 temp <- temp[seq(1, length(abundance), 2),]
 
-sum(temp$abundance)
+options("scipen"=100, "digits"=5)
+message(paste("A total of ", sum(temp$abundance), "sequences where demultiplexed"), sep="")
+message(paste(round(temp$abundance[temp=="N_debris_r1.txt"]/sum(temp$abundance)*100, digits=2)), "% of sequences could not be matched with any of the tagging combinations (e.g. sequencing errors in the tags or PhiX.)", sep="")
+
+temp <- paste(Sys.time(), paste("Number of reads demultiplexed ", sum(temp$abundance), sep=""), paste("Number of not matching reads (N_debris):", temp$abundance[temp=="N_debris_r1.txt"], sep=""), paste("Relative abundance of not matching reads: ", round(temp$abundance[temp=="N_debris_r1.txt"]/sum(temp$abundance)*100, digits=2), "", "Module completed!" sep=""), sep="\n")
+cat(file="../log.txt", temp, append=T, sep="\n")
 
 # end count reads
-
+options("scipen"=-100, "digits"=5)
 setwd("../") # return to base folder
 }
-
-
 
 
 
