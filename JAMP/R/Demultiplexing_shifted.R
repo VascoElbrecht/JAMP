@@ -1,6 +1,6 @@
 # Demultiplexing_shifted v0.1
 
-Demultiplexing_shifted <- function(file1, file2, tags=NA, combinations=NA){
+Demultiplexing_shifted <- function(file1, file2, tags=NA, combinations=NA, md5=T){
 
 Core(module="Demultiplexing_shifted")
 
@@ -14,6 +14,22 @@ barcodes <- read.csv(paste(system.file(package="JAMP"), "/BF_BR.csv", sep=""), s
 } else {barcodes <- read.csv(tags, stringsAsFactors=F)}
 
 combos <- read.csv(combinations, stringsAsFactors=F)
+
+#basic log stats
+temp <- paste(Sys.time(), "Starting demultiplexing using:", paste("Barcode table:", tags, sep=""), paste("Searching for ", nrow(combos)/2, " samples as given in table: ", combinations, sep=""), paste("Raw data format: ", compression, sep=""), paste("Read 1 RAW data: ", paste(file1), sep=""), paste("Read 2 RAW data: ", paste(file2), sep=""), "\n", sep="\n")
+cat(file="../log.txt", temp, append=T, sep="\n")
+
+
+if(md5){
+# claculate md5 checksums for log
+temp <- c(file1, file2)
+
+A <- NULL
+for (i in 1:length(temp)){
+A[i] <- system2("md5", temp[i], stdout=T)
+}
+}
+cat(file="../log.txt", A, append=T, sep="\n")
 
 
 savesequ <- function(file_name1="N_debres_r1.txt", file_name2="N_debres_r2.txt", rm1=0, rm2=0){
@@ -38,6 +54,7 @@ cat(exp_sequ2, file= paste("_data/", file_name2, sep=""), append=T, sep="\n")}
 
 i <- 1
 chunk <- 100000*4
+mytime <- Sys.time()
 
 for (i in 1:length(file1)){
 
@@ -57,7 +74,7 @@ stop()
 }
 
 
-mytime <- Sys.time()
+
 repeat {
 data1 <- readLines(con1, chunk) # read chunck
 data2 <- readLines(con2, chunk) # read chunck
@@ -99,14 +116,30 @@ if(length(A)>0){savesequ("N_debris_r1.txt", "N_debris_r2.txt", 0, 0)}
 # repeat loop enede
 } # looping all sequence files!
 
+}
+
 print("done in:")
 print(mytime - Sys.time())
 print("")
 close(con1)
 close(con2)
 
-}
+# count number of reads in each file
+abundance <- Count_sequences(list.files("_data", full.names=T))
+temp <- data.frame("files_demultiplexed"=list.files("_data"), abundance)
 
+write.csv(temp, "_stats/read_abundance.csv")
+
+temp <- temp[seq(1, length(abundance), 2),]
+
+sum(temp$abundance)
+
+# end count reads
 
 setwd("../") # return to base folder
 }
+
+
+
+
+
