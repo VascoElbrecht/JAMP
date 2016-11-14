@@ -1,0 +1,5 @@
+# subset rawdata files
+
+gzcat /Users/luckylion/Documents/UNI_und_VORLESUNGEN/11\ phd\ projects/1\ Meta\ ANNA\ chiro/2\ Ak15\ DATA/Ak15_1.fastq.gz | head -n 2500000 > /Users/luckylion/Desktop/Ak15_1.fastq
+
+gzcat /Users/luckylion/Documents/UNI_und_VORLESUNGEN/11\ phd\ projects/1\ Meta\ ANNA\ chiro/2\ Ak15\ DATA/Ak15_2.fastq.gz | head -n 2500000 > /Users/luckylion/Desktop/Ak15_2.fastq
