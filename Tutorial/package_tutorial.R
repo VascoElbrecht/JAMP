@@ -9,9 +9,8 @@ install.packages("JAMP", repos = NULL, type="source", dependencies=T)
 # load the package into R
 library("JAMP")
 
+# base directory
 setwd("~/Desktop/package_test2/")
-# creating configuration file and batch downloading reads
-
 
 Demultiplexing_shifted("../Ak15_1.fastq", "../Ak15_2.fastq", tags="BF_BR", combinations="../AK_demulti_used.csv")
 

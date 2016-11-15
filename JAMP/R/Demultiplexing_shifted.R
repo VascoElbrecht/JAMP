@@ -137,19 +137,19 @@ write.csv(temp, "_stats/read_abundance.csv")
 
 temp <- temp[seq(1, length(abundance), 2),]
 
-options("scipen"=100, "digits"=5)
+options("scipen"=100, "digits"=7)
 message(paste("A total of ", sum(temp$abundance), "sequences where demultiplexed"), sep="")
 message(paste(round(temp$abundance[temp=="N_debris_r1.txt"]/sum(temp$abundance)*100, digits=2)), "% of sequences could not be matched with any of the tagging combinations (e.g. sequencing errors in the tags or PhiX.)", sep="")
 
-temp <- paste(Sys.time(), paste("Number of reads demultiplexed ", sum(temp$abundance), sep=""), paste("Number of not matching reads (N_debris):", temp$abundance[temp=="N_debris_r1.txt"], sep=""), paste("Relative abundance of not matching reads: ", round(c(temp$abundance[temp=="N_debris_r1.txt"]/sum(temp$abundance)*100), digits=2), "", "Module completed!", sep=""), sep="\n")
+temp <- paste(Sys.time(), paste("Number of reads demultiplexed ", sum(temp$abundance), sep=""), paste("Number of not matching reads (N_debris):", temp$abundance[temp=="N_debris_r1.txt"], sep=""), paste("Relative abundance of not matching reads: ", round(c(temp$abundance[temp=="N_debris_r1.txt"]/sum(temp$abundance)*100), digits=2), "\n", "\n", "Module completed!", "\n", "\n", sep=""), sep="\n")
 cat(file="../log.txt", temp, append=T, sep="\n")
 
 
 
 # end count reads
-options("scipen"=-100, "digits"=5)
+#options("scipen"=-100, "digits"=7)
 setwd("../") # return to base folder
 }
 
 
-
+?options

@@ -58,6 +58,9 @@ message(meep)
 cat(file="../log.txt", meep, append=T, sep="\n")
 }
 
+cat(file="../log.txt", "\n", append=T, sep="\n")
+
+
 tab_exp <- data.frame(tab_exp)
 names(tab_exp) <- c("Sample", "Sequ_count", "percent_merged", "median_length")
 
