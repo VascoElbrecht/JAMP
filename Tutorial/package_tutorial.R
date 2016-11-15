@@ -25,4 +25,4 @@ meep <- Count_sequences(list.files("A_Demultiplexing_shifted/_data", full.names=
 getwd()
 setwd("A_Demultiplexing_shifted")
 
-sum(meep)/2
+
