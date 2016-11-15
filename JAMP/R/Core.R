@@ -24,7 +24,7 @@ dir.create(paste(new_folder, "_stats", sep="/"))
 setwd(new_folder)
 
 # write mudule name in log
-temp <- paste("##########", Sys.time(), "PROCESSING MODULE:", new_folder, sep="\n")
+temp <- paste("##########", Sys.time(), "PROCESSING MODULE:", new_folder, "", sep="\n")
 
 cat(file="../log.txt", temp, append=T, sep="")
 
