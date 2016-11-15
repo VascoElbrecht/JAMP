@@ -15,14 +15,13 @@ setwd("~/Desktop/package_test2/")
 
 Demultiplexing_shifted("../Ak15_1.fastq", "../Ak15_2.fastq", tags="BF_BR", combinations="../AK_demulti_used.csv")
 
-
-Demultiplexing_shifted(c("../Ak15_1.fastq", "../Ak15_1.fastq"), c("../Ak15_2.fastq", "../Ak15_2.fastq"), tags="BF_BR", combinations="../AK_demulti_used.csv")
+U_merge_PE() # merge PE
 
 
 
 meep <- Count_sequences(list.files("A_Demultiplexing_shifted/_data", full.names=T))
 
 getwd()
-setwd("A_Demultiplexing_shifted")
+setwd("B_U_merge_PE")
 
 
