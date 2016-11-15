@@ -4,8 +4,8 @@
 U_merge_PE <- function(files="latest", file1=NA, file2=NA, fastq_maxdiffs=99, fastq_maxdiffpct=99, fastq=T){
 
 Core(module="U_merge_PE")
-cat(file="../log.txt", c("\n", "Version v0.1", "\n"), append=T, sep="\n")
-
+cat(file="../log.txt", c("Version v0.1", "\n"), append=T, sep="\n")
+message(" ")
 
 if (files=="latest"){
 source("robots.txt")
@@ -68,7 +68,7 @@ write.csv(tab_exp, "_stats/sequ_length_abund.csv")
 message(" ")
 message(" Done with PE merging")
 
-cat(file="../log.txt", print(Sys.time(), "Done with PE merging", "", sep="\n"), append=T, sep="\n")
+cat(file="../log.txt", paste(Sys.time(), "Done with PE merging", "", sep="\n"), append=T, sep="\n")
 
 setwd("../")
 }
