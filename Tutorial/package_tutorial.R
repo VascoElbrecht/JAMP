@@ -16,6 +16,13 @@ Demultiplexing_shifted("../Ak15_1.fastq", "../Ak15_2.fastq", tags="BF_BR", combi
 
 U_merge_PE() # merge PE
 
+# select sequ to make revcomp of!
+revcomp <- list.files("B_U_merge_PE/_data")
+revcomp_tf <- grepl(".*_.*_.R.*_.*_.*", revcomp)
+cbind(revcomp, revcomp_tf)
+
+U_revcomp(RC= revcomp_tf) # make RevComp of selected reads
+
 
 
 meep <- Count_sequences(list.files("A_Demultiplexing_shifted/_data", full.names=T))
