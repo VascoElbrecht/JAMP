@@ -7,7 +7,6 @@ install.packages("seqinr", dependencies=T)
 install.packages("JAMP", repos = NULL, type="source")
 
 
-rev(comp("AGGGA"))
 
 # load the package into R
 library("JAMP")
@@ -27,3 +26,8 @@ cbind(revcomp, revcomp_tf)
 U_revcomp(RC= revcomp_tf) # make RevComp of selected reads
 
 Cutadapt(forward="BF2", reverse="BR1")
+
+
+setwd("D_Cutadapt")
+
+

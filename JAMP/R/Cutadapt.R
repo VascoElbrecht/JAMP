@@ -58,22 +58,43 @@ temp <- paste("Starting to remove adapters (primers) on both ends in ", length(c
 cat(file="../log.txt", temp , append=T, sep="\n")
 message(temp)
 
+dir.create("_stats/_cutadapt_logs")
+log_names <- sub("_data", "_stats/_cutadapt_logs", new_names)
+log_names <- sub(".fast[aq]", ".txt", log_names)
 
+exp <- NULL
 temp <- new_names
 for (i in 1:length(cmd1)){
-system2("cutadapt", cmd1[i], stdout=T, stderr=T)
-system2("cutadapt", cmd2[i], stdout=T, stderr=T)
-
+A <- system2("cutadapt", cmd1[i], stdout=T, stderr=T)
+cat(file=log_names[i], A, append=T, sep="\n")
+A <- system2("cutadapt", cmd2[i], stdout=T, stderr=T)
+cat(file=log_names[i], A, append=T, sep="\n")
 # reporting
-meep <- sub(".*_data/(.*)", "\\1", temp[i])
+
+stats <- readLines(log_names[i])
+
+reads_in <- stats[grep("Total reads processed:", stats)[1]]
+reads_in <- sub(".* processed: +", "", reads_in)
+reads_in <- as.numeric(gsub(",", "", reads_in))
+
+reads_out <- stats[grep("Reads written \\(passing filters\\):", stats)[2]]
+reads_out <- sub(".* filters.: +", "", reads_out)
+reads_out <- sub(" .*", "", reads_out)
+reads_out <- as.numeric(gsub(",", "", reads_out))
+
+keep <- round(reads_out/reads_in*100, digits=2)
+exp <- rbind(exp, c(sub(".*_data/(.*)", "\\1", temp[i]), reads_out, keep))
+
+meep <- paste(sub(".*_data/(.*)_PE.*", "\\1", temp[i]), " - ", keep, "% reads passed", sep="")
 cat(file="../log.txt", meep, append=T, sep="\n")
 message(meep)
 }
 
-# delete temp primer file!!!
+exp <- data.frame(exp)
+names(exp) <- c("Sample", "Abundance", "pct_pass")
+write.csv(exp, "_stats/cut_pass.csv")
 
-
-
+file.remove("_data/temp.txt") # remove temporary file
 message(" ")
 message(" Module completed!")
 
