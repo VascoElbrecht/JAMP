@@ -26,12 +26,12 @@ if(md5){
 # claculate md5 checksums for log
 temp <- c(file1, file2)
 
-A <- NULL
+A <- NULL # make alternative comand for linux
 for (i in 1:length(temp)){
 A[i] <- system2("md5", temp[i], stdout=T)
 }
-}
 cat(file="../log.txt", A, append=T, sep="\n")
+}
 
 
 savesequ <- function(file_name1="N_debres_r1.txt", file_name2="N_debres_r2.txt", rm1=0, rm2=0){

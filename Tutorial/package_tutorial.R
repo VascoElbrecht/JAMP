@@ -1,10 +1,13 @@
 # 161111 - JAMP tutorial!
 setwd("~/Documents/UNI_und_VORLESUNGEN/GitHub/JAMP/") # set the path to the PrimerMinder folder you just downloaded
 
+install.packages("seqinr", dependencies=T)
+
 # install the PrimerMiner package icl dependencies
-install.packages("JAMP", repos = NULL, type="source", dependencies=T)
+install.packages("JAMP", repos = NULL, type="source")
 
 
+rev(comp("AGGGA"))
 
 # load the package into R
 library("JAMP")
@@ -23,11 +26,4 @@ cbind(revcomp, revcomp_tf)
 
 U_revcomp(RC= revcomp_tf) # make RevComp of selected reads
 
-
-
-meep <- Count_sequences(list.files("A_Demultiplexing_shifted/_data", full.names=T))
-
-getwd()
-setwd("B_U_merge_PE")
-
-
+Cutadapt(forward="BF2", reverse="BR1")
