@@ -34,12 +34,13 @@ max <- plusminus[1] + 10
 }
 
 
+# make cmd
+cmd <- paste("\"", files, "\" -o \"", new_names, "\" -f ", if(fastq){"fastq"}else{"fasta"}, if(!is.na(min)){" -m "}, if(!is.na(min)){min}, if(!is.na(min)){" -M "}, if(!is.na(min)){max}, sep="")
+
+# report
 temp <- paste("Starting to discard reads that don't fit the target length in ", length(cmd), " files:", sep="")
 cat(file="../log.txt", temp , append=T, sep="\n")
 message(temp)
-
-# make cmd
-cmd <- paste("\"", files, "\" -o \"", new_names, "\" -f ", if(fastq){"fastq"}else{"fasta"}, if(!is.na(min)){" -m "}, if(!is.na(min)){min}, if(!is.na(min)){" -M "}, if(!is.na(min)){max}, sep="")
 
 
 exp <- NULL

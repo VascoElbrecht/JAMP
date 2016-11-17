@@ -12,7 +12,7 @@ install.packages("JAMP", repos = NULL, type="source")
 library("JAMP")
 
 # base directory
-setwd("~/Desktop/package_test2/")
+setwd("~/Desktop/package_test/")
 
 Demultiplexing_shifted("../Ak15_1.fastq", "../Ak15_2.fastq", tags="BF_BR", combinations="../AK_demulti_used.csv")
 
@@ -29,11 +29,12 @@ U_revcomp(RC= revcomp_tf) # make RevComp of selected reads
 Cutadapt(forward="BF2", reverse="BR1")
 U_truncate(left=10, right=30)
 
-Minmax(plusminus=c(312, 10))
+Minmax(plusminus=c(281, 10))
 
 U_max_ee()
 
 
-setwd("E_U_truncate")
+
+U_cluster_otus()
 
 
