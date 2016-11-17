@@ -1,1210 +1,614 @@
-library("JAMP")
-rev(comp("AGGGA"))
-rev(comp(splitstr("AGGGA")))
-rev(comp(strsplit("AGGGA")))
-rev(comp(strsplit("AGGGA", "")))
-strsplit("AGGGA", "")
-rev(comp(unlist(strsplit("AGGGA", ""))))
-rev(comp(unlist(strsplit("AGGGACCC", ""))))
-rev(comp(unlist(strsplit("AGGGACCC", "")), forceToLower=F))
-rev(comp(unlist(strsplit(rw[1], "")), forceToLower=F))
-rw <- primers$Primer_Sequence[match(reverse, primers$Primer_Name)]
-rw <- "AGGGAGAGGGGTTTTT"
-rev(comp(unlist(strsplit(rw[i], "")), forceToLower=F))
-i <- 1
-rev(comp(unlist(strsplit(rw[i], "")), forceToLower=F))
-# Cutadapt v0.1#
+# 161111 - JAMP tutorial!#
+setwd("~/Documents/UNI_und_VORLESUNGEN/GitHub/JAMP/") # set the path to the PrimerMinder folder you just downloaded#
 #
-Cutadapt <- function(files="latest", forward=NA, reverse=NA, fastq=T){#
+# install the PrimerMiner package icl dependencies#
+install.packages("JAMP", repos = NULL, type="source", dependencies=T)#
 #
-Core(module="Cutadapt")#
-cat(file="../log.txt", c("Module Version: v0.1", "\n"), append=T, sep="\n")#
-#
-# cutadapt version#
-temp <- paste("Util Version: ", "Cutadapt v", system2("cutadapt", "--v", stdout=T, stderr=T), sep="")#
-message(temp)#
-cat(file="../log.txt", temp, append=T, sep="\n")#
-message(" ")#
-if (files=="latest"){#
-source("robots.txt")#
-files <- list.files(paste("../", last_data, "/_data", sep=""), full.names=T)#
-}#
-#
-# new file names#
-new_names <- sub(".*(_data/.*)", "\\1", files)#
-new_names <- sub(".fast", "_cut.fast", new_names)#
-#
-# get primer sequences / names#
-primers <- read.csv(paste(system.file(package="JAMP"), "/primers.csv", sep=""), stringsAsFactors=F)#
-# replace primer name with sequence#
-if(length(forward)==1){#
-fw <- primers$Primer_Sequence[primers$Primer_Name==forward]#
-if(length(fw)==0){fw <- forward}#
-}#
-if(length(reverse)==1){#
-rw <- primers$Primer_Sequence[primers$Primer_Name==reverse]#
-if(length(fw)==0){rw <- reverse}#
-}#
-#
-# match multiple primer names#
-if(length(forward)>1){#
-fw <- primers$Primer_Sequence[match(forward, primers$Primer_Name)]#
-}#
-if(length(reverse)>1){#
-rw <- primers$Primer_Sequence[match(reverse, primers$Primer_Name)]#
-}#
-#
-#build rev comp of rw#
-for (i in 1:length(rw)){#
-rw[i] <- paste(rev(comp(unlist(strsplit(rw[i], "")), forceToLower=F)), sep="")#
-}#
-#
-# add: write down used primers in log!#
-#
-cmd1 <- paste("-g ^", fw, " -o _data/temp.txt \"", files, "\"", " -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") # forward adapter#
-cmd2 <- paste("-A ", rw, "$ -o ", new_names, " _data/temp.txt -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") #rverse adapter#
-#
-temp <- paste("Starting to remove adapters (primers) on both ends in ", length(cmd1), " files:", sep="")#
-cat(file="../log.txt", temp , append=T, sep="\n")#
-message(temp)#
-temp <- new_names#
-for (i in 1:length(cmd1)){#
-system2("cutadapt", cmd1[i], stdout=T, stderr=T)#
-system2("cutadapt", cmd2[i], stdout=T, stderr=T)#
-#
-# reporting#
-meep <- sub(".*_data/(.*)", "\\1", temp[i])#
-cat(file="../log.txt", meep, append=T, sep="\n")#
-message(meep)#
-}#
-#
-# delete temp primer file!!!#
-message(" ")#
-message(" Module completed!")#
-#
-cat(file="../log.txt", paste(Sys.time(), "\n", "Module completed!", "", sep="\n"), append=T, sep="\n")#
-#
-setwd("../")#
-}
 # load the package into R#
 library("JAMP")#
 #
-# base directory#
-setwd("~/Desktop/package_test2/")
-# Cutadapt v0.1#
+setwd("Tutorial")#
+# creating configuration file and batch downloading reads#
+Core(module="ONE")
+Core(module="bluberry")
+Core(module="bluberry2")
+# Core v0.1#
 #
-Cutadapt <- function(files="latest", forward=NA, reverse=NA, fastq=T){#
+Core <- function(files="last", module=NA, letter="A"){#
 #
-Core(module="Cutadapt")#
-cat(file="../log.txt", c("Module Version: v0.1", "\n"), append=T, sep="\n")#
+if(files=="last"){ # look in log what last action was to load files from data folder!#
 #
-# cutadapt version#
-temp <- paste("Util Version: ", "Cutadapt v", system2("cutadapt", "--v", stdout=T, stderr=T), sep="")#
-message(temp)#
+}#
+#
+ABC <- unlist(strsplit("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ""))#
+#
+if(file.exists("log.txt")){#
+log <- readLines("log.txt") # load log#
+step <- which(log=="PROCESSING MODULE:") # detect processing modules#
+} else {step <- 3}#
+new_folder <- paste(ABC[length(step)+1], ") ", module, sep="")#
+dir.create(new_folder)#
+setwd(new_folder)#
+#
+# write mudule name in log#
+temp <- paste("##########", Sys.time(), "PROCESSING MODULE:", new_folder, sep="\n")#
+#
 cat(file="../log.txt", temp, append=T, sep="\n")#
-message(" ")#
-if (files=="latest"){#
-source("robots.txt")#
-files <- list.files(paste("../", last_data, "/_data", sep=""), full.names=T)#
-}#
+warning("Hello World")#
+setwd("../") # remove and implement into modules!!!#
 #
-# new file names#
-new_names <- sub(".*(_data/.*)", "\\1", files)#
-new_names <- sub(".fast", "_cut.fast", new_names)#
-#
-# get primer sequences / names#
-primers <- read.csv(paste(system.file(package="JAMP"), "/primers.csv", sep=""), stringsAsFactors=F)#
-# replace primer name with sequence#
-if(length(forward)==1){#
-fw <- primers$Primer_Sequence[primers$Primer_Name==forward]#
-if(length(fw)==0){fw <- forward}#
-}#
-if(length(reverse)==1){#
-rw <- primers$Primer_Sequence[primers$Primer_Name==reverse]#
-if(length(fw)==0){rw <- reverse}#
-}#
-#
-# match multiple primer names#
-if(length(forward)>1){#
-fw <- primers$Primer_Sequence[match(forward, primers$Primer_Name)]#
-}#
-if(length(reverse)>1){#
-rw <- primers$Primer_Sequence[match(reverse, primers$Primer_Name)]#
-}#
-#
-#build rev comp of rw#
-for (i in 1:length(rw)){#
-rw[i] <- paste(rev(comp(unlist(strsplit(rw[i], "")), forceToLower=F)), sep="")#
-}#
-#
-# add: write down used primers in log!#
-#
-cmd1 <- paste("-g ^", fw, " -o _data/temp.txt \"", files, "\"", " -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") # forward adapter#
-cmd2 <- paste("-A ", rw, "$ -o ", new_names, " _data/temp.txt -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") #rverse adapter#
-#
-temp <- paste("Starting to remove adapters (primers) on both ends in ", length(cmd1), " files:", sep="")#
-cat(file="../log.txt", temp , append=T, sep="\n")#
-message(temp)#
-temp <- new_names#
-for (i in 1:length(cmd1)){#
-system2("cutadapt", cmd1[i], stdout=T, stderr=T)#
-system2("cutadapt", cmd2[i], stdout=T, stderr=T)#
-#
-# reporting#
-meep <- sub(".*_data/(.*)", "\\1", temp[i])#
-cat(file="../log.txt", meep, append=T, sep="\n")#
-message(meep)#
-}#
-#
-# delete temp primer file!!!#
-message(" ")#
-message(" Module completed!")#
-#
-cat(file="../log.txt", paste(Sys.time(), "\n", "Module completed!", "", sep="\n"), append=T, sep="\n")#
-#
-setwd("../")#
 }
-Cutadapt(forward="BF2", reverse="BR1")
-warnings()
-paste(rev(comp(unlist(strsplit(rw[i], "")), forceToLower=F)), sep="")
-paste(rev(comp(unlist(strsplit(rw[i], "")), forceToLower=F)), collapse="")
-# Cutadapt v0.1#
+# 161111 - JAMP tutorial!#
+setwd("~/Documents/UNI_und_VORLESUNGEN/GitHub/JAMP/") # set the path to the PrimerMinder folder you just downloaded#
 #
-Cutadapt <- function(files="latest", forward=NA, reverse=NA, fastq=T){#
+# install the PrimerMiner package icl dependencies#
+install.packages("JAMP", repos = NULL, type="source", dependencies=T)#
 #
-Core(module="Cutadapt")#
-cat(file="../log.txt", c("Module Version: v0.1", "\n"), append=T, sep="\n")#
+# load the package into R#
+library("JAMP")#
 #
-# cutadapt version#
-temp <- paste("Util Version: ", "Cutadapt v", system2("cutadapt", "--v", stdout=T, stderr=T), sep="")#
-message(temp)#
+setwd("Tutorial")#
+# creating configuration file and batch downloading reads#
+Core(module="bluberry2")
+Core(module="bluberry2")
+Core(module="bubble")
+Core(module="GLumanda")
+Core(module="Rela")
+Core(module="Hello")
+# Core v0.1#
+#
+Core <- function(files="last", module=NA, letter="A"){#
+#
+if(files=="last"){ # look in log what last action was to load files from data folder!#
+#
+}#
+#
+ABC <- unlist(strsplit("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ""))#
+#
+if(file.exists("log.txt")){#
+log <- readLines("log.txt") # load log#
+step <- which(log=="PROCESSING MODULE:") # detect processing modules#
+} else {step <- NULL}#
+new_folder <- paste(ABC[length(step)+1], ") ", module, sep="")#
+dir.create(new_folder)#
+setwd(new_folder)#
+#
+# write mudule name in log#
+temp <- paste("##########", Sys.time(), "PROCESSING MODULE:", new_folder, sep="\n")#
+#
 cat(file="../log.txt", temp, append=T, sep="\n")#
-message(" ")#
-if (files=="latest"){#
-source("robots.txt")#
-files <- list.files(paste("../", last_data, "/_data", sep=""), full.names=T)#
-}#
+warning("Hello World")#
+setwd("../") # remove and implement into modules!!!#
 #
-# new file names#
-new_names <- sub(".*(_data/.*)", "\\1", files)#
-new_names <- sub(".fast", "_cut.fast", new_names)#
-#
-# get primer sequences / names#
-primers <- read.csv(paste(system.file(package="JAMP"), "/primers.csv", sep=""), stringsAsFactors=F)#
-# replace primer name with sequence#
-if(length(forward)==1){#
-fw <- primers$Primer_Sequence[primers$Primer_Name==forward]#
-if(length(fw)==0){fw <- forward}#
-}#
-if(length(reverse)==1){#
-rw <- primers$Primer_Sequence[primers$Primer_Name==reverse]#
-if(length(fw)==0){rw <- reverse}#
-}#
-#
-# match multiple primer names#
-if(length(forward)>1){#
-fw <- primers$Primer_Sequence[match(forward, primers$Primer_Name)]#
-}#
-if(length(reverse)>1){#
-rw <- primers$Primer_Sequence[match(reverse, primers$Primer_Name)]#
-}#
-#
-#build rev comp of rw#
-for (i in 1:length(rw)){#
-rw[i] <- paste(rev(comp(unlist(strsplit(rw[i], "")), forceToLower=F)), collapse="")#
-}#
-#
-# add: write down used primers in log!#
-#
-cmd1 <- paste("-g ^", fw, " -o _data/temp.txt \"", files, "\"", " -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") # forward adapter#
-cmd2 <- paste("-A ", rw, "$ -o ", new_names, " _data/temp.txt -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") #rverse adapter#
-#
-temp <- paste("Starting to remove adapters (primers) on both ends in ", length(cmd1), " files:", sep="")#
-cat(file="../log.txt", temp , append=T, sep="\n")#
-message(temp)#
-temp <- new_names#
-for (i in 1:length(cmd1)){#
-system2("cutadapt", cmd1[i], stdout=T, stderr=T)#
-system2("cutadapt", cmd2[i], stdout=T, stderr=T)#
-#
-# reporting#
-meep <- sub(".*_data/(.*)", "\\1", temp[i])#
-cat(file="../log.txt", meep, append=T, sep="\n")#
-message(meep)#
-}#
-#
-# delete temp primer file!!!#
-message(" ")#
-message(" Module completed!")#
-#
-cat(file="../log.txt", paste(Sys.time(), "\n", "Module completed!", "", sep="\n"), append=T, sep="\n")#
-#
-setwd("../")#
 }
-# Cutadapt v0.1#
+length(step)+1
+step <- NULL
+length(step)+1
+# Core v0.1#
 #
-Cutadapt <- function(files="latest", forward=NA, reverse=NA, fastq=T){#
+Core <- function(files="last", module=NA, letter="A"){#
 #
-Core(module="Cutadapt")#
-cat(file="../log.txt", c("Module Version: v0.1", "\n"), append=T, sep="\n")#
+if(files=="last"){ # look in log what last action was to load files from data folder!#
 #
-# cutadapt version#
-temp <- paste("Util Version: ", "Cutadapt v", system2("cutadapt", "--v", stdout=T, stderr=T), sep="")#
-message(temp)#
+}#
+#
+ABC <- unlist(strsplit("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ""))#
+#
+if(file.exists("log.txt")){#
+log <- readLines("log.txt") # load log#
+step <- which(log=="PROCESSING MODULE:") # detect processing modules#
+} else {step <- NULL}#
+#
+# ADD routine to remove deleted folders from log!#
+new_folder <- paste(ABC[length(step)+1], ") ", module, sep="")#
+dir.create(new_folder)#
+setwd(new_folder)#
+#
+# write mudule name in log#
+temp <- paste("##########", Sys.time(), "PROCESSING MODULE:", new_folder, sep="\n")#
+#
 cat(file="../log.txt", temp, append=T, sep="\n")#
-message(" ")#
-if (files=="latest"){#
-source("robots.txt")#
-files <- list.files(paste("../", last_data, "/_data", sep=""), full.names=T)#
-}#
+warning("Hello World")#
+setwd("../") # remove and implement into modules!!!#
 #
-# new file names#
-new_names <- sub(".*(_data/.*)", "\\1", files)#
-new_names <- sub(".fast", "_cut.fast", new_names)#
-#
-# get primer sequences / names#
-primers <- read.csv(paste(system.file(package="JAMP"), "/primers.csv", sep=""), stringsAsFactors=F)#
-# replace primer name with sequence#
-if(length(forward)==1){#
-fw <- primers$Primer_Sequence[primers$Primer_Name==forward]#
-if(length(fw)==0){fw <- forward}#
-}#
-if(length(reverse)==1){#
-rw <- primers$Primer_Sequence[primers$Primer_Name==reverse]#
-if(length(fw)==0){rw <- reverse}#
-}#
-#
-# match multiple primer names#
-if(length(forward)>1){#
-fw <- primers$Primer_Sequence[match(forward, primers$Primer_Name)]#
-}#
-if(length(reverse)>1){#
-rw <- primers$Primer_Sequence[match(reverse, primers$Primer_Name)]#
-}#
-#
-#build rev comp of rw#
-for (i in 1:length(rw)){#
-rw[i] <- paste(rev(comp(unlist(strsplit(rw[i], "")), forceToLower=F)), collapse="")#
-}#
-#
-# add: write down used primers in log!#
-#
-cmd1 <- paste("-g ^", fw, " -o _data/temp.txt \"", files, "\"", " -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") # forward adapter#
-cmd2 <- paste("-A ", rw, "$ -o ", new_names, " _data/temp.txt -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") #rverse adapter#
-#
-temp <- paste("Starting to remove adapters (primers) on both ends in ", length(cmd1), " files:", sep="")#
-cat(file="../log.txt", temp , append=T, sep="\n")#
-message(temp)#
-temp <- new_names#
-for (i in 1:length(cmd1)){#
-system2("cutadapt", cmd1[i], stdout=T, stderr=T)#
-system2("cutadapt", cmd2[i], stdout=T, stderr=T)#
-#
-# reporting#
-meep <- sub(".*_data/(.*)", "\\1", temp[i])#
-cat(file="../log.txt", meep, append=T, sep="\n")#
-message(meep)#
-}#
-#
-# delete temp primer file!!!#
-message(" ")#
-message(" Module completed!")#
-#
-cat(file="../log.txt", paste(Sys.time(), "\n", "Module completed!", "", sep="\n"), append=T, sep="\n")#
-#
-setwd("../")#
 }
-setwd("~/Desktop/package_test2/")
-Cutadapt(forward="BF2", reverse="BR1")
-warnings()
-# Cutadapt v0.1#
+# 161111 - JAMP tutorial!#
+setwd("~/Documents/UNI_und_VORLESUNGEN/GitHub/JAMP/") # set the path to the PrimerMinder folder you just downloaded#
 #
-Cutadapt <- function(files="latest", forward=NA, reverse=NA, fastq=T){#
+# install the PrimerMiner package icl dependencies#
+install.packages("JAMP", repos = NULL, type="source", dependencies=T)#
 #
-Core(module="Cutadapt")#
-cat(file="../log.txt", c("Module Version: v0.1", "\n"), append=T, sep="\n")#
+# load the package into R#
+library("JAMP")#
 #
-# cutadapt version#
-temp <- paste("Util Version: ", "Cutadapt v", system2("cutadapt", "--v", stdout=T, stderr=T), sep="")#
-message(temp)#
+setwd("Tutorial")#
+# creating configuration file and batch downloading reads#
+Core(module="Hello")#
+Core(module="Mellofd")#
+Core(module="NEw script")#
+Core(module="this is a test")#
+Core(module="Glumanda!!!")
+# Core v0.1#
+#
+Core <- function(files="last", module=NA, letter="A"){#
+#
+if(files=="last"){ # look in log what last action was to load files from data folder!#
+#
+}#
+#
+ABC <- unlist(strsplit("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ""))#
+#
+if(file.exists("log.txt")){#
+log <- readLines("log.txt") # load log#
+step <- which(log=="PROCESSING MODULE:") # detect processing modules#
+} else {step <- NULL}#
+#
+# ADD routine to remove deleted folders from log!#
+new_folder <- paste(ABC[length(step)+1], ") ", module, sep="")#
+dir.create(new_folder)#
+dir.create(paste(new_folder, "_data", sep="/"))#
+dir.create(paste(new_folder, "_stats", sep="/"))#
+setwd(new_folder)#
+#
+# write mudule name in log#
+temp <- paste("##########", Sys.time(), "PROCESSING MODULE:", new_folder, sep="\n")#
+#
 cat(file="../log.txt", temp, append=T, sep="\n")#
-message(" ")#
-if (files=="latest"){#
-source("robots.txt")#
-files <- list.files(paste("../", last_data, "/_data", sep=""), full.names=T)#
-}#
+warning("Hello World")#
+setwd("../") # remove and implement into modules!!!#
 #
-# new file names#
-new_names <- sub(".*(_data/.*)", "\\1", files)#
-new_names <- sub(".fast", "_cut.fast", new_names)#
-#
-# get primer sequences / names#
-primers <- read.csv(paste(system.file(package="JAMP"), "/primers.csv", sep=""), stringsAsFactors=F)#
-# replace primer name with sequence#
-if(length(forward)==1){#
-fw <- primers$Primer_Sequence[primers$Primer_Name==forward]#
-if(length(fw)==0){fw <- forward}#
-}#
-if(length(reverse)==1){#
-rw <- primers$Primer_Sequence[primers$Primer_Name==reverse]#
-if(length(fw)==0){rw <- reverse}#
-}#
-#
-# match multiple primer names#
-if(length(forward)>1){#
-fw <- primers$Primer_Sequence[match(forward, primers$Primer_Name)]#
-}#
-if(length(reverse)>1){#
-rw <- primers$Primer_Sequence[match(reverse, primers$Primer_Name)]#
-}#
-#
-#build rev comp of rw#
-for (i in 1:length(rw)){#
-rw[i] <- paste(rev(comp(unlist(strsplit(rw[i], "")), forceToLower=F)), collapse="")#
-}#
-#
-# add: write down used primers in log!#
-#
-cmd1 <- paste("-g ^", fw, " -o _data/temp.txt \"", files, "\"", " -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") # forward adapter#
-cmd2 <- paste("-a ", rw, "$ -o ", new_names, " _data/temp.txt -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") #rverse adapter#
-#
-temp <- paste("Starting to remove adapters (primers) on both ends in ", length(cmd1), " files:", sep="")#
-cat(file="../log.txt", temp , append=T, sep="\n")#
-message(temp)#
-temp <- new_names#
-for (i in 1:length(cmd1)){#
-system2("cutadapt", cmd1[i], stdout=T, stderr=T)#
-system2("cutadapt", cmd2[i], stdout=T, stderr=T)#
-#
-# reporting#
-meep <- sub(".*_data/(.*)", "\\1", temp[i])#
-cat(file="../log.txt", meep, append=T, sep="\n")#
-message(meep)#
-}#
-#
-# delete temp primer file!!!#
-message(" ")#
-message(" Module completed!")#
-#
-cat(file="../log.txt", paste(Sys.time(), "\n", "Module completed!", "", sep="\n"), append=T, sep="\n")#
-#
-setwd("../")#
 }
-setwd("~/Desktop/package_test2/")
-Cutadapt(forward="BF2", reverse="BR1")
-rw
-print(rw)
-# Cutadapt v0.1#
+# 161111 - JAMP tutorial!#
+setwd("~/Documents/UNI_und_VORLESUNGEN/GitHub/JAMP/") # set the path to the PrimerMinder folder you just downloaded#
 #
-Cutadapt <- function(files="latest", forward=NA, reverse=NA, fastq=T){#
+# install the PrimerMiner package icl dependencies#
+install.packages("JAMP", repos = NULL, type="source", dependencies=T)#
 #
-Core(module="Cutadapt")#
-cat(file="../log.txt", c("Module Version: v0.1", "\n"), append=T, sep="\n")#
+# load the package into R#
+library("JAMP")#
 #
-# cutadapt version#
-temp <- paste("Util Version: ", "Cutadapt v", system2("cutadapt", "--v", stdout=T, stderr=T), sep="")#
-message(temp)#
+setwd("Tutorial")#
+# creating configuration file and batch downloading reads#
+Core(module="Hello")#
+Core(module="Mellofd")#
+Core(module="NEw script")#
+Core(module="this is a test")#
+Core(module="Glumanda!!!")
+Core(module="Hello")#
+Core(module="Mellofd")#
+Core(module="NEw script")#
+Core(module="this is a test")#
+Core(module="Glumanda!!!")
+delete_data=F
+# Core v0.1#
+#
+Core <- function(files="last", module=NA, letter="A", delete_data=F){#
+#
+if(files=="last"){ # look in log what last action was to load files from data folder!#
+#
+}#
+#
+ABC <- unlist(strsplit("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ""))#
+#
+if(file.exists("log.txt")){#
+log <- readLines("log.txt") # load log#
+step <- which(log=="PROCESSING MODULE:") # detect processing modules#
+} else {step <- NULL}#
+#
+# ADD routine to remove deleted folders from log!#
+new_folder <- paste(ABC[length(step)+1], ") ", module, sep="")#
+dir.create(new_folder)#
+dir.create(paste(new_folder, "_data", sep="/"))#
+dir.create(paste(new_folder, "_stats", sep="/"))#
+setwd(new_folder)#
+#
+# write mudule name in log#
+temp <- paste("##########", Sys.time(), "PROCESSING MODULE:", new_folder, sep="\n")#
+#
 cat(file="../log.txt", temp, append=T, sep="\n")#
-message(" ")#
-if (files=="latest"){#
-source("robots.txt")#
-files <- list.files(paste("../", last_data, "/_data", sep=""), full.names=T)#
+if(delete_data){#
+cat(file="robots.txt", "delete_data=T", append=T, sep="\n")#
+#
 }#
+warning("Hello World")#
+setwd("../") # remove and implement into modules!!!#
 #
-# new file names#
-new_names <- sub(".*(_data/.*)", "\\1", files)#
-new_names <- sub(".fast", "_cut.fast", new_names)#
-#
-# get primer sequences / names#
-primers <- read.csv(paste(system.file(package="JAMP"), "/primers.csv", sep=""), stringsAsFactors=F)#
-# replace primer name with sequence#
-if(length(forward)==1){#
-fw <- primers$Primer_Sequence[primers$Primer_Name==forward]#
-if(length(fw)==0){fw <- forward}#
-}#
-if(length(reverse)==1){#
-rw <- primers$Primer_Sequence[primers$Primer_Name==reverse]#
-if(length(fw)==0){rw <- reverse}#
-}#
-#
-# match multiple primer names#
-if(length(forward)>1){#
-fw <- primers$Primer_Sequence[match(forward, primers$Primer_Name)]#
-}#
-if(length(reverse)>1){#
-rw <- primers$Primer_Sequence[match(reverse, primers$Primer_Name)]#
-}#
-#
-#build rev comp of rw#
-for (i in 1:length(rw)){#
-rw[i] <- paste(rev(comp(unlist(strsplit(rw[i], "")), forceToLower=F)), collapse="")#
-}#
-#
-print(rw)#
-# add: write down used primers in log!#
-#
-cmd1 <- paste("-g ^", fw, " -o _data/temp.txt \"", files, "\"", " -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") # forward adapter#
-cmd2 <- paste("-a ", rw, "$ -o ", new_names, " _data/temp.txt -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") #rverse adapter#
-#
-temp <- paste("Starting to remove adapters (primers) on both ends in ", length(cmd1), " files:", sep="")#
-cat(file="../log.txt", temp , append=T, sep="\n")#
-message(temp)#
-temp <- new_names#
-for (i in 1:length(cmd1)){#
-system2("cutadapt", cmd1[i], stdout=T, stderr=T)#
-system2("cutadapt", cmd2[i], stdout=T, stderr=T)#
-#
-# reporting#
-meep <- sub(".*_data/(.*)", "\\1", temp[i])#
-cat(file="../log.txt", meep, append=T, sep="\n")#
-message(meep)#
-}#
-#
-# delete temp primer file!!!#
-message(" ")#
-message(" Module completed!")#
-#
-cat(file="../log.txt", paste(Sys.time(), "\n", "Module completed!", "", sep="\n"), append=T, sep="\n")#
-#
-setwd("../")#
 }
-cmd2
-# Cutadapt v0.1#
+step
+step[length(step)]
+# Core v0.1#
 #
-Cutadapt <- function(files="latest", forward=NA, reverse=NA, fastq=T){#
+Core <- function(files="last", module=NA, letter="A", delete_data=F){#
 #
-Core(module="Cutadapt")#
-cat(file="../log.txt", c("Module Version: v0.1", "\n"), append=T, sep="\n")#
+if(files=="last"){ # look in log what last action was to load files from data folder!#
 #
-# cutadapt version#
-temp <- paste("Util Version: ", "Cutadapt v", system2("cutadapt", "--v", stdout=T, stderr=T), sep="")#
-message(temp)#
+}#
+#
+ABC <- unlist(strsplit("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ""))#
+#
+if(file.exists("log.txt")){#
+log <- readLines("log.txt") # load log#
+step <- which(log=="PROCESSING MODULE:") # detect processing modules#
+} else {step <- NULL}#
+#
+# ADD routine to remove deleted folders from log!#
+new_folder <- paste(ABC[length(step)+1], ") ", module, sep="")#
+dir.create(new_folder)#
+dir.create(paste(new_folder, "_data", sep="/"))#
+dir.create(paste(new_folder, "_stats", sep="/"))#
+setwd(new_folder)#
+#
+# write mudule name in log#
+temp <- paste("##########", Sys.time(), "PROCESSING MODULE:", new_folder, sep="\n")#
+#
 cat(file="../log.txt", temp, append=T, sep="\n")#
-message(" ")#
-if (files=="latest"){#
-source("robots.txt")#
-files <- list.files(paste("../", last_data, "/_data", sep=""), full.names=T)#
+if(delete_data){#
+cat(file="robots.txt", "delete_data=T", "\n", "last_data=\"", step[length(step)], "\"", append=T, sep="\n")#
 }#
+warning("Hello World")#
+setwd("../") # remove and implement into modules!!!#
 #
-# new file names#
-new_names <- sub(".*(_data/.*)", "\\1", files)#
-new_names <- sub(".fast", "_cut.fast", new_names)#
-#
-# get primer sequences / names#
-primers <- read.csv(paste(system.file(package="JAMP"), "/primers.csv", sep=""), stringsAsFactors=F)#
-# replace primer name with sequence#
-if(length(forward)==1){#
-fw <- primers$Primer_Sequence[primers$Primer_Name==forward]#
-if(length(fw)==0){fw <- forward}#
-}#
-if(length(reverse)==1){#
-rw <- primers$Primer_Sequence[primers$Primer_Name==reverse]#
-if(length(fw)==0){rw <- reverse}#
-}#
-#
-# match multiple primer names#
-if(length(forward)>1){#
-fw <- primers$Primer_Sequence[match(forward, primers$Primer_Name)]#
-}#
-if(length(reverse)>1){#
-rw <- primers$Primer_Sequence[match(reverse, primers$Primer_Name)]#
-}#
-#
-#build rev comp of rw#
-for (i in 1:length(rw)){#
-rw[i] <- paste(rev(comp(unlist(strsplit(rw[i], "")), forceToLower=F)), collapse="")#
-}#
-#
-print(rw)#
-#
-# add: write down used primers in log!#
-#
-cmd1 <- paste("-g ^", fw, " -o _data/temp.txt \"", files, "\"", " -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") # forward adapter#
-cmd2 <- paste("-a ", rw, "$ -o ", new_names, " _data/temp.txt -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") #rverse adapter#
-#
-temp <- paste("Starting to remove adapters (primers) on both ends in ", length(cmd1), " files:", sep="")#
-cat(file="../log.txt", temp , append=T, sep="\n")#
-message(temp)#
-temp <- new_names#
-for (i in 1:length(cmd1)){#
-system2("cutadapt", cmd1[i], stdout=T, stderr=T)#
-system2("cutadapt", cmd2[i], stdout=T, stderr=T)#
-#
-# reporting#
-meep <- sub(".*_data/(.*)", "\\1", temp[i])#
-cat(file="../log.txt", meep, append=T, sep="\n")#
-message(meep)#
-}#
-#
-# delete temp primer file!!!#
-message(" ")#
-message(" Module completed!")#
-#
-cat(file="../log.txt", paste(Sys.time(), "\n", "Module completed!", "", sep="\n"), append=T, sep="\n")#
-#
-setwd("../")#
 }
-setwd("~/Desktop/package_test2/")
-Cutadapt(forward="BF2", reverse="BR1")
-rw
-rw <- "ACWGGWTGRACWGTNTAYCC"
-paste(rev(comp(unlist(strsplit(rw[i], "")), forceToLower=F)), collapse="")
-paste(rev(comp(unlist(strsplit(rw[i], ""), ambigious=T), forceToLower=F)), collapse="")
-? comp
-paste(rev(comp(unlist(strsplit(rw[i], ""), ambiguous=T), forceToLower=F)), collapse="")
-paste(rev(comp(unlist(strsplit(rw[i], "")), forceToLower=F, ambiguous=T)), collapse="")
-# Cutadapt v0.1#
+Core(module="Hello")#
+Core(module="Mellofd")#
+Core(module="NEw script")#
+Core(module="this is a test")#
+Core(module="Glumanda!!!")
+cat(file="robots.txt", "delete_data=T", "\n", "last_data=\"", step[length(step)], "\"", append=T, sep="\n")
+# Core v0.1#
 #
-Cutadapt <- function(files="latest", forward=NA, reverse=NA, fastq=T){#
+Core <- function(files="last", module=NA, letter="A", delete_data=F){#
 #
-Core(module="Cutadapt")#
-cat(file="../log.txt", c("Module Version: v0.1", "\n"), append=T, sep="\n")#
+if(files=="last"){ # look in log what last action was to load files from data folder!#
 #
-# cutadapt version#
-temp <- paste("Util Version: ", "Cutadapt v", system2("cutadapt", "--v", stdout=T, stderr=T), sep="")#
-message(temp)#
+}#
+#
+ABC <- unlist(strsplit("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ""))#
+#
+if(file.exists("log.txt")){#
+log <- readLines("log.txt") # load log#
+step <- which(log=="PROCESSING MODULE:") # detect processing modules#
+} else {step <- NULL}#
+#
+# ADD routine to remove deleted folders from log!#
+new_folder <- paste(ABC[length(step)+1], ") ", module, sep="")#
+dir.create(new_folder)#
+dir.create(paste(new_folder, "_data", sep="/"))#
+dir.create(paste(new_folder, "_stats", sep="/"))#
+setwd(new_folder)#
+#
+# write mudule name in log#
+temp <- paste("##########", Sys.time(), "PROCESSING MODULE:", new_folder, sep="\n")#
+#
 cat(file="../log.txt", temp, append=T, sep="\n")#
-message(" ")#
-if (files=="latest"){#
-source("robots.txt")#
-files <- list.files(paste("../", last_data, "/_data", sep=""), full.names=T)#
-}#
+cat(file="robots.txt", "delete_data=", delete_data, "\n", "last_data=\"", step[length(step)], "\"", append=T, sep="\n")#
+warning("Hello World")#
+setwd("../") # remove and implement into modules!!!#
 #
-# new file names#
-new_names <- sub(".*(_data/.*)", "\\1", files)#
-new_names <- sub(".fast", "_cut.fast", new_names)#
-#
-# get primer sequences / names#
-primers <- read.csv(paste(system.file(package="JAMP"), "/primers.csv", sep=""), stringsAsFactors=F)#
-# replace primer name with sequence#
-if(length(forward)==1){#
-fw <- primers$Primer_Sequence[primers$Primer_Name==forward]#
-if(length(fw)==0){fw <- forward}#
-}#
-if(length(reverse)==1){#
-rw <- primers$Primer_Sequence[primers$Primer_Name==reverse]#
-if(length(fw)==0){rw <- reverse}#
-}#
-#
-# match multiple primer names#
-if(length(forward)>1){#
-fw <- primers$Primer_Sequence[match(forward, primers$Primer_Name)]#
-}#
-if(length(reverse)>1){#
-rw <- primers$Primer_Sequence[match(reverse, primers$Primer_Name)]#
-}#
-#
-#build rev comp of rw, using "seqinr"#
-for (i in 1:length(rw)){#
-rw[i] <- paste(rev(comp(unlist(strsplit(rw[i], "")), forceToLower=F, ambiguous=T)), collapse="")#
-}#
-# add: write down used primers in log!#
-#
-cmd1 <- paste("-g ^", fw, " -o _data/temp.txt \"", files, "\"", " -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") # forward adapter#
-cmd2 <- paste("-a ", rw, "$ -o ", new_names, " _data/temp.txt -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") #rverse adapter#
-#
-temp <- paste("Starting to remove adapters (primers) on both ends in ", length(cmd1), " files:", sep="")#
-cat(file="../log.txt", temp , append=T, sep="\n")#
-message(temp)#
-temp <- new_names#
-for (i in 1:length(cmd1)){#
-system2("cutadapt", cmd1[i], stdout=T, stderr=T)#
-system2("cutadapt", cmd2[i], stdout=T, stderr=T)#
-#
-# reporting#
-meep <- sub(".*_data/(.*)", "\\1", temp[i])#
-cat(file="../log.txt", meep, append=T, sep="\n")#
-message(meep)#
-}#
-#
-# delete temp primer file!!!#
-message(" ")#
-message(" Module completed!")#
-#
-cat(file="../log.txt", paste(Sys.time(), "\n", "Module completed!", "", sep="\n"), append=T, sep="\n")#
-#
-setwd("../")#
 }
-setwd("~/Desktop/package_test2/")
-Cutadapt(forward="BF2", reverse="BR1")
-system2("cutadapt", "--v", stdout=T, stderr=T)
-system2("cutadapt", "--h", stdout=T, stderr=T)
-A <- system2("cutadapt", "--h", stdout=T, stderr=T)
-A
-setwd("~/Desktop/package_test2/")
-sub(".*_data/(.*)", "\\1", temp[i])
-log_names <- sub(".*_data/(.*)", "\\1", temp)
-new_names
-setwd("~/Desktop/package_test2/")
-files="latest"
-Core(module="Cutadapt")#
-cat(file="../log.txt", c("Module Version: v0.1", "\n"), append=T, sep="\n")#
+Core(module="Hello")#
+Core(module="Mellofd")#
+Core(module="NEw script")#
+Core(module="this is a test")#
+Core(module="Glumanda!!!")
+# Core v0.1#
 #
-# cutadapt version#
-temp <- paste("Util Version: ", "Cutadapt v", system2("cutadapt", "--v", stdout=T, stderr=T), sep="")#
-message(temp)#
+Core <- function(files="last", module=NA, letter="A", delete_data=F){#
+#
+if(files=="last"){ # look in log what last action was to load files from data folder!#
+#
+}#
+#
+ABC <- unlist(strsplit("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ""))#
+#
+if(file.exists("log.txt")){#
+log <- readLines("log.txt") # load log#
+step <- which(log=="PROCESSING MODULE:") # detect processing modules#
+} else {step <- NULL}#
+#
+# ADD routine to remove deleted folders from log!#
+new_folder <- paste(ABC[length(step)+1], ") ", module, sep="")#
+dir.create(new_folder)#
+dir.create(paste(new_folder, "_data", sep="/"))#
+dir.create(paste(new_folder, "_stats", sep="/"))#
+setwd(new_folder)#
+#
+# write mudule name in log#
+temp <- paste("##########", Sys.time(), "PROCESSING MODULE:", new_folder, sep="\n")#
+#
 cat(file="../log.txt", temp, append=T, sep="\n")#
-message(" ")#
-if (files=="latest"){#
-source("robots.txt")#
-files <- list.files(paste("../", last_data, "/_data", sep=""), full.names=T)#
+cat(file="robots.txt", "delete_data=", delete_data, "\n", "last_data=\"", step[length(step)], "\"\n", append=T, sep="")#
+warning("Hello World")#
+setwd("../") # remove and implement into modules!!!#
+#
 }
-# new file names#
-new_names <- sub(".*(_data/.*)", "\\1", files)#
-new_names <- sub(".fast", "_cut.fast", new_names)
-new_names
-sub(".*_data/(.*)", "\\1", new_names)
-log_names <- sub("_data", "_stats", new_names)
-log_names
-log_names <- sub("_data", "_stats/_cutadapt_logs", new_names)
-log_names
-sub(".fast[aq]", "", log_names)
-dir.create("_stats/_cutadapt_logs")#
-log_names <- sub("_data", "_stats/_cutadapt_logs", new_names)#
-log_names <- sub(".fast[aq]", ".txt", log_names)
-log_names
-# Cutadapt v0.1#
+Core(module="Hello")#
+Core(module="Mellofd")#
+Core(module="NEw script")#
+Core(module="this is a test")#
+Core(module="Glumanda!!!")
+step[length(step)]
+step
+# Core v0.1#
 #
-Cutadapt <- function(files="latest", forward=NA, reverse=NA, fastq=T){#
+Core <- function(files="last", module=NA, letter="A", delete_data=F){#
 #
-Core(module="Cutadapt")#
-cat(file="../log.txt", c("Module Version: v0.1", "\n"), append=T, sep="\n")#
+if(files=="last"){ # look in log what last action was to load files from data folder!#
 #
-# cutadapt version#
-temp <- paste("Util Version: ", "Cutadapt v", system2("cutadapt", "--v", stdout=T, stderr=T), sep="")#
-message(temp)#
+}#
+#
+ABC <- unlist(strsplit("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ""))#
+#
+if(file.exists("log.txt")){#
+log <- readLines("log.txt") # load log#
+step <- which(log=="PROCESSING MODULE:") # detect processing modules#
+} else {step <- NULL}#
+#
+# ADD routine to remove deleted folders from log!#
+new_folder <- paste(ABC[length(step)+1], ") ", module, sep="")#
+dir.create(new_folder)#
+dir.create(paste(new_folder, "_data", sep="/"))#
+dir.create(paste(new_folder, "_stats", sep="/"))#
+setwd(new_folder)#
+#
+# write mudule name in log#
+temp <- paste("##########", Sys.time(), "PROCESSING MODULE:", new_folder, sep="\n")#
+#
 cat(file="../log.txt", temp, append=T, sep="\n")#
-message(" ")#
-if (files=="latest"){#
-source("robots.txt")#
-files <- list.files(paste("../", last_data, "/_data", sep=""), full.names=T)#
-}#
+cat(file="robots.txt", "delete_data=", delete_data, "\n", "last_data=\"", log[step[length(step)]+1], "\"\n", append=T, sep="")#
+warning("Hello World")#
+setwd("../") # remove and implement into modules!!!#
 #
-# new file names#
-new_names <- sub(".*(_data/.*)", "\\1", files)#
-new_names <- sub(".fast", "_cut.fast", new_names)#
-#
-# get primer sequences / names#
-primers <- read.csv(paste(system.file(package="JAMP"), "/primers.csv", sep=""), stringsAsFactors=F)#
-# replace primer name with sequence#
-if(length(forward)==1){#
-fw <- primers$Primer_Sequence[primers$Primer_Name==forward]#
-if(length(fw)==0){fw <- forward}#
-}#
-if(length(reverse)==1){#
-rw <- primers$Primer_Sequence[primers$Primer_Name==reverse]#
-if(length(fw)==0){rw <- reverse}#
-}#
-#
-# match multiple primer names#
-if(length(forward)>1){#
-fw <- primers$Primer_Sequence[match(forward, primers$Primer_Name)]#
-}#
-if(length(reverse)>1){#
-rw <- primers$Primer_Sequence[match(reverse, primers$Primer_Name)]#
-}#
-#
-#build rev comp of rw, using "seqinr"#
-for (i in 1:length(rw)){#
-rw[i] <- paste(rev(comp(unlist(strsplit(rw[i], "")), forceToLower=F, ambiguous=T)), collapse="")#
-}#
-# add: write down used primers in log!#
-#
-cmd1 <- paste("-g ^", fw, " -o _data/temp.txt \"", files, "\"", " -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") # forward adapter#
-cmd2 <- paste("-a ", rw, "$ -o ", new_names, " _data/temp.txt -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") #rverse adapter#
-#
-temp <- paste("Starting to remove adapters (primers) on both ends in ", length(cmd1), " files:", sep="")#
-cat(file="../log.txt", temp , append=T, sep="\n")#
-message(temp)#
-#
-dir.create("_stats/_cutadapt_logs")#
-log_names <- sub("_data", "_stats/_cutadapt_logs", new_names)#
-log_names <- sub(".fast[aq]", ".txt", log_names)#
-temp <- new_names#
-for (i in 1:length(cmd1)){#
-A <- system2("cutadapt", cmd1[i], stdout=T, stderr=T)#
-cat(file=log_names[i], cmd1[i], append=T, sep="\n")#
-cat(file=log_names[i], A, append=T, sep="\n")#
-A <- system2("cutadapt", cmd2[i], stdout=T, stderr=T)#
-cat(file=log_names[i], cmd2[i], append=T, sep="\n")#
-cat(file=log_names[i], A, append=T, sep="\n")#
-# reporting#
-meep <- sub(".*_data/(.*)", "\\1", temp[i])#
-cat(file="../log.txt", meep, append=T, sep="\n")#
-message(meep)#
-}#
-#
-# delete temp primer file!!!#
-message(" ")#
-message(" Module completed!")#
-#
-cat(file="../log.txt", paste(Sys.time(), "\n", "Module completed!", "", sep="\n"), append=T, sep="\n")#
-#
-setwd("../")#
 }
-setwd("~/Desktop/package_test2/")
-Cutadapt(forward="BF2", reverse="BR1")
-readLines(log_names[i])
-# Cutadapt v0.1#
-#
-Cutadapt <- function(files="latest", forward=NA, reverse=NA, fastq=T){#
-#
-Core(module="Cutadapt")#
-cat(file="../log.txt", c("Module Version: v0.1", "\n"), append=T, sep="\n")#
-#
-# cutadapt version#
-temp <- paste("Util Version: ", "Cutadapt v", system2("cutadapt", "--v", stdout=T, stderr=T), sep="")#
-message(temp)#
-cat(file="../log.txt", temp, append=T, sep="\n")#
-message(" ")#
-if (files=="latest"){#
-source("robots.txt")#
-files <- list.files(paste("../", last_data, "/_data", sep=""), full.names=T)#
-}#
-#
-# new file names#
-new_names <- sub(".*(_data/.*)", "\\1", files)#
-new_names <- sub(".fast", "_cut.fast", new_names)#
-#
-# get primer sequences / names#
-primers <- read.csv(paste(system.file(package="JAMP"), "/primers.csv", sep=""), stringsAsFactors=F)#
-# replace primer name with sequence#
-if(length(forward)==1){#
-fw <- primers$Primer_Sequence[primers$Primer_Name==forward]#
-if(length(fw)==0){fw <- forward}#
-}#
-if(length(reverse)==1){#
-rw <- primers$Primer_Sequence[primers$Primer_Name==reverse]#
-if(length(fw)==0){rw <- reverse}#
-}#
-#
-# match multiple primer names#
-if(length(forward)>1){#
-fw <- primers$Primer_Sequence[match(forward, primers$Primer_Name)]#
-}#
-if(length(reverse)>1){#
-rw <- primers$Primer_Sequence[match(reverse, primers$Primer_Name)]#
-}#
-#
-#build rev comp of rw, using "seqinr"#
-for (i in 1:length(rw)){#
-rw[i] <- paste(rev(comp(unlist(strsplit(rw[i], "")), forceToLower=F, ambiguous=T)), collapse="")#
-}#
-# add: write down used primers in log!#
-#
-cmd1 <- paste("-g ^", fw, " -o _data/temp.txt \"", files, "\"", " -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") # forward adapter#
-cmd2 <- paste("-a ", rw, "$ -o ", new_names, " _data/temp.txt -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") #rverse adapter#
-#
-temp <- paste("Starting to remove adapters (primers) on both ends in ", length(cmd1), " files:", sep="")#
-cat(file="../log.txt", temp , append=T, sep="\n")#
-message(temp)#
-#
-dir.create("_stats/_cutadapt_logs")#
-log_names <- sub("_data", "_stats/_cutadapt_logs", new_names)#
-log_names <- sub(".fast[aq]", ".txt", log_names)#
-temp <- new_names#
-for (i in 1:length(cmd1)){#
-A <- system2("cutadapt", cmd1[i], stdout=T, stderr=T)#
-cat(file=log_names[i], A, append=T, sep="\n")#
-A <- system2("cutadapt", cmd2[i], stdout=T, stderr=T)#
-cat(file=log_names[i], A, append=T, sep="\n")#
-# reporting#
-#
-stats <- readLines(log_names[i])#
-#
-meep <- sub(".*_data/(.*)", "\\1", temp[i])#
-cat(file="../log.txt", meep, append=T, sep="\n")#
-message(meep)#
-}#
-#
-# delete temp primer file!!!#
-message(" ")#
-message(" Module completed!")#
-#
-cat(file="../log.txt", paste(Sys.time(), "\n", "Module completed!", "", sep="\n"), append=T, sep="\n")#
-#
-setwd("../")#
-}
-setwd("~/Desktop/package_test2/")
-Cutadapt(forward="BF2", reverse="BR1")
-setwd("D_Cutadapt")
-file.remove("_data/temp.txt")
-log_names
-log_names[i]
-stats <- readLines(log_names[i])
-stats
-grep(Total reads processed:)
-grep("Total reads processed:", stats)
-stats[grep("Total reads processed:", stats)[1]]
-in
-reads_in <- stats[grep("Total reads processed:", stats)[1]]
-sub(".* processed:", reads_in)
-sub(".* processed:", "", reads_in)
-sub(".* processed: +", "", reads_in)
-reads_in
-reads_in <- sub(".* processed: +", "", reads_in)
-reads_in
-as.numeric(reads_in)
-?as.numeric
-reads_in
-sub(",", "", reads_in)
-as.numeric(sub(",", "", reads_in))
-reads_in <- as.numeric(sub(",", "", reads_in))
-reads_in <- "12,1212,1212,2"
-reads_in <- as.numeric(sub(",", "", reads_in))
-sub(",", "", reads_in)
-reads_in <- "12,1212,1212,2"
-reads_in
-sub(",", "", reads_in)
-sub(",", "", reads_in)
-gsub(",", "", reads_in)
-stats
-stats[grep("Reads written (passing filters):", stats)]
-stats[grep("Reads written (passing filters):", stats)]
-stats
-stats[grep("Reads written \\(passing filters\\):", stats)]
-reads_out <- stats[grep("Reads written \\(passing filters\\):", stats)[2]]#
-reads_out <- sub(".* filters.: +", "", reads_out)#
-reads_out <- as.numeric(gsub(",", "", reads_out))
-sub(".* filters.: +", "", reads_out)
-reads_out <- stats[grep("Reads written \\(passing filters\\):", stats)[2]]
-sub(".* filters.: +", "", reads_out)
-sub(" .*", "", reads_out)
-reads_out <- sub(".* filters.: +", "", reads_out)
-sub(" .*", "", reads_out)
-reads_out <- stats[grep("Reads written \\(passing filters\\):", stats)[2]]#
-reads_out <- sub(".* filters.: +", "", reads_out)#
-reads_out <- sub(" .*", "", reads_out)#
-reads_out <- as.numeric(gsub(",", "", reads_out))
-reads_out
-reads_in
-reads_in <- stats[grep("Total reads processed:", stats)[1]]#
-reads_in <- sub(".* processed: +", "", reads_in)#
-reads_in <- as.numeric(gsub(",", "", reads_in))
-reads_in
-reads_in/reads_out
-reads_out/reads_in
-reads_out/reads_in*100
-round(reads_out/reads_in*100, digits=2)
-keep
-keep <- round(reads_out/reads_in*100, digits=2)
-paste(sub(".*_data/(.*)", "\\1", temp[i]))
-temp <- new_names
-paste(sub(".*_data/(.*)", "\\1", temp[i]))
-meep <- paste(sub(".*_data/(.*)", "\\1", temp[i]), " - ", keep, sep="")
-meep
-# Cutadapt v0.1#
-#
-Cutadapt <- function(files="latest", forward=NA, reverse=NA, fastq=T){#
-#
-Core(module="Cutadapt")#
-cat(file="../log.txt", c("Module Version: v0.1", "\n"), append=T, sep="\n")#
-#
-# cutadapt version#
-temp <- paste("Util Version: ", "Cutadapt v", system2("cutadapt", "--v", stdout=T, stderr=T), sep="")#
-message(temp)#
-cat(file="../log.txt", temp, append=T, sep="\n")#
-message(" ")#
-if (files=="latest"){#
-source("robots.txt")#
-files <- list.files(paste("../", last_data, "/_data", sep=""), full.names=T)#
-}#
-#
-# new file names#
-new_names <- sub(".*(_data/.*)", "\\1", files)#
-new_names <- sub(".fast", "_cut.fast", new_names)#
-#
-# get primer sequences / names#
-primers <- read.csv(paste(system.file(package="JAMP"), "/primers.csv", sep=""), stringsAsFactors=F)#
-# replace primer name with sequence#
-if(length(forward)==1){#
-fw <- primers$Primer_Sequence[primers$Primer_Name==forward]#
-if(length(fw)==0){fw <- forward}#
-}#
-if(length(reverse)==1){#
-rw <- primers$Primer_Sequence[primers$Primer_Name==reverse]#
-if(length(fw)==0){rw <- reverse}#
-}#
-#
-# match multiple primer names#
-if(length(forward)>1){#
-fw <- primers$Primer_Sequence[match(forward, primers$Primer_Name)]#
-}#
-if(length(reverse)>1){#
-rw <- primers$Primer_Sequence[match(reverse, primers$Primer_Name)]#
-}#
-#
-#build rev comp of rw, using "seqinr"#
-for (i in 1:length(rw)){#
-rw[i] <- paste(rev(comp(unlist(strsplit(rw[i], "")), forceToLower=F, ambiguous=T)), collapse="")#
-}#
-# add: write down used primers in log!#
-#
-cmd1 <- paste("-g ^", fw, " -o _data/temp.txt \"", files, "\"", " -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") # forward adapter#
-cmd2 <- paste("-a ", rw, "$ -o ", new_names, " _data/temp.txt -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") #rverse adapter#
-#
-temp <- paste("Starting to remove adapters (primers) on both ends in ", length(cmd1), " files:", sep="")#
-cat(file="../log.txt", temp , append=T, sep="\n")#
-message(temp)#
-#
-dir.create("_stats/_cutadapt_logs")#
-log_names <- sub("_data", "_stats/_cutadapt_logs", new_names)#
-log_names <- sub(".fast[aq]", ".txt", log_names)#
-temp <- new_names#
-for (i in 1:length(cmd1)){#
-A <- system2("cutadapt", cmd1[i], stdout=T, stderr=T)#
-cat(file=log_names[i], A, append=T, sep="\n")#
-A <- system2("cutadapt", cmd2[i], stdout=T, stderr=T)#
-cat(file=log_names[i], A, append=T, sep="\n")#
-# reporting#
-#
-stats <- readLines(log_names[i])#
-reads_in <- stats[grep("Total reads processed:", stats)[1]]#
-reads_in <- sub(".* processed: +", "", reads_in)#
-reads_in <- as.numeric(gsub(",", "", reads_in))#
-#
-reads_out <- stats[grep("Reads written \\(passing filters\\):", stats)[2]]#
-reads_out <- sub(".* filters.: +", "", reads_out)#
-reads_out <- sub(" .*", "", reads_out)#
-reads_out <- as.numeric(gsub(",", "", reads_out))#
-#
-keep <- round(reads_out/reads_in*100, digits=2)#
-#
-meep <- paste(sub(".*_data/(.*)", "\\1", temp[i]), " - ", keep, "% reads passed", sep="")#
-cat(file="../log.txt", meep, append=T, sep="\n")#
-message(meep)#
-}#
-file.remove("_data/temp.txt") # remove temporary file#
-message(" ")#
-message(" Module completed!")#
-#
-cat(file="../log.txt", paste(Sys.time(), "\n", "Module completed!", "", sep="\n"), append=T, sep="\n")#
-#
-setwd("../")#
-}
-B <- NULL
-abundance
-abundance <- NULL
-abundnace
-abundance <- NULL
-abundance
-exp <- NULL
-sub(".*_data/(.*)", "\\1", temp[i])
-exp <- rbind(exp, c(sub(".*_data/(.*)", "\\1", temp[i]), reads_out, keep))
-exp <- rbind(exp, c(sub(".*_data/(.*)", "\\1", temp[i]), reads_out, keep))
-exp <- rbind(exp, c(sub(".*_data/(.*)", "\\1", temp[i]), reads_out, keep))
-exp <- rbind(exp, c(sub(".*_data/(.*)", "\\1", temp[i]), reads_out, keep))
-exp
-exp <- data.frame(exp)
-names(exp)
-exp
-names(exp) <- c("Sample", "Abundance", "pct_pass")
-temp
-meep <- paste(sub(".*_data/(.*)_PE", "\\1", temp[i]), " - ", keep, "% reads passed", sep="")
-meep
-meep <- paste(sub(".*_data/(.*)_PE.*", "\\1", temp[i]), " - ", keep, "% reads passed", sep="")
-meep
-exp <- data.frame(exp)#
-names(exp) <- c("Sample", "Abundance", "pct_pass")#
-write.csv("_stats/cut_pass.csv")
-write.csv(exp, "_stats/cut_pass.csv")
-# Cutadapt v0.1#
-#
-Cutadapt <- function(files="latest", forward=NA, reverse=NA, fastq=T){#
-#
-Core(module="Cutadapt")#
-cat(file="../log.txt", c("Module Version: v0.1", "\n"), append=T, sep="\n")#
-#
-# cutadapt version#
-temp <- paste("Util Version: ", "Cutadapt v", system2("cutadapt", "--v", stdout=T, stderr=T), sep="")#
-message(temp)#
-cat(file="../log.txt", temp, append=T, sep="\n")#
-message(" ")#
-if (files=="latest"){#
-source("robots.txt")#
-files <- list.files(paste("../", last_data, "/_data", sep=""), full.names=T)#
-}#
-#
-# new file names#
-new_names <- sub(".*(_data/.*)", "\\1", files)#
-new_names <- sub(".fast", "_cut.fast", new_names)#
-#
-# get primer sequences / names#
-primers <- read.csv(paste(system.file(package="JAMP"), "/primers.csv", sep=""), stringsAsFactors=F)#
-# replace primer name with sequence#
-if(length(forward)==1){#
-fw <- primers$Primer_Sequence[primers$Primer_Name==forward]#
-if(length(fw)==0){fw <- forward}#
-}#
-if(length(reverse)==1){#
-rw <- primers$Primer_Sequence[primers$Primer_Name==reverse]#
-if(length(fw)==0){rw <- reverse}#
-}#
-#
-# match multiple primer names#
-if(length(forward)>1){#
-fw <- primers$Primer_Sequence[match(forward, primers$Primer_Name)]#
-}#
-if(length(reverse)>1){#
-rw <- primers$Primer_Sequence[match(reverse, primers$Primer_Name)]#
-}#
-#
-#build rev comp of rw, using "seqinr"#
-for (i in 1:length(rw)){#
-rw[i] <- paste(rev(comp(unlist(strsplit(rw[i], "")), forceToLower=F, ambiguous=T)), collapse="")#
-}#
-# add: write down used primers in log!#
-#
-cmd1 <- paste("-g ^", fw, " -o _data/temp.txt \"", files, "\"", " -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") # forward adapter#
-cmd2 <- paste("-a ", rw, "$ -o ", new_names, " _data/temp.txt -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") #rverse adapter#
-#
-temp <- paste("Starting to remove adapters (primers) on both ends in ", length(cmd1), " files:", sep="")#
-cat(file="../log.txt", temp , append=T, sep="\n")#
-message(temp)#
-#
-dir.create("_stats/_cutadapt_logs")#
-log_names <- sub("_data", "_stats/_cutadapt_logs", new_names)#
-log_names <- sub(".fast[aq]", ".txt", log_names)#
-#
-exp <- NULL#
-temp <- new_names#
-for (i in 1:length(cmd1)){#
-A <- system2("cutadapt", cmd1[i], stdout=T, stderr=T)#
-cat(file=log_names[i], A, append=T, sep="\n")#
-A <- system2("cutadapt", cmd2[i], stdout=T, stderr=T)#
-cat(file=log_names[i], A, append=T, sep="\n")#
-# reporting#
-#
-stats <- readLines(log_names[i])#
-#
-reads_in <- stats[grep("Total reads processed:", stats)[1]]#
-reads_in <- sub(".* processed: +", "", reads_in)#
-reads_in <- as.numeric(gsub(",", "", reads_in))#
-#
-reads_out <- stats[grep("Reads written \\(passing filters\\):", stats)[2]]#
-reads_out <- sub(".* filters.: +", "", reads_out)#
-reads_out <- sub(" .*", "", reads_out)#
-reads_out <- as.numeric(gsub(",", "", reads_out))#
-#
-keep <- round(reads_out/reads_in*100, digits=2)#
-exp <- rbind(exp, c(sub(".*_data/(.*)", "\\1", temp[i]), reads_out, keep))#
-#
-meep <- paste(sub(".*_data/(.*)_PE.*", "\\1", temp[i]), " - ", keep, "% reads passed", sep="")#
-cat(file="../log.txt", meep, append=T, sep="\n")#
-message(meep)#
-}#
-#
-exp <- data.frame(exp)#
-names(exp) <- c("Sample", "Abundance", "pct_pass")#
-write.csv(exp, "_stats/cut_pass.csv")#
-#
-file.remove("_data/temp.txt") # remove temporary file#
-message(" ")#
-message(" Module completed!")#
-#
-cat(file="../log.txt", paste(Sys.time(), "\n", "Module completed!", "", sep="\n"), append=T, sep="\n")#
-#
-setwd("../")#
-}
-# Cutadapt v0.1#
-#
-Cutadapt <- function(files="latest", forward=NA, reverse=NA, fastq=T){#
-#
-Core(module="Cutadapt")#
-cat(file="../log.txt", c("Module Version: v0.1", "\n"), append=T, sep="\n")#
-#
-# cutadapt version#
-temp <- paste("Util Version: ", "Cutadapt v", system2("cutadapt", "--v", stdout=T, stderr=T), sep="")#
-message(temp)#
-cat(file="../log.txt", temp, append=T, sep="\n")#
-message(" ")#
-if (files=="latest"){#
-source("robots.txt")#
-files <- list.files(paste("../", last_data, "/_data", sep=""), full.names=T)#
-}#
-#
-# new file names#
-new_names <- sub(".*(_data/.*)", "\\1", files)#
-new_names <- sub(".fast", "_cut.fast", new_names)#
-#
-# get primer sequences / names#
-primers <- read.csv(paste(system.file(package="JAMP"), "/primers.csv", sep=""), stringsAsFactors=F)#
-# replace primer name with sequence#
-if(length(forward)==1){#
-fw <- primers$Primer_Sequence[primers$Primer_Name==forward]#
-if(length(fw)==0){fw <- forward}#
-}#
-if(length(reverse)==1){#
-rw <- primers$Primer_Sequence[primers$Primer_Name==reverse]#
-if(length(fw)==0){rw <- reverse}#
-}#
-#
-# match multiple primer names#
-if(length(forward)>1){#
-fw <- primers$Primer_Sequence[match(forward, primers$Primer_Name)]#
-}#
-if(length(reverse)>1){#
-rw <- primers$Primer_Sequence[match(reverse, primers$Primer_Name)]#
-}#
-#
-#build rev comp of rw, using "seqinr"#
-for (i in 1:length(rw)){#
-rw[i] <- paste(rev(comp(unlist(strsplit(rw[i], "")), forceToLower=F, ambiguous=T)), collapse="")#
-}#
-# add: write down used primers in log!#
-#
-cmd1 <- paste("-g ^", fw, " -o _data/temp.txt \"", files, "\"", " -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") # forward adapter#
-cmd2 <- paste("-a ", rw, "$ -o ", new_names, " _data/temp.txt -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") #rverse adapter#
-#
-temp <- paste("Starting to remove adapters (primers) on both ends in ", length(cmd1), " files:", sep="")#
-cat(file="../log.txt", temp , append=T, sep="\n")#
-message(temp)#
-#
-dir.create("_stats/_cutadapt_logs")#
-log_names <- sub("_data", "_stats/_cutadapt_logs", new_names)#
-log_names <- sub(".fast[aq]", ".txt", log_names)#
-#
-exp <- NULL#
-temp <- new_names#
-for (i in 1:length(cmd1)){#
-A <- system2("cutadapt", cmd1[i], stdout=T, stderr=T)#
-cat(file=log_names[i], A, append=T, sep="\n")#
-A <- system2("cutadapt", cmd2[i], stdout=T, stderr=T)#
-cat(file=log_names[i], A, append=T, sep="\n")#
-# reporting#
-#
-stats <- readLines(log_names[i])#
-#
-reads_in <- stats[grep("Total reads processed:", stats)[1]]#
-reads_in <- sub(".* processed: +", "", reads_in)#
-reads_in <- as.numeric(gsub(",", "", reads_in))#
-#
-reads_out <- stats[grep("Reads written \\(passing filters\\):", stats)[2]]#
-reads_out <- sub(".* filters.: +", "", reads_out)#
-reads_out <- sub(" .*", "", reads_out)#
-reads_out <- as.numeric(gsub(",", "", reads_out))#
-#
-keep <- round(reads_out/reads_in*100, digits=2)#
-exp <- rbind(exp, c(sub(".*_data/(.*)", "\\1", temp[i]), reads_out, keep))#
-#
-meep <- paste(sub(".*_data/(.*)_PE.*", "\\1", temp[i]), " - ", keep, "% reads passed", sep="")#
-cat(file="../log.txt", meep, append=T, sep="\n")#
-message(meep)#
-}#
-#
-exp <- data.frame(exp)#
-names(exp) <- c("Sample", "Abundance", "pct_pass")#
-write.csv(exp, "_stats/cut_pass.csv")#
-#
-file.remove("_data/temp.txt") # remove temporary file#
-message(" ")#
-message(" Module completed!")#
-#
-cat(file="../log.txt", paste(Sys.time(), "\n", "Module completed!", "", sep="\n"), append=T, sep="\n")#
-#
-setwd("../")#
-}
-setwd("~/Desktop/package_test2/")
-Cutadapt(forward="BF2", reverse="BR1")
+Core(module="Hello")#
+Core(module="Mellofd")#
+Core(module="NEw script")#
+Core(module="this is a test")#
+Core(module="Glumanda!!!")
 setwd("~/Documents/UNI_und_VORLESUNGEN/GitHub/JAMP/") # set the path to the PrimerMinder folder you just downloaded
+setwd("Tutorial")
+Core(module="Hello")
+length(step)
+step[length(step)]
+step[length(step)]+1
+log[step[length(step)]+1]
+length(step)
+step
+# Core v0.1#
+#
+Core <- function(files="last", module=NA, letter="A", delete_data=F){#
+#
+if(files=="last"){ # look in log what last action was to load files from data folder!#
+#
+}#
+#
+ABC <- unlist(strsplit("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ""))#
+#
+if(file.exists("log.txt")){#
+log <- readLines("log.txt") # load log#
+step <- which(log=="PROCESSING MODULE:") # detect processing modules#
+} else {step <- NULL}#
+#
+# ADD routine to remove deleted folders from log!#
+new_folder <- paste(ABC[length(step)+1], ") ", module, sep="")#
+dir.create(new_folder)#
+dir.create(paste(new_folder, "_data", sep="/"))#
+dir.create(paste(new_folder, "_stats", sep="/"))#
+setwd(new_folder)#
+#
+# write mudule name in log#
+temp <- paste("##########", Sys.time(), "PROCESSING MODULE:", new_folder, sep="\n")#
+#
+cat(file="../log.txt", temp, append=T, sep="\n")#
+#
+if(is.null(step)){temp <- NA} else {temp <- log[step[length(step)]+1]}#
+cat(file="robots.txt", "delete_data=", delete_data, "\n", "last_data=\"", temp, "\"\n", append=T, sep="")#
+warning("Hello World")#
+setwd("../") # remove and implement into modules!!!#
+#
+}
+setwd("~/Documents/UNI_und_VORLESUNGEN/GitHub/JAMP/") # set the path to the PrimerMinder folder you just downloaded#
+#
+# install the PrimerMiner package icl dependencies#
+install.packages("JAMP", repos = NULL, type="source", dependencies=T)#
+#
+# load the package into R#
+library("JAMP")#
+#
+setwd("Tutorial")#
+# creating configuration file and batch downloading reads
+Core(module="Hello")
+Core(module="Mellofd")
+Core(module="NEw script")
+Core(module="this is a test")
+Core(module="Glumanda!!!")
+ABC
+ABC <- unlist(strsplit("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ""))
+ABC
+paste(Z, 1:100)
+paste("Z", 1:100)
+paste("Z", 1:100, sep="")
+ABC <- unlist(strsplit("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ""))#
+ABC <- c(ABC, paste("Z", 1:100, sep=""))
+ABC
+ABC <- unlist(strsplit("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ""))
+ABC
+length(ABC)
+length(ABC)-100
+ABC <- unlist(strsplit("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ""))#
+ABC <- c(ABC, paste("Z", 1:74, sep=""))
+ABC
+length(ABC)
+# Core v0.1#
+#
+Core <- function(files="last", module=NA, letter="A", delete_data=F){#
+#
+if(files=="last"){ # look in log what last action was to load files from data folder!#
+#
+}#
+#
+ABC <- unlist(strsplit("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ""))#
+ABC <- c(ABC, paste("Z", 1:74, sep=""))#
+#
+if(file.exists("log.txt")){#
+log <- readLines("log.txt") # load log#
+step <- which(log=="PROCESSING MODULE:") # detect processing modules#
+} else {step <- NULL}#
+#
+# ADD routine to remove deleted folders from log!#
+new_folder <- paste(ABC[length(step)+1], ") ", module, sep="")#
+dir.create(new_folder)#
+dir.create(paste(new_folder, "_data", sep="/"))#
+dir.create(paste(new_folder, "_stats", sep="/"))#
+setwd(new_folder)#
+#
+# write mudule name in log#
+temp <- paste("##########", Sys.time(), "PROCESSING MODULE:", new_folder, sep="\n")#
+#
+cat(file="../log.txt", temp, append=T, sep="\n")#
+#
+if(is.null(step)){temp <- NA} else {temp <- log[step[length(step)]+1]}#
+cat(file="robots.txt", "delete_data=", delete_data, "\n", "last_data=\"", temp, "\"\n", append=T, sep="")#
+warning("Hello World")#
+setwd("../") # remove and implement into modules!!!#
+#
+}
+# Core v0.1#
+#
+Core <- function(files="last", module=NA, letter="A", delete_data=F){#
+#
+if(files=="last"){ # look in log what last action was to load files from data folder!#
+#
+}#
+#
+ABC <- unlist(strsplit("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ""))#
+ABC <- c(ABC, paste("Z", 1:74, sep=""))#
+#
+if(file.exists("log.txt")){#
+log <- readLines("log.txt") # load log#
+step <- which(log=="PROCESSING MODULE:") # detect processing modules#
+} else {step <- NULL}#
+#
+# ADD routine to remove deleted folders from log!#
+new_folder <- paste(ABC[length(step)+1], ") ", module, sep="")#
+dir.create(new_folder)#
+dir.create(paste(new_folder, "_data", sep="/"))#
+dir.create(paste(new_folder, "_stats", sep="/"))#
+setwd(new_folder)#
+#
+# write mudule name in log#
+temp <- paste("##########", Sys.time(), "PROCESSING MODULE:", new_folder,"\n\n" sep="\n")#
+#
+cat(file="../log.txt", temp, append=T, sep="\n")#
+#
+if(is.null(step)){temp <- NA} else {temp <- log[step[length(step)]+1]}#
+cat(file="robots.txt", "delete_data=", delete_data, "\n", "last_data=\"", temp, "\"\n", append=T, sep="")#
+warning("Hello World")#
+setwd("../") # remove and implement into modules!!!#
+#
+}
+# Core v0.1#
+#
+Core <- function(files="last", module=NA, letter="A", delete_data=F){#
+#
+if(files=="last"){ # look in log what last action was to load files from data folder!#
+#
+}#
+#
+ABC <- unlist(strsplit("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ""))#
+ABC <- c(ABC, paste("Z", 1:74, sep=""))#
+#
+if(file.exists("log.txt")){#
+log <- readLines("log.txt") # load log#
+step <- which(log=="PROCESSING MODULE:") # detect processing modules#
+} else {step <- NULL}#
+#
+# ADD routine to remove deleted folders from log!#
+new_folder <- paste(ABC[length(step)+1], ") ", module, sep="")#
+dir.create(new_folder)#
+dir.create(paste(new_folder, "_data", sep="/"))#
+dir.create(paste(new_folder, "_stats", sep="/"))#
+setwd(new_folder)#
+#
+# write mudule name in log#
+temp <- paste("##########", Sys.time(), "PROCESSING MODULE:", new_folder,"\n\n", sep="\n")#
+#
+cat(file="../log.txt", temp, append=T, sep="\n")#
+#
+if(is.null(step)){temp <- NA} else {temp <- log[step[length(step)]+1]}#
+cat(file="robots.txt", "delete_data=", delete_data, "\n", "last_data=\"", temp, "\"\n", append=T, sep="")#
+warning("Hello World")#
+setwd("../") # remove and implement into modules!!!#
+#
+}
+# 161111 - JAMP tutorial!#
+setwd("~/Documents/UNI_und_VORLESUNGEN/GitHub/JAMP/") # set the path to the PrimerMinder folder you just downloaded#
+#
+# install the PrimerMiner package icl dependencies#
+install.packages("JAMP", repos = NULL, type="source", dependencies=T)#
+#
+# load the package into R#
+library("JAMP")#
+#
+setwd("Tutorial")#
+# creating configuration file and batch downloading reads#
+Core(module="Hello")#
+Core(module="Mellofd")#
+Core(module="NEw script")#
+Core(module="this is a test")#
+Core(module="Glumanda!!!")
+Core(module="Hello")#
+Core(module="Mellofd")#
+Core(module="NEw script")#
+Core(module="this is a test")#
+Core(module="Glumanda!!!")
+# Core v0.1#
+#
+Core <- function(files="last", module=NA, letter="A", delete_data=F){#
+#
+if(files=="last"){ # look in log what last action was to load files from data folder!#
+#
+}#
+#
+ABC <- unlist(strsplit("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ""))#
+ABC <- c(ABC, paste("Z", 1:74, sep=""))#
+#
+if(file.exists("log.txt")){#
+log <- readLines("log.txt") # load log#
+step <- which(log=="PROCESSING MODULE:") # detect processing modules#
+} else {step <- NULL}#
+#
+# ADD routine to remove deleted folders from log!#
+new_folder <- paste(ABC[length(step)+1], ") ", module, sep="")#
+dir.create(new_folder)#
+dir.create(paste(new_folder, "_data", sep="/"))#
+dir.create(paste(new_folder, "_stats", sep="/"))#
+setwd(new_folder)#
+#
+# write mudule name in log#
+temp <- paste("##########", Sys.time(), "PROCESSING MODULE:", new_folder,"\n", sep="\n")#
+#
+cat(file="../log.txt", temp, append=T, sep="\n")#
+#
+if(is.null(step)){temp <- NA} else {temp <- log[step[length(step)]+1]}#
+cat(file="robots.txt", "delete_data=", delete_data, "\n", "last_data=\"", temp, "\"\n", append=T, sep="")#
+warning("Hello World")#
+setwd("../") # remove and implement into modules!!!#
+#
+}
+#numbering for folders#
+ABC <- unlist(strsplit("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ""))#
+ABC <- c(ABC, paste("Z0", 1:9, sep=""), paste("Z0", 10:74, sep=""))
+ABC
+#numbering for folders#
+ABC <- unlist(strsplit("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ""))#
+ABC <- c(ABC, paste("Z0", 1:9, sep=""), paste("Z", 10:74, sep=""))
+ABC
+# 161111 - JAMP tutorial!#
+setwd("~/Documents/UNI_und_VORLESUNGEN/GitHub/JAMP/") # set the path to the PrimerMinder folder you just downloaded#
+#
+install.packages("seqinr", dependencies=T)#
+#
+# install the PrimerMiner package icl dependencies#
+install.packages("JAMP", repos = NULL, type="source")
 install.packages("JAMP", repos = NULL, type="source")

@@ -15,3 +15,11 @@ abundance <- as.numeric(sub(" ", "", A))#
 #
 } else {}
 abundance
+OS="autodetect"
+sys <- Sys.info()[['sysname']]
+sys
+Sys.info()
+comd
+cmd
+md5_cmd <- "md5"
+md5_cmd

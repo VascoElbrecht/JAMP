@@ -1,6 +1,6 @@
 # Demultiplexing_shifted v0.1
 
-Demultiplexing_shifted <- function(file1, file2, tags=NA, combinations=NA, md5=T){
+Demultiplexing_shifted <- function(file1, file2, tags=NA, combinations=NA, md5=T, OS="autodetect"){
 
 Core(module="Demultiplexing_shifted")
 cat(file="../log.txt", c("\n", "Version v0.1", "\n"), append=T, sep="\n")
@@ -23,12 +23,27 @@ cat(file="../log.txt", temp, append=T, sep="\n")
 
 
 if(md5){
+
+if(OS=="autodetect"){
+sys <- Sys.info()[['sysname']]
+if(sys=="Darwin"){
+sys <- "Mac"
+md5_cmd <- "md5"
+}
+if(sys=="Linux"){
+md5_cmd <- "md5sum"
+}
+} else {
+if(OS=="Mac"){md5_cmd <- "md5"} else {md5_cmd <- "md5sum"}
+}
+
+
 # claculate md5 checksums for log
 temp <- c(file1, file2)
 
 A <- NULL # make alternative comand for linux
 for (i in 1:length(temp)){
-A[i] <- system2("md5", temp[i], stdout=T)
+A[i] <- system2(md5_cmd, temp[i], stdout=T)
 }
 cat(file="../log.txt", A, append=T, sep="\n")
 }
