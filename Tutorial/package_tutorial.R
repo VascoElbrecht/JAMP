@@ -31,7 +31,7 @@ U_truncate(left=10, right=30)
 
 Minmax(plusminus=c(312, 10))
 
-
+U_max_ee()
 
 
 setwd("E_U_truncate")
