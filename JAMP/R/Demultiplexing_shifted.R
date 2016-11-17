@@ -41,7 +41,7 @@ if(OS=="Mac"){md5_cmd <- "md5"} else {md5_cmd <- "md5sum"}
 # claculate md5 checksums for log
 temp <- c(file1, file2)
 
-A <- NULL # make alternative comand for linux
+A <- NULL
 for (i in 1:length(temp)){
 A[i] <- system2(md5_cmd, temp[i], stdout=T)
 }
