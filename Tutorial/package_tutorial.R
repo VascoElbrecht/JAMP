@@ -25,9 +25,13 @@ cbind(revcomp, revcomp_tf)
 
 U_revcomp(RC= revcomp_tf) # make RevComp of selected reads
 
-Cutadapt(forward="BF2", reverse="BR1")
 
+Cutadapt(forward="BF2", reverse="BR1")
 U_truncate(left=10, right=30)
+
+Minmax(plusminus=c(312, 10))
+
+
 
 
 setwd("E_U_truncate")
