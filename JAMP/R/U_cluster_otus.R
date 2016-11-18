@@ -79,15 +79,102 @@ OTU_file <- sub("B_", "C_", filename_all_unique)
 
 cmd <- paste(" -cluster_otus _data/2_OTU_clustering/", filename_all_unique, " -otus _data/2_OTU_clustering/", OTU_file, " -uparseout _data/2_OTU_clustering/", sub(".fasta", "_OTUtab.txt", OTU_file), " -relabel OTU_ -otu_radius_pct ", otu_radius_pct, " -strand ", strand, sep="")
 
-A <- system2("Usearch", cmd, stdout=T, stderr=T)
+A <- system2("Usearch", cmd, stdout=T, stderr=T) # cluster OTUs!
+
+chimeras <- sub(".*OTUs, (.*) chimeras\r", "\\1", A[grep("chimeras\r", A)])
+OTUs <- sub(".*100.0% (.*) OTUs, .* chimeras\r", "\\1", A[grep("chimeras\r", A)])
+
+temp <- paste("\n", "Clustering reads from \"", filename_all_unique, "\nminuniquesize = ", minuniquesize, "\notu_radius_pct = ", otu_radius_pct, "\nstrand = ", strand, "\nChimeras discarded: ", chimeras, "\nOTUs written: ", OTUs, " -> file \"", OTU_file, "\"\n", sep="")
+message(temp)
+cat(file="../log.txt", temp, append=T, sep="\n")
 
 
+# compare against refernce sequences (including singletons)
+
+dir.create("_data/3_Compare_OTU_derep/")
+dir.create("_stats/3_Compare_OTU_derep/")
+
+blast_names <- sub("1_derep_inc_singletons", "3_Compare_OTU_derep", new_names)
+blast_names <- sub("_PE_derep.fasta", ".txt", blast_names)
+log_names <- sub("_data", "_stats", blast_names)
 
 
-message(" ")
-message(" Module completed!")
+cmd <- paste("-usearch_global ", new_names, " -db ", "\"_data/2_OTU_clustering/", OTU_file, "\"", " -strand plus -id 0.97 -blast6out \"", blast_names, "\" -maxhits 1", sep="")
 
-cat(file="../log.txt", paste(Sys.time(), "\n", "Module completed!", "", sep="\n"), append=T, sep="\n")
+
+temp <- paste("Comparing ", length(cmd)," files with dereplicated reads (incl. singletons) against OTUs \"", OTU_file, "\" using \"usearch_global\".\n", sep="")
+message(temp)
+cat(file="../log.txt", temp, append=T, sep="\n")
+
+exp <- NULL
+temp <- new_names
+for (i in 1:length(cmd)){
+A <- system2("usearch", cmd[i], stdout=T, stderr=T)
+cat(file= log_names[i], paste("usearch ", cmd[i], sep=""), "\n", A, append=F, sep="\n")
+
+meep <- sub(".*singletons/(.*)", "\\1", temp[i])
+pass <- sub(".*, (.*)% matched\r", "\\1", A[grep("matched\r", A)])
+exp <- rbind(exp, c(meep, pass))
+glumanda <- paste(meep," - ", pass, "% reads matched", sep="")
+cat(file="../log.txt", glumanda, append=T, sep="\n")
+message(glumanda)
+}
+
+
+# Write raw data OTU table! incl OTU sequences
+files <- blast_names
+
+tab <- c("NULL")
+tab <- as.data.frame(tab, stringsAsFactors=F)
+names(tab) <- "ID"
+
+for (i in 1:length(files)){
+data <- read.csv(files[i], sep="\t", header=F, stringsAsFactors=F)
+
+names(data) <- c("query", "otu", "ident", "length", "mism", "gap", "qstart", "qend", "target_s", "target_e", "e.value", "bitscore")
+
+data <- data[,c(-11,-12)]
+
+data <- cbind(data, "abund"=as.numeric(sub(".*size=(.*);", "\\1", data$query)), "otu_no"=sub("(.*);size.*", "\\1", data$otu), stringsAsFactors=F)
+
+head(data)
+
+temp <- aggregate(data$abund, by=list(data$otu_no), FUN="sum")
+tab <- merge(tab , temp, by.x="ID", by.y="Group.1", all=T, sort=T)
+names(tab)[i+1] <- sub(".*derep/(.*).txt", "\\1", files[i])
+}
+
+head(tab)
+
+tab <- tab[-1,] # remove NULL entry in the beginning
+tab[is.na(tab)] <- 0
+
+mrew <- tab$ID
+mrew <- as.numeric(gsub("OTU_(.*)", "\\1", mrew))
+tab <- tab[order(as.numeric(mrew)),]
+
+# add sequences!
+
+sequ <- read.fasta(paste("_data/2_OTU_clustering/", OTU_file, sep=""), forceDNAtolower=F, as.string=T)
+
+tab2 <- cbind(tab, "sequ"=unlist(sequ))
+
+write.csv(file="3_Raw_OTU_table.csv", tab2, row.names=F)
+
+temp <- "\n\nOTU table generated (including OTU sequences): 3_Raw_OTU_table.csv"
+message(temp)
+cat(file="../log.txt", temp, append=T, sep="\n")
+
+exp2 <- data.frame("ID"=exp[,1], "Abundance"=colSums(tab[-1]), "pct_pass"=exp[,2], row.names=1:length(exp[,1]))
+
+write.csv(exp2, file="_stats/3_pct_matched.csv")
+
+
+#### end raw data table
+
+temp <- "\nModule completed!"
+message(temp)
+cat(file="../log.txt", paste(Sys.time(), temp, "", sep="\n"), append=T, sep="\n")
 
 setwd("../")
 }
