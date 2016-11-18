@@ -33,12 +33,12 @@ for (i in 1:length(cmd)){
 A <- system2("usearch", cmd[i], stdout=T, stderr=T)
 cat(A, file=log_names[i], sep="\n")
 
-imput <- A[grep("FASTQ recs", A)]
-imput <- sub(" +(.*) +FASTQ.*", "\\1", imput)
+imput <- A[grep("Reads \\(", A)]
+imput <- sub("(.*)Reads.*", "\\1", imput)
 imput <- as.numeric(imput)
 
-pass <- A[grep("Converted ", A)]
-pass <- sub(" +(.*) +Converted.*", "\\1", pass)
+pass <- A[grep("Filtered reads", A)]
+pass <- sub("(.*)Filtered reads .*", "\\1", pass)
 pass <- as.numeric(pass)
 
 pct <- round(pass/imput*100, digits=2)

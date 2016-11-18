@@ -48,7 +48,7 @@ temp <- readLines(log_names[i])
 
 # table export
 merged <- as.numeric(sub(".*merged \\((.*)..", "\\1",temp[6]))
-median_length <- as.numeric(sub(".*median (.*), high.*", "\\1",temp[9]))
+median_length <- as.numeric(sub("(.*)Median", "\\1",temp[11]))
 temp_count <- Count_sequences(new_names[i], fastq)
 short_name <- sub("_data/(.*)_PE.fast.", "\\1", new_names[i])
 tab_exp <- rbind(tab_exp, c(short_name, temp_count, merged, median_length))
