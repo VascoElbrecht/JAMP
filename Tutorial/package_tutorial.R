@@ -6,7 +6,6 @@ setwd("~/Documents/UNI_und_VORLESUNGEN/GitHub/JAMP/") # set the path to the Prim
 # install the PrimerMiner package icl dependencies
 install.packages("JAMP", repos = NULL, type="source")
 
-temp <- readLines("~/Desktop/package_test/B_U_merge_PE/_stats/merge_stats/Ak15_04GK_BF20_BR11_PE_log.txt")
 
 # load the package into R
 library("JAMP")

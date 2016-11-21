@@ -39,7 +39,7 @@ dir.create("_stats/merge_stats")
 log_names <- sub("_data", "_stats/merge_stats", new_names)
 log_names <- sub("_PE.fast[aq]", "_PE_log.txt", log_names)
 
-cmd <- paste(" -fastq_mergepairs \"", file1, "\" -reverse \"", file2,  "\" ", if(fastq){"-fastqout"} else {"-fastaout"}, " \"", new_names, "\"", " -report ", log_names, " -fastq_maxdiffs ", fastq_maxdiffs , " -fastq_maxdiffpct ", fastq_maxdiffpct , sep="")
+cmd <- paste(" -fastq_mergepairs \"", file1, "\" -reverse \"", file2,  "\" ", if(fastq){"-fastqout"} else {"-fastaout"}, " \"", new_names, "\"", " -report ", log_names, " -fastq_maxdiffs ", fastq_maxdiffs , " -fastq_maxdiffpct ", fastq_maxdiffpct ," -fastq_trunctail 0", sep="")
 
 tab_exp <- NULL
 for (i in 1:length(cmd)){
