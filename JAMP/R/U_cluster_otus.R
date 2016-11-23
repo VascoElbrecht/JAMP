@@ -60,7 +60,7 @@ cmd <- paste("-derep_fulllength _data/2_OTU_clustering/A_all_files_united.fasta 
 
 filename_all_unique <- paste("B_all_derep_min", minuniquesize, ".fasta", sep="")
 
-A <- system2("Vsearch", cmd, stdout=T, stderr=T)
+A <- system2("vsearch", cmd, stdout=T, stderr=T)
 
 temp <- paste("Total number of sequences (not dereplicated): ", sub(".*nt in (.*) seqs.*", "\\1", A[grep("seqs, min", A)]), "\n", sep="")
 message(temp)
