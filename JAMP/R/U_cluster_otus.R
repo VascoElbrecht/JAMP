@@ -79,7 +79,7 @@ OTU_file <- sub("B_", "C_", filename_all_unique)
 
 cmd <- paste(" -cluster_otus _data/2_OTU_clustering/", filename_all_unique, " -otus _data/2_OTU_clustering/", OTU_file, " -uparseout _data/2_OTU_clustering/", sub(".fasta", "_OTUtab.txt", OTU_file), " -relabel OTU_ -otu_radius_pct ", otu_radius_pct, " -strand ", strand, sep="")
 
-A <- system2("Usearch", cmd, stdout=T, stderr=T) # cluster OTUs!
+A <- system2("usearch", cmd, stdout=T, stderr=T) # cluster OTUs!
 
 chimeras <- sub(".*OTUs, (.*) chimeras\r", "\\1", A[grep("chimeras\r", A)])
 OTUs <- sub(".*100.0% (.*) OTUs, .* chimeras\r", "\\1", A[grep("chimeras\r", A)])
