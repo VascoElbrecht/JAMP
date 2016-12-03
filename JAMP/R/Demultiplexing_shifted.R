@@ -15,6 +15,8 @@ if(tags=="BF_BR"){
 barcodes <- read.csv(paste(system.file(package="JAMP"), "/BF_BR.csv", sep=""), stringsAsFactors=F)
 } else {barcodes <- read.csv(tags, stringsAsFactors=F)}
 
+tagL <- nchar(barcodes[1,1])
+
 combos <- read.csv(combinations, stringsAsFactors=F)
 
 #basic log stats
@@ -104,8 +106,9 @@ if (!length(data1)) break
 sequ1 <- data1[seq(2, length(data1), 4)]
 sequ2 <- data2[seq(2, length(data2), 4)]
 
-sequ1 <- substr(sequ1, 1, 5)
-sequ2 <- substr(sequ2, 1, 5)
+sequ1 <- substr(sequ1, 1, tagL)
+sequ2 <- substr(sequ2, 1, tagL)
+
 
 match_sequ1 <- match(sequ1, barcodes$barcode, nomatch=0)
 match_sequ2 <- match(sequ2, barcodes$barcode, nomatch=0)

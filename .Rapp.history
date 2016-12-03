@@ -1,62 +1,85 @@
-# load the package into R#
-library("JAMP")#
+# 161203 - pooling_csv#
 #
-# base directory#
-setwd("~/Desktop/package_test/")
-U_cluster_otus()
-# load the package into R#
-library("JAMP")#
+setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 PCR : Lab/final library")#
 #
-# base directory#
-setwd("~/Desktop/package_test/")#
-#
-Demultiplexing_shifted("../Ak15_1.fastq", "../Ak15_2.fastq", tags="BF_BR", combinations="../AK_demulti_used.csv")#
-#
-U_merge_PE() # merge PE#
-#
-# select sequ to make revcomp of!#
-revcomp <- list.files("B_U_merge_PE/_data")#
-revcomp_tf <- grepl(".*_.*_.R.*_.*_.*", revcomp)#
-cbind(revcomp, revcomp_tf)#
-#
-U_revcomp(RC= revcomp_tf) # make RevComp of selected reads#
-Cutadapt(forward="BF2", reverse="BR1")#
-U_truncate(left=10, right=30)#
-#
-Minmax(plusminus=c(281, 10))#
-#
-U_max_ee()#
-U_cluster_otus()
-A <- readLines("~/Desktop/package_test/G_U_max_ee/_stats/merge_stats/Ak15_04GK_BF20_BR11_PE_RC_cut_trunc_minmax_ee.txt")
-A
-imput <- sub("(.*)Reads.*", "\\1", imput)
-imput <- A[grep("Reads (", A)]
-imput <- A[grep("Reads \(", A)]
-imput <- A[grep("Reads \\(", A)]
-imput
-imput <- sub("(.*)Reads.*", "\\1", imput)
-imput
-imput <- as.numeric(imput)
-imput
-A
-pass <- A[grep("Filtered reads", A)]#
-pass <- sub("(.*)Filtered reads .*", "\\1", pass)#
-pass <- as.numeric(pass)
-pass
-A <- readLines("~/Desktop/package_test/B_U_merge_PE/_stats/merge_stats/Ak15_04GK_BF20_BR11_PE_log.txt")
-temp <- readLines("~/Desktop/package_test/B_U_merge_PE/_stats/merge_stats/Ak15_04GK_BF20_BR11_PE_log.txt")
-merged
+data <- read.csv("Final_tagging+Qubit+FA.csv", stringsAsFactors=F)
+data
+data$P5_F1
+sub(".._(.*)_.", "\\1", data$P5_F1)
+paste(sub(".._(.*)_.", "\\1", data$P5_F1), sub(".._(.*)_.", "\\1", data$P7_R1), collapse="_")
+ID <- paste(sub(".._(.*)_.", "\\1", data$P5_F1), sub(".._(.*)_.", "\\1", data$P7_R1), collapse="_")
+data
+paste(data$No..for.Clean.up)
+paste(data$No..for.Clean.up)
+data
+paste(data$No..for.Clean.up, data$Sample, ID, "r1.txt", collapse="_")
+paste(data$No..for.Clean.up, data$Sample, ID, "r1.txt", collapse="_", sep="")
+paste(data$No..for.Clean.up, data$Sample, ID, "r1.txt", collapse="_", sep="_")
+paste(data$No..for.Clean.up, data$Sample, ID, "r1.txt", sep="_")
+data$No..for.Clean.up
+data$Sample
+ID
+ID <- paste(sub(".._(.*)_.", "\\1", data$P5_F1), sub(".._(.*)_.", "\\1", data$P7_R1), collapse="_")
+ID <- paste(sub(".._(.*)_.", "\\1", data$P5_F1), sub(".._(.*)_.", "\\1", data$P7_R1), sep="_")
+paste(data$No..for.Clean.up, data$Sample, ID, "r1.txt", sep="_")
+File1 <- paste(data$No..for.Clean.up, data$Sample, ID, "r1.txt", sep="_")
+File2 <- paste(data$No..for.Clean.up, data$Sample, ID, "r2.txt", sep="_")
+temp <- data.frame(ID, File1, File2)
 temp
-merged <- as.numeric(sub("(.*)Median", "\\1",temp[11]))
-merged
-median_length <- as.numeric(sub("(.*)Median", "\\1",temp[11]))
-median_length
-merged <- as.numeric(sub(".*merged \\((.*)..", "\\1",temp[6]))
-merged
-# 161111 - JAMP tutorial!#
-setwd("~/Documents/UNI_und_VORLESUNGEN/GitHub/JAMP/") # set the path to the PrimerMinder folder you just downloaded#
+temp[-c(25,26)]
+temp[,-c(25,26)]
+temp[-c(25,26),]
+temp2 <- temp[-c(25,26),]
+nrow(temp2)
+write.csv(temp2, "haplo_filenames.csv")
+ID <- paste(sub(".._(.*)_(.)", "\\1\\2", data$P5_F1), sub(".._(.*)_.", "\\1", data$P7_R1), sep="_")
+# 161203 - pooling_csv#
 #
-#install.packages("seqinr", dependencies=T)#
+setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 PCR : Lab/final library")#
 #
-# install the PrimerMiner package icl dependencies#
+data <- read.csv("Final_tagging+Qubit+FA.csv", stringsAsFactors=F)#
+data#
+#
+ID <- paste(sub(".._(.*)_(.)", "\\1\\2", data$P5_F1), sub(".._(.*)_.", "\\1", data$P7_R1), sep="_")#
+#
+File1 <- paste(data$No..for.Clean.up, data$Sample, ID, "r1.txt", sep="_")#
+#
+File2 <- paste(data$No..for.Clean.up, data$Sample, ID, "r2.txt", sep="_")#
+temp <- data.frame(ID, File1, File2)#
+#
+temp2 <- temp[-c(25,26),]#
+nrow(temp2)#
+#
+write.csv(temp2, "haplo_filenames.csv")
+write.csv(temp2, "haplo_filenames.csv", row.names=F)
+# 161203 - pooling_csv#
+#
+setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 PCR : Lab/final library")#
+#
+data <- read.csv("Final_tagging+Qubit+FA.csv", stringsAsFactors=F)#
+data#
+#
+ID <- paste(sub(".._(.*)_(.)", "\\1\\2", data$P5_F1), sub(".._(.*)_.", "\\1", data$P7_R1), sep="_")#
+#
+File1 <- paste(data$No..for.Clean.up, data$Sample, ID, "r1.txt", sep="_")#
+#
+File2 <- paste(data$No..for.Clean.up, data$Sample, ID, "r2.txt", sep="_")#
+temp <- data.frame(ID, File1, File2)#
+#
+temp2 <- temp[-c(25,26),]#
+nrow(temp2)#
+#
+write.csv(temp2, "haplo_filenames.csv", row.names=F)
+library("JAMP")#
+#
+# base directory#
+setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP")#
+#
+Demultiplexing_shifted("../../1 sequence DATA/NG-10942_FW_Haplo_lib_lib154605_5038_1_1.fastq.bz2", "../../1 sequence DATA/NG-10942_FW_Haplo_lib_lib154605_5038_1_2.fastq.bz2", tags="../161203_fwh.csv", combinations="../haplo_filenames.csv")
+# base directory#
+setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP")#
+#
+Demultiplexing_shifted("../../1 sequence DATA/NG-10942_FW_Haplo_lib_lib154605_5038_1_1.fastq.bz2", "../../1 sequence DATA/NG-10942_FW_Haplo_lib_lib154605_5038_1_2.fastq.bz2", tags="../161203_fwh.csv", combinations="../haplo_filenames.csv", md5=F)
+setwd("~/Documents/UNI_und_VORLESUNGEN/GitHub/JAMP/")
 install.packages("JAMP", repos = NULL, type="source")
+library("JAMP")
