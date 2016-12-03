@@ -45,7 +45,7 @@ temp <- c(file1, file2)
 
 A <- NULL
 for (i in 1:length(temp)){
-A[i] <- system2(md5_cmd, temp[i], stdout=T)
+A[i] <- system2(md5_cmd, paste("\"", temp[i], "\"", sep=""), stdout=T)
 }
 cat(file="../log.txt", A, append=T, sep="\n")
 }

@@ -1,85 +1,9 @@
-# 161203 - pooling_csv#
-#
-setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 PCR : Lab/final library")#
-#
-data <- read.csv("Final_tagging+Qubit+FA.csv", stringsAsFactors=F)
-data
-data$P5_F1
-sub(".._(.*)_.", "\\1", data$P5_F1)
-paste(sub(".._(.*)_.", "\\1", data$P5_F1), sub(".._(.*)_.", "\\1", data$P7_R1), collapse="_")
-ID <- paste(sub(".._(.*)_.", "\\1", data$P5_F1), sub(".._(.*)_.", "\\1", data$P7_R1), collapse="_")
-data
-paste(data$No..for.Clean.up)
-paste(data$No..for.Clean.up)
-data
-paste(data$No..for.Clean.up, data$Sample, ID, "r1.txt", collapse="_")
-paste(data$No..for.Clean.up, data$Sample, ID, "r1.txt", collapse="_", sep="")
-paste(data$No..for.Clean.up, data$Sample, ID, "r1.txt", collapse="_", sep="_")
-paste(data$No..for.Clean.up, data$Sample, ID, "r1.txt", sep="_")
-data$No..for.Clean.up
-data$Sample
-ID
-ID <- paste(sub(".._(.*)_.", "\\1", data$P5_F1), sub(".._(.*)_.", "\\1", data$P7_R1), collapse="_")
-ID <- paste(sub(".._(.*)_.", "\\1", data$P5_F1), sub(".._(.*)_.", "\\1", data$P7_R1), sep="_")
-paste(data$No..for.Clean.up, data$Sample, ID, "r1.txt", sep="_")
-File1 <- paste(data$No..for.Clean.up, data$Sample, ID, "r1.txt", sep="_")
-File2 <- paste(data$No..for.Clean.up, data$Sample, ID, "r2.txt", sep="_")
-temp <- data.frame(ID, File1, File2)
-temp
-temp[-c(25,26)]
-temp[,-c(25,26)]
-temp[-c(25,26),]
-temp2 <- temp[-c(25,26),]
-nrow(temp2)
-write.csv(temp2, "haplo_filenames.csv")
-ID <- paste(sub(".._(.*)_(.)", "\\1\\2", data$P5_F1), sub(".._(.*)_.", "\\1", data$P7_R1), sep="_")
-# 161203 - pooling_csv#
-#
-setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 PCR : Lab/final library")#
-#
-data <- read.csv("Final_tagging+Qubit+FA.csv", stringsAsFactors=F)#
-data#
-#
-ID <- paste(sub(".._(.*)_(.)", "\\1\\2", data$P5_F1), sub(".._(.*)_.", "\\1", data$P7_R1), sep="_")#
-#
-File1 <- paste(data$No..for.Clean.up, data$Sample, ID, "r1.txt", sep="_")#
-#
-File2 <- paste(data$No..for.Clean.up, data$Sample, ID, "r2.txt", sep="_")#
-temp <- data.frame(ID, File1, File2)#
-#
-temp2 <- temp[-c(25,26),]#
-nrow(temp2)#
-#
-write.csv(temp2, "haplo_filenames.csv")
-write.csv(temp2, "haplo_filenames.csv", row.names=F)
-# 161203 - pooling_csv#
-#
-setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 PCR : Lab/final library")#
-#
-data <- read.csv("Final_tagging+Qubit+FA.csv", stringsAsFactors=F)#
-data#
-#
-ID <- paste(sub(".._(.*)_(.)", "\\1\\2", data$P5_F1), sub(".._(.*)_.", "\\1", data$P7_R1), sep="_")#
-#
-File1 <- paste(data$No..for.Clean.up, data$Sample, ID, "r1.txt", sep="_")#
-#
-File2 <- paste(data$No..for.Clean.up, data$Sample, ID, "r2.txt", sep="_")#
-temp <- data.frame(ID, File1, File2)#
-#
-temp2 <- temp[-c(25,26),]#
-nrow(temp2)#
-#
-write.csv(temp2, "haplo_filenames.csv", row.names=F)
 library("JAMP")#
 #
 # base directory#
 setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP")#
 #
-Demultiplexing_shifted("../../1 sequence DATA/NG-10942_FW_Haplo_lib_lib154605_5038_1_1.fastq.bz2", "../../1 sequence DATA/NG-10942_FW_Haplo_lib_lib154605_5038_1_2.fastq.bz2", tags="../161203_fwh.csv", combinations="../haplo_filenames.csv")
-# base directory#
-setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP")#
-#
 Demultiplexing_shifted("../../1 sequence DATA/NG-10942_FW_Haplo_lib_lib154605_5038_1_1.fastq.bz2", "../../1 sequence DATA/NG-10942_FW_Haplo_lib_lib154605_5038_1_2.fastq.bz2", tags="../161203_fwh.csv", combinations="../haplo_filenames.csv", md5=F)
+Demultiplexing_shifted
 setwd("~/Documents/UNI_und_VORLESUNGEN/GitHub/JAMP/")
 install.packages("JAMP", repos = NULL, type="source")
-library("JAMP")
