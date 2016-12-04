@@ -38,9 +38,11 @@ if(length(fw)==0){rw <- reverse}
 # match multiple primer names
 if(length(forward)>1){
 fw <- primers$Primer_Sequence[match(forward, primers$Primer_Name)]
+fw[is.na(fw)] <- forward[is.na(fw)]
 }
 if(length(reverse)>1){
 rw <- primers$Primer_Sequence[match(reverse, primers$Primer_Name)]
+rw[is.na(rw)] <- reverse[is.na(rw)]
 }
 
 #build rev comp of rw, using "seqinr"
