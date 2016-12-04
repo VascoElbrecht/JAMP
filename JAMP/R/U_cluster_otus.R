@@ -6,7 +6,7 @@ Core(module="U_cluster_otus")
 cat(file="../log.txt", c("Version v0.1", "\n"), append=T, sep="\n")
 message(" ")
 
-if (files=="latest"){
+if (files[1]=="latest"){
 source("robots.txt")
 files <- list.files(paste("../", last_data, "/_data", sep=""), full.names=T)
 }
