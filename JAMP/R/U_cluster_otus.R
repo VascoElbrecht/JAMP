@@ -1,6 +1,6 @@
 # U_cluster_otus v0.1
 
-U_cluster_otus <- function(files="latest", minuniquesize=2, otu_radius_pct=3, strand="plus", filter=NA, filterN=1){
+U_cluster_otus <- function(files="latest", minuniquesize=2, otu_radius_pct=3, strand="plus", filter=0.01, filterN=1){
 
 Core(module="U_cluster_otus")
 cat(file="../log.txt", c("Version v0.1", "\n"), append=T, sep="\n")
@@ -207,15 +207,18 @@ exp <- rbind(exp, NA)
 
 exp[nrow(exp), start:stop] <- colSums(tab2[!subset2, start:stop])
 exp$ID[nrow(exp)] <- paste("below_", filter, sep="")
+exp$sort[nrow(exp)] <- exp$sort[nrow(exp)-1]+1
 
 
-write.csv(exp, file=paste("4_OTU_sub_", filter, ".csv", sep=""), row.names=F)
+# make folder 
+dir.create("_data/4_subset/")
+
+
+write.csv(exp, file=paste("_data/4_subset/4_OTU_sub_", filter, "_not_rematched.csv", sep=""), row.names=F)
+
+write.fasta(as.list(exp$sequ[-nrow(exp)]), exp$ID[-nrow(exp)], file.out=paste("_data/4_subset/4_OTU_sub_", filter, ".fasta", sep=""))
 
 } # end subsetting
-
-
-
-
 
 
 
