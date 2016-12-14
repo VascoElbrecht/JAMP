@@ -1,6 +1,6 @@
 # U_cluster_otus v0.1
 
-U_cluster_otus <- function(files="latest", minuniquesize=2, otu_radius_pct=3, strand="plus"){
+U_cluster_otus <- function(files="latest", minuniquesize=2, otu_radius_pct=3, strand="plus", filter=NA, filterN=1){
 
 Core(module="U_cluster_otus")
 cat(file="../log.txt", c("Version v0.1", "\n"), append=T, sep="\n")
@@ -157,7 +157,8 @@ tab <- tab[order(as.numeric(mrew)),]
 
 sequ <- read.fasta(paste("_data/2_OTU_clustering/", OTU_file, sep=""), forceDNAtolower=F, as.string=T)
 
-tab2 <- cbind(tab, "sequ"=unlist(sequ))
+tab2 <- cbind("sort"=sub("OTU_", "", tab2[,1]), tab, "sequ"=unlist(sequ))
+
 
 write.csv(file="3_Raw_OTU_table.csv", tab2, row.names=F)
 
@@ -169,8 +170,54 @@ exp2 <- data.frame("ID"=exp[,1], "Abundance"=colSums(tab[-1]), "pct_pass"=exp[,2
 
 write.csv(exp2, file="_stats/3_pct_matched.csv")
 
-
 #### end raw data table
+
+### make abundance filtering
+if(!is.na(filter)){
+#tab2 <- read.csv(file="3_Raw_OTU_table.csv", stringsAsFactors=F)
+
+start <- which(names(tab2)=="ID")+1
+stop <- which(names(tab2)=="sequ")-1
+
+temp <- tab2[, start:stop]
+
+meep <- paste("Discarding OTUs with below ", filter, "% abundance across at least ", filterN, " out of ", ncol(temp), " samples.", sep="")
+message(meep)
+cat(file="../log.txt", meep, append=T, sep="\n")
+
+temp2 <- temp
+sampleabundance <- colSums(temp)
+for (i in 1:ncol(temp)){
+temp2[i] <- temp[i]/sampleabundance[i]*100
+}
+
+# subset OTUs
+subset <- rowSums(temp2>=filter)
+subset2 <- subset >= filterN
+
+# reporting
+meep <- paste("Discarded OTUs: ", sum(subset2)," / ",  length(subset2), " (", round(100-sum(subset2)/length(subset2)*100, 2), "% discarded)", sep="")
+message(meep)
+cat(file="../log.txt", meep, append=T, sep="\n")
+
+#write subsetted OTU table
+
+exp <- tab2[subset2,]
+exp <- rbind(exp, NA)
+
+exp[nrow(exp), start:stop] <- colSums(tab2[!subset2, start:stop])
+exp$ID[nrow(exp)] <- paste("below_", filter, sep="")
+
+
+write.csv(exp, file=paste("4_OTU_sub_", filter, ".csv", sep=""), row.names=F)
+
+} # end subsetting
+
+
+
+
+
+
 
 temp <- "\nModule completed!"
 message(temp)
