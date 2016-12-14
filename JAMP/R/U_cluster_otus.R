@@ -157,7 +157,7 @@ tab <- tab[order(as.numeric(mrew)),]
 
 sequ <- read.fasta(paste("_data/2_OTU_clustering/", OTU_file, sep=""), forceDNAtolower=F, as.string=T)
 
-tab2 <- cbind("sort"=sub("OTU_", "", tab2[,1]), tab, "sequ"=unlist(sequ))
+tab2 <- cbind("sort"=sub("OTU_", "", tab[,1]), tab, "sequ"=unlist(sequ))
 
 
 write.csv(file="3_Raw_OTU_table.csv", tab2, row.names=F)
@@ -196,7 +196,7 @@ subset <- rowSums(temp2>=filter)
 subset2 <- subset >= filterN
 
 # reporting
-meep <- paste("Discarded OTUs: ", sum(subset2)," / ",  length(subset2), " (", round(100-sum(subset2)/length(subset2)*100, 2), "% discarded)", sep="")
+meep <- paste("Discarded OTUs: ", sum(!subset2)," / ",  length(subset2), " (", round(100-sum(subset2)/length(subset2)*100, 2), "% discarded)", sep="")
 message(meep)
 cat(file="../log.txt", meep, append=T, sep="\n")
 
