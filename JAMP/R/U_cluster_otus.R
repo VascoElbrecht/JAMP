@@ -207,7 +207,7 @@ exp <- rbind(exp, NA)
 
 exp[nrow(exp), start:stop] <- colSums(tab2[!subset2, start:stop])
 exp$ID[nrow(exp)] <- paste("below_", filter, sep="")
-exp$sort[nrow(exp)] <- exp$sort[nrow(exp)-1]+1
+exp$sort[nrow(exp)] <- exp$sort[nrow(exp)-1]
 
 
 # make folder 
