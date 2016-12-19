@@ -174,7 +174,7 @@ write.csv(exp2, file="_stats/3_pct_matched.csv")
 
 ### make abundance filtering
 if(!is.na(filter)){
-#tab2 <- read.csv(file="3_Raw_OTU_table.csv", stringsAsFactors=F)
+tab2 <- read.csv(file="3_Raw_OTU_table.csv", stringsAsFactors=F)
 
 start <- which(names(tab2)=="ID")+1
 stop <- which(names(tab2)=="sequ")-1
@@ -196,7 +196,7 @@ subset <- rowSums(temp2>=filter)
 subset2 <- subset >= filterN
 
 # reporting
-meep <- paste("Discarded OTUs: ", sum(!subset2)," / ",  length(subset2), " (", round(100-sum(subset2)/length(subset2)*100, 2), "% discarded)", sep="")
+meep <- paste("Discarded OTUs: ", sum(!subset2)," out of ",  length(subset2), " discarded (", round(100-sum(subset2)/length(subset2)*100, 2), "%)", sep="")
 message(meep)
 cat(file="../log.txt", meep, append=T, sep="\n")
 
@@ -211,12 +211,102 @@ exp$sort[nrow(exp)] <- exp$sort[nrow(exp)-1]
 
 
 # make folder 
-dir.create("_data/4_subset/")
+dir.create("_data/5_subset/")
 
 
-write.csv(exp, file=paste("_data/4_subset/4_OTU_sub_", filter, "_not_rematched.csv", sep=""), row.names=F)
+write.csv(exp, file=paste("_data/5_subset/5_OTU_sub_", filter, "_not_rematched.csv", sep=""), row.names=F)
 
-write.fasta(as.list(exp$sequ[-nrow(exp)]), exp$ID[-nrow(exp)], file.out=paste("_data/4_subset/4_OTU_sub_", filter, ".fasta", sep=""))
+OTU_sub_filename <- paste("_data/5_subset/5_OTU_sub_", filter, ".fasta", sep="")
+write.fasta(as.list(exp$sequ[-nrow(exp)]), exp$ID[-nrow(exp)], file.out=OTU_sub_filename)
+
+# remapping of reads against subsetted OTUs!
+# compare against refernce sequences (including singletons)
+
+dir.create("_data/5_subset/usearch_global")
+dir.create("_stats/5_subset/")
+
+new_names <- list.files("_data/1_derep_inc_singletons", full.names=T)
+blast_names <- sub("_PE_derep.fasta", ".txt", new_names)
+blast_names <- sub("1_derep_inc_singletons", "5_subset/usearch_global", blast_names)
+log_names <- sub("_data/", "_stats/", blast_names)
+log_names <- sub("/usearch_global", "", log_names)
+
+
+cmd <- paste("-usearch_global ", new_names, " -db ", OTU_sub_filename, " -strand plus -id 0.97 -blast6out ", blast_names, " -maxhits 1", sep="")
+
+
+temp <- paste("Remapping ", length(cmd)," files (incl. singletons) against subsetted OTUs \"", OTU_sub_filename, "\" using \"usearch_global\".\n", sep="")
+message(temp)
+cat(file="../log.txt", temp, append=T, sep="\n")
+
+exp <- NULL
+temp <- new_names
+for (i in 1:length(cmd)){
+A <- system2("usearch", cmd[i], stdout=T, stderr=T)
+cat(file= log_names[i], paste("usearch ", cmd[i], sep=""), "\n", A, append=F, sep="\n")
+
+meep <- sub(".*singletons/(.*)", "\\1", temp[i])
+pass <- sub(".*, (.*)% matched\r", "\\1", A[grep("matched\r", A)])
+exp <- rbind(exp, c(meep, pass))
+glumanda <- paste(meep," - ", pass, "% reads matched", sep="")
+cat(file="../log.txt", glumanda, append=T, sep="\n")
+message(glumanda)
+}
+
+#Remapping end
+
+# Writing subsetted & remapped OTU table!
+# Write raw data OTU table! incl OTU sequences
+files <- blast_names
+
+tab <- c("NULL")
+tab <- as.data.frame(tab, stringsAsFactors=F)
+names(tab) <- "ID"
+
+for (i in 1:length(files)){
+data <- read.csv(files[i], sep="\t", header=F, stringsAsFactors=F)
+
+names(data) <- c("query", "otu", "ident", "length", "mism", "gap", "qstart", "qend", "target_s", "target_e", "e.value", "bitscore")
+
+data <- data[,c(-11,-12)]
+
+data <- cbind(data, "abund"=as.numeric(sub(".*size=(.*);", "\\1", data$query)), "otu_no"=sub("(.*);size.*", "\\1", data$otu), stringsAsFactors=F)
+
+head(data)
+
+temp <- aggregate(data$abund, by=list(data$otu_no), FUN="sum")
+tab <- merge(tab , temp, by.x="ID", by.y="Group.1", all=T, sort=T)
+names(tab)[i+1] <- sub(".*/(.*)_PE.*", "\\1", files[i])
+}
+
+head(tab)
+
+tab <- tab[-1,] # remove NULL entry in the beginning
+tab[is.na(tab)] <- 0
+
+mrew <- tab$ID
+mrew <- as.numeric(gsub("OTU_(.*)", "\\1", mrew))
+tab <- tab[order(as.numeric(mrew)),]
+
+# add sequences!
+
+sequ <- read.fasta(OTU_sub_filename, forceDNAtolower=F, as.string=T)
+
+tab2 <- cbind("sort"=sub("OTU_", "", tab[,1]), tab, "sequ"=unlist(sequ))
+
+names(tab2) <- sub("_data/5_subset/usearch_global/(.*).txt", "\\1", names(tab2)) # SUBSET HERE
+
+write.csv(file=paste("5_OTU_table_", filter,".csv", sep=""), tab2, row.names=F)
+
+temp <- paste("\n\nSubsetted OTU table generated (", filter, "% abundance in at least ", filterN," sample): ", sub(OTU_sub_filename, "", "_data/5_subset/"), sep="")
+message(temp)
+cat(file="../log.txt", temp, append=T, sep="\n")
+
+exp2 <- data.frame("ID"=exp[,1], "Abundance"=colSums(tab[-1]), "pct_pass"=exp[,2], row.names=1:length(exp[,1]))
+
+write.csv(exp2, file="_stats/5_pct_subsetted_matched.csv")
+
+#### end subsetted OTU table
 
 } # end subsetting
 
