@@ -174,7 +174,7 @@ write.csv(exp2, file="_stats/3_pct_matched.csv")
 
 ### make abundance filtering
 if(!is.na(filter)){
-tab2 <- read.csv(file="3_Raw_OTU_table.csv", stringsAsFactors=F)
+#tab2 <- read.csv(file="3_Raw_OTU_table.csv", stringsAsFactors=F)
 
 start <- which(names(tab2)=="ID")+1
 stop <- which(names(tab2)=="sequ")-1
@@ -235,7 +235,7 @@ log_names <- sub("/usearch_global", "", log_names)
 cmd <- paste("-usearch_global ", new_names, " -db ", OTU_sub_filename, " -strand plus -id 0.97 -blast6out ", blast_names, " -maxhits 1", sep="")
 
 
-temp <- paste("Remapping ", length(cmd)," files (incl. singletons) against subsetted OTUs \"", OTU_sub_filename, "\" using \"usearch_global\".\n", sep="")
+temp <- paste("\n\nRemapping ", length(cmd)," files (incl. singletons) against subsetted OTUs \"", OTU_sub_filename, "\" using \"usearch_global\".\n", sep="")
 message(temp)
 cat(file="../log.txt", temp, append=T, sep="\n")
 
@@ -292,19 +292,27 @@ tab <- tab[order(as.numeric(mrew)),]
 
 sequ <- read.fasta(OTU_sub_filename, forceDNAtolower=F, as.string=T)
 
-tab2 <- cbind("sort"=sub("OTU_", "", tab[,1]), tab, "sequ"=unlist(sequ))
+tab2 <- cbind("sort"=as.numeric(sub("OTU_", "", tab[,1])), tab, "sequ"=unlist(sequ))
 
 names(tab2) <- sub("_data/5_subset/usearch_global/(.*).txt", "\\1", names(tab2)) # SUBSET HERE
 
-write.csv(file=paste("5_OTU_table_", filter,".csv", sep=""), tab2, row.names=F)
+# add below OTUs
+
+subSums <- read.csv("3_Raw_OTU_table.csv")
+subSums <- as.vector(c(subSums[nrow(subSums)-1, 1]+1, paste("below_", filter, sep=""), colSums(subSums[,-c(1,2, ncol(subSums))])-colSums(tab2[-c(1,2, ncol(tab2))]), NA))
+
+
+tab3 <- rbind(tab2, subSums)
+
+write.csv(file=paste("5_OTU_table_", filter,".csv", sep=""), tab3, row.names=F)
+
 
 temp <- paste("\n\nSubsetted OTU table generated (", filter, "% abundance in at least ", filterN," sample): ", sub(OTU_sub_filename, "", "_data/5_subset/"), sep="")
 message(temp)
 cat(file="../log.txt", temp, append=T, sep="\n")
 
-exp2 <- data.frame("ID"=exp[,1], "Abundance"=colSums(tab[-1]), "pct_pass"=exp[,2], row.names=1:length(exp[,1]))
-
-write.csv(exp2, file="_stats/5_pct_subsetted_matched.csv")
+#exp2 <- data.frame("ID"=exp[,1], "Abundance"=colSums(tab[-1]), "pct_pass"=exp[,2], row.names=1:length(exp[,1]))
+#write.csv(exp2, file="_stats/5_pct_subsetted_matched.csv")
 
 #### end subsetted OTU table
 
