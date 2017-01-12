@@ -12,7 +12,7 @@ cat(file="../log.txt", temp, append=T, sep="\n")
 message(" ")
 
 
-if (files=="latest"){
+if (files[1]=="latest"){
 source("robots.txt")
 files <- list.files(paste("../", last_data, "/_data", sep=""), full.names=T)
 }

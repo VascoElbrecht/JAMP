@@ -2,9 +2,9 @@ Package: JAMP
 Type: Package
 Title: Just Another Metabarcoding Pipeline
 Version: 0.1
-Date: 2016-11-11
+Date: 2017-01-09
 Author: Vasco Elbrecht
 Maintainer: Vasco Elbrecht <luckylion07@googlemail.com>
 Description: Modular pipeline to process metabarcoding Illumina data. Optimised for fusion primer systems (in line barcodes), with frame shifting tags (see Elbrecht & Leese 2015, PlosONE). Intended for internal use @Leeselab, but openly and freely available on the web.
 License: MIT
-Depends: seqinr
+Depends: seqinr, bold
