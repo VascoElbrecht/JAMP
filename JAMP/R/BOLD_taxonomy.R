@@ -47,7 +47,6 @@ message(i)
 
 }
 
-i <- 12
 
 new_taxonomy <- NULL
 for (i in 1:length(temp_files)){
@@ -91,7 +90,7 @@ if(length(tab_family)==0){adj_family <- "NA"} else {adj_family <- paste(tab_fami
 # order
 tab_order <- as.data.frame(table(data_bold$order[data_bold$similarity>= MM[4]]), stringsAsFactors=F)
 tab_order <- tab_order[order(tab_order$Freq, decreasing=T),]
-adj_order <- paste(tab_order[1,1], " ", tab_order$Freq[1], "/", sum(tab_order$Freq), sep="")
+if(length(tab_order)==0){adj_order <- "NA"} else {adj_order <- paste(tab_order[1,1], " ", tab_order$Freq[1], "/", sum(tab_order$Freq), sep="")}
 
 # Add taxonomic level
 # add taxon name!
@@ -107,7 +106,10 @@ bold_level <- "Family"
 bold_taxonomy <- tab_family[1,1]
 } else if(!grepl("NA", adj_order)){
 bold_level <- "Order"
-bold_taxonomy <- tab_order[1,1]}
+bold_taxonomy <- tab_order[1,1]} else {
+bold_level <- NA
+bold_taxonomy <- NA
+}
 
 
 new_taxonomy <- rbind(new_taxonomy, c(temp_files[i] , adj_order, adj_family, adj_genus, adj_species, data_bold$similarity[1], bold_taxonomy, bold_level))
