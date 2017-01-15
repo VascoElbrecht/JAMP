@@ -1,9 +1,1187 @@
-library("JAMP")#
-#
-# base directory#
+hittable <- bold_identify_parents(hittable, wide=T)
 setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP")#
+folder <- "K_U_cluster_otus"#
+file <- "5_OTU_table_0.003_SUB.csv"#
+s <- 1#
+library("JAMP")
+oldwd <- getwd()#
+setwd(folder)#
+getwd()#
+#cat(file="../log.txt", c("\n","Version v0.1", "\n"), append=T, sep="\n")#
+message("Getting taxonomy via BOLD api.")#
 #
-Demultiplexing_shifted("../../1 sequence DATA/NG-10942_FW_Haplo_lib_lib154605_5038_1_1.fastq.bz2", "../../1 sequence DATA/NG-10942_FW_Haplo_lib_lib154605_5038_1_2.fastq.bz2", tags="../161203_fwh.csv", combinations="../haplo_filenames.csv", md5=F)
-Demultiplexing_shifted
+data <- read.csv(file, stringsAsFactors=F)#
+sequ <- which(!is.na(data$sequ)) # sequences exist#
+#
+dir.create("_BOLD_data", showWarnings = FALSE)#
+setwd("_BOLD_data")#
+dir.create("_stats", showWarnings = FALSE)#
+#
+#based on ID_engine_bp_v2_anna_NovemberR.R#
+# query sequences to bold API#
+#
+# check if data already downloaded#
+#
+sequ_inital_DL <- sequ#
+#
+# skipp if already downloaded!#
+temp_files <- paste(data$ID[sequ_inital_DL], ".csv", sep="")#
+sequ_inital_DL <- sequ_inital_DL[!temp_files%in%list.files("_stats", "csv")]#
+#
+for (i in sequ_inital_DL){#
+#
+hittable <- NULL#
+#
+hittable <- bold_identify(data$sequ[i], db="COX1")#
+revcomp <- paste(rev(comp(strsplit(data$sequ[i], "")[[1]])), collapse="")#
+if(is.null(hittable[[1]])){ # no hits, check rev comp#
+hittable <- bold_identify(revcomp, db="COX1")[[1]]}#
+#
+hittable <- bold_identify_parents(hittable, wide=T)#
+#
+write.table(hittable, file=paste("_stats/", data$ID[i], ".csv", collapse="", sep=""), sep="\t")#
+message(i)#
+#
+}
+data <- read.csv(paste("_stats/", temp_files[i], sep=""), sep="\t", stringsAsFactors=F)
+data
+names(data)
+cbind(names(data))
+head(data)
+data
+head(data)
+cbind(names(data))
+data[-c(2,3,4, 7:11, 13, 15, 17, 19, 21, 23)]
+data[-c(2,3,4, 7:15, 17, 19, 21:23)]
+data <- data[-c(2,3,4, 7:15, 17, 19, 21:23)]
+data
+data[order(data$similarity),]
+data[order(data$similarity), decreasing=T]
+data[order(data$similarity, decreasing=T),]
+data
+data[order(data$similarity, decreasing=T),]
+data <- data[order(data$similarity, decreasing=T),]
+grep("sp.", data$species)
+data$species <- [grep("sp.", data$species)] <- NA
+data$species <- data$species[grep("sp.", data$species)] <- NA
+data$species[data$similarity>= MM[1]]
+data$similarity>= MM[1]
+data$species
+data$species[grep("sp.", data$species)]
+data <- read.csv(paste("_stats/", temp_files[i], sep=""), sep="\t", stringsAsFactors=F)#
+#
+data <- data[-c(2,3,4, 7:15, 17, 19, 21:23)]#
+data <- data[order(data$similarity, decreasing=T),]
+data$species[grep("sp.", data$species)]
+data$species[grep("sp.", data$species)] <- data$species[grep("sp.", data$species)] <- NA
+data$species[data$similarity>= MM[1]]
+data$species[!data$similarity>= MM[1]]
+data$species[!data$similarity>= MM[1]] <- NA
+data
+data$genus[!data$similarity>= MM[2]] <- NA
+data
+data
+data$family[!data$similarity>= MM[3]] <- NA
+data <- read.csv(paste("_stats/", temp_files[i], sep=""), sep="\t", stringsAsFactors=F)#
+#
+data <- data[-c(2,3,4, 7:15, 17, 19, 21:23)]#
+data <- data[order(data$similarity, decreasing=T),]#
+#
+data$species[grep("sp.", data$species)] <- data$species[grep("sp.", data$species)] <- NA#
+#
+data$species[!data$similarity>= MM[1]] <- NA#
+data$genus[!data$similarity>= MM[2]] <- NA#
+data$family[!data$similarity>= MM[3]] <- NA#
+data$family[!data$similarity>= MM[4]] <- NA
+data
+i <- 2
+data <- read.csv(paste("_stats/", temp_files[i], sep=""), sep="\t", stringsAsFactors=F)#
+#
+data <- data[-c(2,3,4, 7:15, 17, 19, 21:23)]#
+data <- data[order(data$similarity, decreasing=T),]#
+#
+data$species[grep("sp.", data$species)] <- data$species[grep("sp.", data$species)] <- NA#
+#
+data$species[!data$similarity>= MM[1]] <- NA#
+data$genus[!data$similarity>= MM[2]] <- NA#
+data$family[!data$similarity>= MM[3]] <- NA#
+data$family[!data$similarity>= MM[4]] <- NA
+data
+i <- 3
+data <- read.csv(paste("_stats/", temp_files[i], sep=""), sep="\t", stringsAsFactors=F)#
+#
+data <- data[-c(2,3,4, 7:15, 17, 19, 21:23)]#
+data <- data[order(data$similarity, decreasing=T),]#
+#
+data$species[grep("sp.", data$species)] <- data$species[grep("sp.", data$species)] <- NA#
+#
+data$species[!data$similarity>= MM[1]] <- NA#
+data$genus[!data$similarity>= MM[2]] <- NA#
+data$family[!data$similarity>= MM[3]] <- NA#
+data$family[!data$similarity>= MM[4]] <- NA
+data
+i <- 1
+data <- read.csv(paste("_stats/", temp_files[i], sep=""), sep="\t", stringsAsFactors=F)#
+#
+data <- data[-c(2,3,4, 7:15, 17, 19, 21:23)]#
+data <- data[order(data$similarity, decreasing=T),]#
+#
+data$species[grep("sp.", data$species)] <- data$species[grep("sp.", data$species)] <- NA#
+#
+data$species[!data$similarity>= MM[1]] <- NA#
+data$genus[!data$similarity>= MM[2]] <- NA#
+data$family[!data$similarity>= MM[3]] <- NA#
+data$family[!data$similarity>= MM[4]] <- NA
+data
+data <- read.csv(paste("_stats/", temp_files[i], sep=""), sep="\t", stringsAsFactors=F)#
+#
+data <- data[-c(2,3,4, 7:15, 17, 19, 21:23)]#
+data <- data[order(data$similarity, decreasing=T),]#
+#
+data$species[grep("sp.", data$species)] <- data$species[grep("sp.", data$species)] <- NA#
+#
+data$species[!data$similarity>= MM[1]] <- NA#
+data$genus[!data$similarity>= MM[2]] <- NA#
+data$family[!data$similarity>= MM[3]] <- NA#
+data$order[!data$similarity>= MM[4]] <- NA
+data
+cbind(names(data))
+data <- read.csv(paste("_stats/", temp_files[i], sep=""), sep="\t", stringsAsFactors=F)#
+#
+cbind(names(data))
+data <- read.csv(paste("_stats/", temp_files[i], sep=""), sep="\t", stringsAsFactors=F)#
+#
+cbind(names(data))#
+#
+data <- data[-c(2,3,4, 7:15, 17, 19, 21:23)]#
+data <- data[order(data$similarity, decreasing=T),]#
+#
+data$species[grep("sp.", data$species)] <- data$species[grep("sp.", data$species)] <- NA#
+#
+data$species[!data$similarity>= MM[1]] <- NA#
+data$genus[!data$similarity>= MM[2]] <- NA#
+data$family[!data$similarity>= MM[3]] <- NA#
+data$order[!data$similarity>= MM[4]] <- NA
+data <- data[data$ID, data$taxonomicidentification]
+data <- data.frame(data$ID, data$taxonomicidentification)
+data
+data$species
+data <- read.csv(paste("_stats/", temp_files[i], sep=""), sep="\t", stringsAsFactors=F)#
+#
+cbind(names(data))#
+#
+data <- data.frame(data$ID, data$taxonomicidentification)#
+data <- data[order(data$similarity, decreasing=T),]#
+#
+data$species[grep("sp.", data$species)] <- data$species[grep("sp.", data$species)] <- NA#
+#
+data$species[!data$similarity>= MM[1]] <- NA#
+data$genus[!data$similarity>= MM[2]] <- NA#
+data$family[!data$similarity>= MM[3]] <- NA#
+data$order[!data$similarity>= MM[4]] <- NA
+data <- read.csv(paste("_stats/", temp_files[i], sep=""), sep="\t", stringsAsFactors=F)
+data
+cbind(names(data))
+data <- data.frame(data$ID, data$taxonomicidentification, data$similarity, data$order, data$family, data$genus, data$species)
+data <- data[order(data$similarity, decreasing=T),]
+data
+data <- data.frame("ID"=data$ID, "taxitenti"=data$taxonomicidentification, "similarity"=data$similarity, "order"=data$order, "family"=data$family, "genus"=data$genus, "species"=data$species)#
+data <- data[order(data$similarity, decreasing=T),]
+data <- read.csv(paste("_stats/", temp_files[i], sep=""), sep="\t", stringsAsFactors=F)#
+#
+cbind(names(data))#
+#
+data <- data.frame("ID"=data$ID, "taxitenti"=data$taxonomicidentification, "similarity"=data$similarity, "order"=data$order, "family"=data$family, "genus"=data$genus, "species"=data$species)#
+data <- data[order(data$similarity, decreasing=T),]
+data
+data <- data.frame("ID"=data$ID, "taxitenti"=data$taxonomicidentification, "similarity"=data$similarity, "order"=data$order, "family"=data$family, "genus"=data$genus, "species"=data$species)
+data <- read.csv(paste("_stats/", temp_files[i], sep=""), sep="\t", stringsAsFactors=F)
+data
+? bold_identify
+data <- read.csv(paste("_stats/", temp_files[i], sep=""), sep="\t", stringsAsFactors=F)#
+#
+data <- data.frame("ID"=data$ID, "taxitenti"=data$taxonomicidentification, "similarity"=data$similarity, "order"=data$order, "family"=data$family, "genus"=data$genus, "species"=data$species)#
+data <- data[order(data$similarity, decreasing=T),]#
+#
+data$species[grep("sp.", data$species)] <- data$species[grep("sp.", data$species)] <- NA#
+#
+data$species[!data$similarity>= MM[1]] <- NA#
+data$genus[!data$similarity>= MM[2]] <- NA#
+data$family[!data$similarity>= MM[3]] <- NA#
+data$order[!data$similarity>= MM[4]] <- NA
+data
+data$species[!data$similarity>= MM[1]]
+data$species
+data <- read.csv(paste("_stats/", temp_files[i], sep=""), sep="\t", stringsAsFactors=F)#
+#
+data <- data.frame("ID"=data$ID, "taxitenti"=data$taxonomicidentification, "similarity"=data$similarity, "order"=data$order, "family"=data$family, "genus"=data$genus, "species"=data$species, stringsAsFactors=F)#
+data <- data[order(data$similarity, decreasing=T),]#
+#
+data$species[grep("sp.", data$species)] <- data$species[grep("sp.", data$species)] <- NA#
+#
+data$species[!data$similarity>= MM[1]] <- NA#
+data$genus[!data$similarity>= MM[2]] <- NA#
+data$family[!data$similarity>= MM[3]] <- NA#
+data$order[!data$similarity>= MM[4]] <- NA#
+#
+data$species[!data$similarity>= MM[1]]
+data$species
+data$genus[!data$similarity>= MM[2]]
+data$species[data$similarity>= MM[1]]
+data$genus[data$similarity>= MM[2]]
+table(data$genus[data$similarity>= MM[2]])
+data
+data[5:8]
+data[5:8,]
+data[,5:8]
+data[5:8]
+data[,5:8]
+data[,5:7]
+data[,4:7]
+data[,4:7][is.na(data[,4:7])] <- "NA"
+data
+table(data$genus[data$similarity>= MM[2]])
+?table
+data.frame(table(data$genus[data$similarity>= MM[2]]))
+tab_genus <- data.frame(table(data$genus[data$similarity>= MM[2]]))
+order(tab_genus$Freq)
+tab_genus[order(tab_genus$Freq),]
+tab_genus[order(tab_genus$Freq, decreasing=T),]
+tab_genus <- tab_genus[order(tab_genus$Freq, decreasing=T),]
+tab_genus[1,1]
+tab_genus <- data.frame(table(data$genus[data$similarity>= MM[2]]), stringsAsFactors=F)
+tab_genus <- tab_genus[order(tab_genus$Freq, decreasing=T),]
+tab_genus[1,1]
+tab_genus <- data.frame(table(data$genus[data$similarity>= MM[2]]), stringsAsFactors=F)
+tab_genus
+tab_genus[1,1]
+tab_genus <- data.frame(table(data$genus[data$similarity>= MM[2]]), stringsAsFactors=F)
+tab_genus[1,1]
+tab_genus <- data.frame(table(data$genus[data$similarity>= MM[2]]), stringsAsFactors=T)
+tab_genus[1,1]
+tab_genus <- data.frame(table(data$genus[data$similarity>= MM[2]]), stringsAsFactors=F)
+data$species
+tab_genus$Var1
+as.character(tab_genus$Var1)
+tab_genus$Var1 <- as.character(tab_genus$Var1)
+tab_genus[1,1]
+paste(tab_genus[1,1], " - ", sep="")
+tab_genus
+paste(tab_genus[1,1], " ", sum(tab_genus$Freq), sep="")
+paste(tab_genus[1,1], " ", tab_genus$Freq[1], "/", sum(tab_genus$Freq), sep="")
+tab_genus <- data.frame(table(data$genus[data$similarity>= MM[2]]), stringsAsFactors=F)#
+tab_genus <- tab_genus[order(tab_genus$Freq, decreasing=T),]#
+tab_genus$Var1 <- as.character(tab_genus$Var1)#
+daj_genus <- paste(tab_genus[1,1], " ", tab_genus$Freq[1], "/", sum(tab_genus$Freq), sep="")
+daj_genus
+data$species[data$similarity>= MM[1]]
+tab_species <- data.frame(table(data$species[data$similarity>= MM[2]]), stringsAsFactors=F)#
+tab_species <- tab_species[order(tab_species$Freq, decreasing=T),]#
+tab_species$Var1 <- as.character(tab_species$Var1)#
+daj_species <- paste(tab_species[1,1], " ", tab_species$Freq[1], "/", sum(tab_species$Freq), sep="")
+daj_species
+# family#
+tab_family <- data.frame(table(data$family[data$similarity>= MM[2]]), stringsAsFactors=F)#
+tab_family <- tab_family[order(tab_family$Freq, decreasing=T),]#
+tab_family$Var1 <- as.character(tab_family$Var1)#
+daj_family <- paste(tab_family[1,1], " ", tab_family$Freq[1], "/", sum(tab_family$Freq), sep="")
+daj_family
+tab_family
+# order#
+tab_order <- data.frame(table(data$order[data$similarity>= MM[2]]), stringsAsFactors=F)#
+tab_order <- tab_order[order(tab_order$Freq, decreasing=T),]#
+tab_order$Var1 <- as.character(tab_order$Var1)#
+daj_order <- paste(tab_order[1,1], " ", tab_order$Freq[1], "/", sum(tab_order$Freq), sep="")
+tab_order
+data
+tab_order
+# species#
+tab_species <- data.frame(table(data$species[data$similarity>= MM[1]]), stringsAsFactors=F)#
+tab_species <- tab_species[order(tab_species$Freq, decreasing=T),]#
+tab_species$Var1 <- as.character(tab_species$Var1)#
+daj_species <- paste(tab_species[1,1], " ", tab_species$Freq[1], "/", sum(tab_species$Freq), sep="")#
+#
+# genus#
+tab_genus <- data.frame(table(data$genus[data$similarity>= MM[2]]), stringsAsFactors=F)#
+tab_genus <- tab_genus[order(tab_genus$Freq, decreasing=T),]#
+tab_genus$Var1 <- as.character(tab_genus$Var1)#
+daj_genus <- paste(tab_genus[1,1], " ", tab_genus$Freq[1], "/", sum(tab_genus$Freq), sep="")#
+#
+# family#
+tab_family <- data.frame(table(data$family[data$similarity>= MM[3]]), stringsAsFactors=F)#
+tab_family <- tab_family[order(tab_family$Freq, decreasing=T),]#
+tab_family$Var1 <- as.character(tab_family$Var1)#
+daj_family <- paste(tab_family[1,1], " ", tab_family$Freq[1], "/", sum(tab_family$Freq), sep="")#
+#
+# order#
+tab_order <- data.frame(table(data$order[data$similarity>= MM[4]]), stringsAsFactors=F)#
+tab_order <- tab_order[order(tab_order$Freq, decreasing=T),]#
+tab_order$Var1 <- as.character(tab_order$Var1)#
+daj_order <- paste(tab_order[1,1], " ", tab_order$Freq[1], "/", sum(tab_order$Freq), sep="")
+tab_order
+tab_family
+daj_order
+daj_family
+daj_genus
+daj_species
+new_taxonomy <- NULL
+rbind(new_taxonomy, c(tab_order, tab_family, tab_genus, tab_species))
+c(tab_order, tab_family, tab_genus, tab_species)
+rbind(new_taxonomy, c(adj_order, adj_family, adj_genus, adj_species))
+# species#
+tab_species <- data.frame(table(data$species[data$similarity>= MM[1]]), stringsAsFactors=F)#
+tab_species <- tab_species[order(tab_species$Freq, decreasing=T),]#
+tab_species$Var1 <- as.character(tab_species$Var1)#
+adj_species <- paste(tab_species[1,1], " ", tab_species$Freq[1], "/", sum(tab_species$Freq), sep="")#
+#
+# genus#
+tab_genus <- data.frame(table(data$genus[data$similarity>= MM[2]]), stringsAsFactors=F)#
+tab_genus <- tab_genus[order(tab_genus$Freq, decreasing=T),]#
+tab_genus$Var1 <- as.character(tab_genus$Var1)#
+adj_genus <- paste(tab_genus[1,1], " ", tab_genus$Freq[1], "/", sum(tab_genus$Freq), sep="")#
+#
+# family#
+tab_family <- data.frame(table(data$family[data$similarity>= MM[3]]), stringsAsFactors=F)#
+tab_family <- tab_family[order(tab_family$Freq, decreasing=T),]#
+tab_family$Var1 <- as.character(tab_family$Var1)#
+adj_family <- paste(tab_family[1,1], " ", tab_family$Freq[1], "/", sum(tab_family$Freq), sep="")#
+#
+# order#
+tab_order <- data.frame(table(data$order[data$similarity>= MM[4]]), stringsAsFactors=F)#
+tab_order <- tab_order[order(tab_order$Freq, decreasing=T),]#
+tab_order$Var1 <- as.character(tab_order$Var1)#
+adj_order <- paste(tab_order[1,1], " ", tab_order$Freq[1], "/", sum(tab_order$Freq), sep="")#
+#
+rbind(new_taxonomy, c(adj_order, adj_family, adj_genus, adj_species))
+temp_files[i]
+rbind(new_taxonomy, c(temp_files[i], adj_order, adj_family, adj_genus, adj_species))
+new_taxonomy <- rbind(new_taxonomy, c(temp_files[i], adj_order, adj_family, adj_genus, adj_species))
+new_taxonomy <- NULL#
+#
+for (i in 1:length(temp_files)){#
+#
+data <- read.csv(paste("_stats/", temp_files[i], sep=""), sep="\t", stringsAsFactors=F)#
+#
+data <- data.frame("ID"=data$ID, "taxitenti"=data$taxonomicidentification, "similarity"=data$similarity, "order"=data$order, "family"=data$family, "genus"=data$genus, "species"=data$species, stringsAsFactors=F)#
+data <- data[order(data$similarity, decreasing=T),]#
+#
+data$species[grep("sp.", data$species)] <- data$species[grep("sp.", data$species)] <- NA#
+#
+data$species[!data$similarity>= MM[1]] <- NA#
+data$genus[!data$similarity>= MM[2]] <- NA#
+data$family[!data$similarity>= MM[3]] <- NA#
+data$order[!data$similarity>= MM[4]] <- NA#
+#
+data[,4:7][is.na(data[,4:7])] <- "NA"#
+#
+# species#
+tab_species <- data.frame(table(data$species[data$similarity>= MM[1]]), stringsAsFactors=F)#
+tab_species <- tab_species[order(tab_species$Freq, decreasing=T),]#
+tab_species$Var1 <- as.character(tab_species$Var1)#
+adj_species <- paste(tab_species[1,1], " ", tab_species$Freq[1], "/", sum(tab_species$Freq), sep="")#
+#
+# genus#
+tab_genus <- data.frame(table(data$genus[data$similarity>= MM[2]]), stringsAsFactors=F)#
+tab_genus <- tab_genus[order(tab_genus$Freq, decreasing=T),]#
+tab_genus$Var1 <- as.character(tab_genus$Var1)#
+adj_genus <- paste(tab_genus[1,1], " ", tab_genus$Freq[1], "/", sum(tab_genus$Freq), sep="")#
+#
+# family#
+tab_family <- data.frame(table(data$family[data$similarity>= MM[3]]), stringsAsFactors=F)#
+tab_family <- tab_family[order(tab_family$Freq, decreasing=T),]#
+tab_family$Var1 <- as.character(tab_family$Var1)#
+adj_family <- paste(tab_family[1,1], " ", tab_family$Freq[1], "/", sum(tab_family$Freq), sep="")#
+#
+# order#
+tab_order <- data.frame(table(data$order[data$similarity>= MM[4]]), stringsAsFactors=F)#
+tab_order <- tab_order[order(tab_order$Freq, decreasing=T),]#
+tab_order$Var1 <- as.character(tab_order$Var1)#
+adj_order <- paste(tab_order[1,1], " ", tab_order$Freq[1], "/", sum(tab_order$Freq), sep="")#
+#
+new_taxonomy <- rbind(new_taxonomy, c(temp_files[i], adj_order, adj_family, adj_genus, adj_species))#
+#
+}
+new_taxonomy
+data$sequ
+setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP")#
+folder <- "K_U_cluster_otus"#
+file <- "5_OTU_table_0.003_SUB.csv"#
+s <- 1#
+library("JAMP")
+oldwd <- getwd()#
+setwd(folder)#
+getwd()#
+#cat(file="../log.txt", c("\n","Version v0.1", "\n"), append=T, sep="\n")#
+message("Getting taxonomy via BOLD api.")#
+#
+data <- read.csv(file, stringsAsFactors=F)#
+sequ <- which(!is.na(data$sequ)) # sequences exist#
+#
+dir.create("_BOLD_data", showWarnings = FALSE)#
+setwd("_BOLD_data")#
+dir.create("_stats", showWarnings = FALSE)#
+#
+#based on ID_engine_bp_v2_anna_NovemberR.R#
+# query sequences to bold API#
+#
+# check if data already downloaded#
+#
+sequ_inital_DL <- sequ
+data$sequ[i]
+hittable <- bold_identify(data$sequ[i], db="COX1")
+hittable
+hittable <- bold_identify_parents(hittable, wide=T)
+hittable
+order(hittable$simmilarty, decreasing=T)
+order(hittable$similarty, decreasing=T)
+order(hittable$similarity, decreasing=T)
+hittable$similarity
+hittable
+hittable[[1]]
+hittable <- hittable[[1]]
+order(hittable$similarity, decreasing=T)
+hittable[order(hittable$similarity, decreasing=T),]
+new_taxonomy
+data
+new_taxonomy
+data.frame(new_taxonomy, stringsAsFactors=F)
+new_taxonomy <- data.frame(new_taxonomy, stringsAsFactors=F)
+tab_order <- as.data.frame(table(data$order[data$similarity>= MM[4]]), stringsAsFactors=F)
+tab_order$Freq
+tab_order <- as.data.frame(table(data$order[data$similarity>= MM[4]]), stringsAsFactors=F)
+tab_order
+data$order
+oldwd <- getwd()#
+setwd(folder)#
+getwd()#
+#cat(file="../log.txt", c("\n","Version v0.1", "\n"), append=T, sep="\n")#
+message("Getting taxonomy via BOLD api.")#
+#
+data <- read.csv(file, stringsAsFactors=F)#
+sequ <- which(!is.na(data$sequ)) # sequences exist#
+#
+dir.create("_BOLD_data", showWarnings = FALSE)#
+setwd("_BOLD_data")#
+dir.create("_stats", showWarnings = FALSE)#
+#
+#based on ID_engine_bp_v2_anna_NovemberR.R#
+# query sequences to bold API#
+#
+# check if data already downloaded#
+#
+sequ_inital_DL <- sequ#
+#
+# skipp if already downloaded!#
+temp_files <- paste(data$ID[sequ_inital_DL], ".csv", sep="")#
+sequ_inital_DL <- sequ_inital_DL[!temp_files%in%list.files("_stats", "csv")]#
+#
+for (i in sequ_inital_DL){#
+#
+hittable <- NULL#
+#
+hittable <- bold_identify(data$sequ[i], db="COX1")#
+revcomp <- paste(rev(comp(strsplit(data$sequ[i], "")[[1]])), collapse="")#
+if(is.null(hittable[[1]])){ # no hits, check rev comp#
+hittable <- bold_identify(revcomp, db="COX1")[[1]]}#
+#
+hittable <- bold_identify_parents(hittable, wide=T)#
+hittable <- hittable[[1]]#
+hittable <- hittable[order(hittable$similarity, decreasing=T),]#
+#
+write.table(hittable, file=paste("_stats/", data$ID[i], ".csv", collapse="", sep=""), sep="\t")#
+message(i)#
+#
+}#
+#
+new_taxonomy <- NULL
+for (i in 1:length(temp_files)){#
+#
+data <- read.csv(paste("_stats/", temp_files[i], sep=""), sep="\t", stringsAsFactors=F)#
+#
+data <- data.frame("ID"=data$ID, "taxitenti"=data$taxonomicidentification, "similarity"=data$similarity, "order"=data$order, "family"=data$family, "genus"=data$genus, "species"=data$species, stringsAsFactors=F)#
+#data <- data[order(data$similarity, decreasing=T),]#
+#
+data$species[grep("sp.", data$species)] <- data$species[grep("sp.", data$species)] <- NA#
+#
+data$species[!data$similarity>= MM[1]] <- NA#
+data$genus[!data$similarity>= MM[2]] <- NA#
+data$family[!data$similarity>= MM[3]] <- NA#
+data$order[!data$similarity>= MM[4]] <- NA#
+#
+data[,4:7][is.na(data[,4:7])] <- "NA"#
+#
+# species#
+tab_species <- data.frame(table(data$species[data$similarity>= MM[1]]), stringsAsFactors=F)#
+tab_species <- tab_species[order(tab_species$Freq, decreasing=T),]#
+tab_species$Var1 <- as.character(tab_species$Var1)#
+adj_species <- paste(tab_species[1,1], " ", tab_species$Freq[1], "/", sum(tab_species$Freq), sep="")#
+#
+# genus#
+tab_genus <- data.frame(table(data$genus[data$similarity>= MM[2]]), stringsAsFactors=F)#
+tab_genus <- tab_genus[order(tab_genus$Freq, decreasing=T),]#
+tab_genus$Var1 <- as.character(tab_genus$Var1)#
+adj_genus <- paste(tab_genus[1,1], " ", tab_genus$Freq[1], "/", sum(tab_genus$Freq), sep="")#
+#
+# family#
+tab_family <- data.frame(table(data$family[data$similarity>= MM[3]]), stringsAsFactors=F)#
+tab_family <- tab_family[order(tab_family$Freq, decreasing=T),]#
+tab_family$Var1 <- as.character(tab_family$Var1)#
+adj_family <- paste(tab_family[1,1], " ", tab_family$Freq[1], "/", sum(tab_family$Freq), sep="")#
+#
+# order#
+tab_order <- as.data.frame(table(data$order[data$similarity>= MM[4]]), stringsAsFactors=F)#
+tab_order <- tab_order[order(tab_order$Freq, decreasing=T),]#
+tab_order$Var1 <- as.character(tab_order$Var1)#
+adj_order <- paste(tab_order[1,1], " ", tab_order$Freq[1], "/", sum(tab_order$Freq), sep="")#
+#
+new_taxonomy <- rbind(new_taxonomy, c(temp_files[i], adj_order, adj_family, adj_genus, adj_species))#
+#
+}
+new_taxonomy
+tab_order <- as.data.frame(table(data$order[data$similarity>= MM[4]]), stringsAsFactors=F)
+tab_order
+tab_order$Freq
+tab_order$Var1
+tab_order <- as.data.frame(table(data$order[data$similarity>= MM[4]]), stringsAsFactors=F)
+tab_order$Var1
+i <- 1
+data <- read.csv(paste("_stats/", temp_files[i], sep=""), sep="\t", stringsAsFactors=F)#
+#
+data <- data.frame("ID"=data$ID, "taxitenti"=data$taxonomicidentification, "similarity"=data$similarity, "order"=data$order, "family"=data$family, "genus"=data$genus, "species"=data$species, stringsAsFactors=F)#
+#data <- data[order(data$similarity, decreasing=T),]#
+#
+data$species[grep("sp.", data$species)] <- data$species[grep("sp.", data$species)] <- NA#
+#
+data$species[!data$similarity>= MM[1]] <- NA#
+data$genus[!data$similarity>= MM[2]] <- NA#
+data$family[!data$similarity>= MM[3]] <- NA#
+data$order[!data$similarity>= MM[4]] <- NA#
+#
+data[,4:7][is.na(data[,4:7])] <- "NA"#
+#
+# species
+tab_order <- as.data.frame(table(data$order[data$similarity>= MM[4]]), stringsAsFactors=F)
+tab_order
+tab_order <- tab_order[order(tab_order$Freq, decreasing=T),]
+tab_order
+tab_order$Var1
+setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP")#
+folder <- "K_U_cluster_otus"#
+file <- "5_OTU_table_0.003_SUB.csv"#
+s <- 1#
+library("JAMP")
+oldwd <- getwd()#
+setwd(folder)#
+getwd()#
+#cat(file="../log.txt", c("\n","Version v0.1", "\n"), append=T, sep="\n")#
+message("Getting taxonomy via BOLD api.")#
+#
+data <- read.csv(file, stringsAsFactors=F)#
+sequ <- which(!is.na(data$sequ)) # sequences exist#
+#
+dir.create("_BOLD_data", showWarnings = FALSE)#
+setwd("_BOLD_data")#
+dir.create("_stats", showWarnings = FALSE)#
+#
+#based on ID_engine_bp_v2_anna_NovemberR.R#
+# query sequences to bold API#
+#
+# check if data already downloaded#
+#
+sequ_inital_DL <- sequ#
+#
+# skipp if already downloaded!#
+temp_files <- paste(data$ID[sequ_inital_DL], ".csv", sep="")#
+sequ_inital_DL <- sequ_inital_DL[!temp_files%in%list.files("_stats", "csv")]#
+#
+for (i in sequ_inital_DL){#
+#
+hittable <- NULL#
+#
+hittable <- bold_identify(data$sequ[i], db="COX1")#
+revcomp <- paste(rev(comp(strsplit(data$sequ[i], "")[[1]])), collapse="")#
+if(is.null(hittable[[1]])){ # no hits, check rev comp#
+hittable <- bold_identify(revcomp, db="COX1")[[1]]}#
+#
+hittable <- bold_identify_parents(hittable, wide=T)#
+hittable <- hittable[[1]]#
+hittable <- hittable[order(hittable$similarity, decreasing=T),]#
+#
+write.table(hittable, file=paste("_stats/", data$ID[i], ".csv", collapse="", sep=""), sep="\t")#
+message(i)#
+#
+}#
+#
+new_taxonomy <- NULL#
+i <- 1#
+for (i in 1:length(temp_files)){#
+#
+data <- read.csv(paste("_stats/", temp_files[i], sep=""), sep="\t", stringsAsFactors=F)#
+#
+data <- data.frame("ID"=data$ID, "taxitenti"=data$taxonomicidentification, "similarity"=data$similarity, "order"=data$order, "family"=data$family, "genus"=data$genus, "species"=data$species, stringsAsFactors=F)#
+#data <- data[order(data$similarity, decreasing=T),]#
+#
+data$species[grep("sp.", data$species)] <- data$species[grep("sp.", data$species)] <- NA#
+#
+data$species[!data$similarity>= MM[1]] <- NA#
+data$genus[!data$similarity>= MM[2]] <- NA#
+data$family[!data$similarity>= MM[3]] <- NA#
+data$order[!data$similarity>= MM[4]] <- NA#
+#
+data[,4:7][is.na(data[,4:7])] <- "NA"#
+#
+# species#
+tab_species <- as.data.frame(table(data$species[data$similarity>= MM[1]]), stringsAsFactors=F)#
+tab_species <- tab_species[order(tab_species$Freq, decreasing=T),]#
+adj_species <- paste(tab_species[1,1], " ", tab_species$Freq[1], "/", sum(tab_species$Freq), sep="")#
+#
+# genus#
+tab_genus <- as.data.frame(table(data$genus[data$similarity>= MM[2]]), stringsAsFactors=F)#
+tab_genus <- tab_genus[order(tab_genus$Freq, decreasing=T),]#
+adj_genus <- paste(tab_genus[1,1], " ", tab_genus$Freq[1], "/", sum(tab_genus$Freq), sep="")#
+#
+# family#
+tab_family <- as.data.frame(table(data$family[data$similarity>= MM[3]]), stringsAsFactors=F)#
+tab_family <- tab_family[order(tab_family$Freq, decreasing=T),]#
+adj_family <- paste(tab_family[1,1], " ", tab_family$Freq[1], "/", sum(tab_family$Freq), sep="")#
+#
+# order#
+tab_order <- as.data.frame(table(data$order[data$similarity>= MM[4]]), stringsAsFactors=F)#
+tab_order <- tab_order[order(tab_order$Freq, decreasing=T),]#
+adj_order <- paste(tab_order[1,1], " ", tab_order$Freq[1], "/", sum(tab_order$Freq), sep="")#
+#
+new_taxonomy <- rbind(new_taxonomy, c(temp_files[i], adj_order, adj_family, adj_genus, adj_species))#
+#
+}
+i
+? bold_identify
+hittable <- bold_identify(data$sequ[i], db="COX1")
+data$sequ[i]
+data <- read.csv(file, stringsAsFactors=F)#
+sequ <- which(!is.na(data$sequ)) # sequences exist#
+#
+dir.create("_BOLD_data", showWarnings = FALSE)#
+setwd("_BOLD_data")#
+dir.create("_stats", showWarnings = FALSE)#
+#
+#based on ID_engine_bp_v2_anna_NovemberR.R#
+# query sequences to bold API#
+#
+# check if data already downloaded#
+#
+sequ_inital_DL <- sequ
+setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP")#
+folder <- "K_U_cluster_otus"#
+file <- "5_OTU_table_0.003_SUB.csv"#
+s <- 1#
+library("JAMP")
+oldwd <- getwd()#
+setwd(folder)#
+getwd()#
+#cat(file="../log.txt", c("\n","Version v0.1", "\n"), append=T, sep="\n")#
+message("Getting taxonomy via BOLD api.")#
+#
+data <- read.csv(file, stringsAsFactors=F)#
+sequ <- which(!is.na(data$sequ)) # sequences exist#
+#
+dir.create("_BOLD_data", showWarnings = FALSE)#
+setwd("_BOLD_data")#
+dir.create("_stats", showWarnings = FALSE)#
+#
+#based on ID_engine_bp_v2_anna_NovemberR.R#
+# query sequences to bold API#
+#
+# check if data already downloaded#
+#
+sequ_inital_DL <- sequ
+# skipp if already downloaded!#
+temp_files <- paste(data$ID[sequ_inital_DL], ".csv", sep="")#
+sequ_inital_DL <- sequ_inital_DL[!temp_files%in%list.files("_stats", "csv")]
+sequ_inital_DL
+for (i in sequ_inital_DL){#
+#
+hittable <- NULL#
+#
+hittable <- bold_identify(data$sequ[i], db="COX1")#
+#
+if(is.null(hittable[[1]])){ # no hits, check rev comp#
+revcomp <- paste(rev(comp(strsplit(data$sequ[i], "")[[1]])), collapse="")#
+hittable <- bold_identify(revcomp, db="COX1")[[1]]}#
+#
+hittable <- bold_identify_parents(hittable, wide=T)#
+hittable <- hittable[[1]]#
+hittable <- hittable[order(hittable$similarity, decreasing=T),]#
+#
+write.table(hittable, file=paste("_stats/", data$ID[i], ".csv", collapse="", sep=""), sep="\t")#
+message(i)#
+#
+}
+for (i in 1:length(temp_files)){#
+#
+data <- read.csv(paste("_stats/", temp_files[i], sep=""), sep="\t", stringsAsFactors=F)#
+#
+data <- data.frame("ID"=data$ID, "taxitenti"=data$taxonomicidentification, "similarity"=data$similarity, "order"=data$order, "family"=data$family, "genus"=data$genus, "species"=data$species, stringsAsFactors=F)#
+#data <- data[order(data$similarity, decreasing=T),]#
+#
+data$species[grep("sp.", data$species)] <- data$species[grep("sp.", data$species)] <- NA#
+#
+data$species[!data$similarity>= MM[1]] <- NA#
+data$genus[!data$similarity>= MM[2]] <- NA#
+data$family[!data$similarity>= MM[3]] <- NA#
+data$order[!data$similarity>= MM[4]] <- NA#
+#
+data[,4:7][is.na(data[,4:7])] <- "NA"#
+#
+# species#
+tab_species <- as.data.frame(table(data$species[data$similarity>= MM[1]]), stringsAsFactors=F)#
+tab_species <- tab_species[order(tab_species$Freq, decreasing=T),]#
+adj_species <- paste(tab_species[1,1], " ", tab_species$Freq[1], "/", sum(tab_species$Freq), sep="")#
+#
+# genus#
+tab_genus <- as.data.frame(table(data$genus[data$similarity>= MM[2]]), stringsAsFactors=F)#
+tab_genus <- tab_genus[order(tab_genus$Freq, decreasing=T),]#
+adj_genus <- paste(tab_genus[1,1], " ", tab_genus$Freq[1], "/", sum(tab_genus$Freq), sep="")#
+#
+# family#
+tab_family <- as.data.frame(table(data$family[data$similarity>= MM[3]]), stringsAsFactors=F)#
+tab_family <- tab_family[order(tab_family$Freq, decreasing=T),]#
+adj_family <- paste(tab_family[1,1], " ", tab_family$Freq[1], "/", sum(tab_family$Freq), sep="")#
+#
+# order#
+tab_order <- as.data.frame(table(data$order[data$similarity>= MM[4]]), stringsAsFactors=F)#
+tab_order <- tab_order[order(tab_order$Freq, decreasing=T),]#
+adj_order <- paste(tab_order[1,1], " ", tab_order$Freq[1], "/", sum(tab_order$Freq), sep="")#
+#
+new_taxonomy <- rbind(new_taxonomy, c(temp_files[i], adj_order, adj_family, adj_genus, adj_species))#
+#
+}
+new_taxonomy <- data.frame(new_taxonomy, stringsAsFactors=F)
+new_taxonomy
+names(new_taxonomy)
+names(new_taxonomy) <- c("BOLD_OTU", "BOLD_Order", "BOLD_Family", "BOLD_Genus", "BOLD_Species")
+data
+# Bold taxonomy#
+#
+Bold_taxonomy <- function(file=NA, folder="", MM=c(0.98, 0.95, 0.90, 0.85)){#
+#
+oldwd <- getwd()#
+setwd(folder)#
+getwd()#
+#cat(file="../log.txt", c("\n","Version v0.1", "\n"), append=T, sep="\n")#
+message("Getting taxonomy via BOLD api.")#
+#
+data <- read.csv(file, stringsAsFactors=F)#
+sequ <- which(!is.na(data$sequ)) # sequences exist#
+#
+dir.create("_BOLD_data", showWarnings = FALSE)#
+setwd("_BOLD_data")#
+dir.create("_stats", showWarnings = FALSE)#
+#
+#based on ID_engine_bp_v2_anna_NovemberR.R#
+# query sequences to bold API#
+#
+# check if data already downloaded#
+#
+sequ_inital_DL <- sequ#
+#
+# skipp if already downloaded!#
+temp_files <- paste(data$ID[sequ_inital_DL], ".csv", sep="")#
+sequ_inital_DL <- sequ_inital_DL[!temp_files%in%list.files("_stats", "csv")]#
+#
+for (i in sequ_inital_DL){#
+#
+hittable <- NULL#
+#
+hittable <- bold_identify(data$sequ[i], db="COX1")#
+#
+if(is.null(hittable[[1]])){ # no hits, check rev comp#
+revcomp <- paste(rev(comp(strsplit(data$sequ[i], "")[[1]])), collapse="")#
+hittable <- bold_identify(revcomp, db="COX1")[[1]]}#
+#
+hittable <- bold_identify_parents(hittable, wide=T)#
+hittable <- hittable[[1]]#
+hittable <- hittable[order(hittable$similarity, decreasing=T),]#
+#
+write.table(hittable, file=paste("_stats/", data$ID[i], ".csv", collapse="", sep=""), sep="\t")#
+message(i)#
+#
+}#
+#
+new_taxonomy <- NULL#
+for (i in 1:length(temp_files)){#
+#
+data <- read.csv(paste("_stats/", temp_files[i], sep=""), sep="\t", stringsAsFactors=F)#
+#
+data <- data.frame("ID"=data$ID, "taxitenti"=data$taxonomicidentification, "similarity"=data$similarity, "order"=data$order, "family"=data$family, "genus"=data$genus, "species"=data$species, stringsAsFactors=F)#
+#data <- data[order(data$similarity, decreasing=T),]#
+#
+data$species[grep("sp.", data$species)] <- data$species[grep("sp.", data$species)] <- NA#
+#
+data$species[!data$similarity>= MM[1]] <- NA#
+data$genus[!data$similarity>= MM[2]] <- NA#
+data$family[!data$similarity>= MM[3]] <- NA#
+data$order[!data$similarity>= MM[4]] <- NA#
+#
+data[,4:7][is.na(data[,4:7])] <- "NA"#
+#
+# species#
+tab_species <- as.data.frame(table(data$species[data$similarity>= MM[1]]), stringsAsFactors=F)#
+tab_species <- tab_species[order(tab_species$Freq, decreasing=T),]#
+adj_species <- paste(tab_species[1,1], " ", tab_species$Freq[1], "/", sum(tab_species$Freq), sep="")#
+#
+# genus#
+tab_genus <- as.data.frame(table(data$genus[data$similarity>= MM[2]]), stringsAsFactors=F)#
+tab_genus <- tab_genus[order(tab_genus$Freq, decreasing=T),]#
+adj_genus <- paste(tab_genus[1,1], " ", tab_genus$Freq[1], "/", sum(tab_genus$Freq), sep="")#
+#
+# family#
+tab_family <- as.data.frame(table(data$family[data$similarity>= MM[3]]), stringsAsFactors=F)#
+tab_family <- tab_family[order(tab_family$Freq, decreasing=T),]#
+adj_family <- paste(tab_family[1,1], " ", tab_family$Freq[1], "/", sum(tab_family$Freq), sep="")#
+#
+# order#
+tab_order <- as.data.frame(table(data$order[data$similarity>= MM[4]]), stringsAsFactors=F)#
+tab_order <- tab_order[order(tab_order$Freq, decreasing=T),]#
+adj_order <- paste(tab_order[1,1], " ", tab_order$Freq[1], "/", sum(tab_order$Freq), sep="")#
+#
+new_taxonomy <- rbind(new_taxonomy, c(temp_files[i], data$similarity[1] , adj_order, adj_family, adj_genus, adj_species))#
+#
+}#
+#
+new_taxonomy <- data.frame(new_taxonomy, stringsAsFactors=F)#
+names(new_taxonomy) <- c("BOLD_OTU", "BOLD_best_match", "BOLD_Order", "BOLD_Family", "BOLD_Genus", "BOLD_Species")#
+setwd(oldwd)#
+}
+new_taxonomy
+data$similarity[1]
+new_taxonomy <- NULL#
+for (i in 1:length(temp_files)){#
+#
+data <- read.csv(paste("_stats/", temp_files[i], sep=""), sep="\t", stringsAsFactors=F)#
+#
+data <- data.frame("ID"=data$ID, "taxitenti"=data$taxonomicidentification, "similarity"=data$similarity, "order"=data$order, "family"=data$family, "genus"=data$genus, "species"=data$species, stringsAsFactors=F)#
+#data <- data[order(data$similarity, decreasing=T),]#
+#
+data$species[grep("sp.", data$species)] <- data$species[grep("sp.", data$species)] <- NA#
+#
+data$species[!data$similarity>= MM[1]] <- NA#
+data$genus[!data$similarity>= MM[2]] <- NA#
+data$family[!data$similarity>= MM[3]] <- NA#
+data$order[!data$similarity>= MM[4]] <- NA#
+#
+data[,4:7][is.na(data[,4:7])] <- "NA"#
+#
+# species#
+tab_species <- as.data.frame(table(data$species[data$similarity>= MM[1]]), stringsAsFactors=F)#
+tab_species <- tab_species[order(tab_species$Freq, decreasing=T),]#
+adj_species <- paste(tab_species[1,1], " ", tab_species$Freq[1], "/", sum(tab_species$Freq), sep="")#
+#
+# genus#
+tab_genus <- as.data.frame(table(data$genus[data$similarity>= MM[2]]), stringsAsFactors=F)#
+tab_genus <- tab_genus[order(tab_genus$Freq, decreasing=T),]#
+adj_genus <- paste(tab_genus[1,1], " ", tab_genus$Freq[1], "/", sum(tab_genus$Freq), sep="")#
+#
+# family#
+tab_family <- as.data.frame(table(data$family[data$similarity>= MM[3]]), stringsAsFactors=F)#
+tab_family <- tab_family[order(tab_family$Freq, decreasing=T),]#
+adj_family <- paste(tab_family[1,1], " ", tab_family$Freq[1], "/", sum(tab_family$Freq), sep="")#
+#
+# order#
+tab_order <- as.data.frame(table(data$order[data$similarity>= MM[4]]), stringsAsFactors=F)#
+tab_order <- tab_order[order(tab_order$Freq, decreasing=T),]#
+adj_order <- paste(tab_order[1,1], " ", tab_order$Freq[1], "/", sum(tab_order$Freq), sep="")#
+#
+new_taxonomy <- rbind(new_taxonomy, c(temp_files[i], data$similarity[1] , adj_order, adj_family, adj_genus, adj_species))#
+#
+}
+new_taxonomy <- data.frame(new_taxonomy, stringsAsFactors=F)
+new_taxonomy
+names(new_taxonomy) <- c("BOLD_OTU", "BOLD_best_match", "BOLD_Order", "BOLD_Family", "BOLD_Genus", "BOLD_Species")
+new_taxonomy
+rbind(new_taxonomy, NA)
+data
+setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP")#
+folder <- "K_U_cluster_otus"#
+file <- "5_OTU_table_0.003_SUB.csv"#
+s <- 1#
+library("JAMP")
+oldwd <- getwd()#
+setwd(folder)#
+getwd()#
+#cat(file="../log.txt", c("\n","Version v0.1", "\n"), append=T, sep="\n")#
+message("Getting taxonomy via BOLD api.")#
+#
+data <- read.csv(file, stringsAsFactors=F)#
+sequ <- which(!is.na(data$sequ)) # sequences exist#
+#
+dir.create("_BOLD_data", showWarnings = FALSE)#
+setwd("_BOLD_data")#
+dir.create("_stats", showWarnings = FALSE)#
+#
+#based on ID_engine_bp_v2_anna_NovemberR.R#
+# query sequences to bold API#
+#
+# check if data already downloaded#
+#
+sequ_inital_DL <- sequ#
+#
+# skipp if already downloaded!#
+temp_files <- paste(data$ID[sequ_inital_DL], ".csv", sep="")#
+sequ_inital_DL <- sequ_inital_DL[!temp_files%in%list.files("_stats", "csv")]#
+#
+for (i in sequ_inital_DL){#
+#
+hittable <- NULL#
+#
+hittable <- bold_identify(data$sequ[i], db="COX1")#
+#
+if(is.null(hittable[[1]])){ # no hits, check rev comp#
+revcomp <- paste(rev(comp(strsplit(data$sequ[i], "")[[1]])), collapse="")#
+hittable <- bold_identify(revcomp, db="COX1")[[1]]}#
+#
+hittable <- bold_identify_parents(hittable, wide=T)#
+hittable <- hittable[[1]]#
+hittable <- hittable[order(hittable$similarity, decreasing=T),]#
+#
+write.table(hittable, file=paste("_stats/", data$ID[i], ".csv", collapse="", sep=""), sep="\t")#
+message(i)#
+#
+}#
+#
+new_taxonomy <- NULL#
+for (i in 1:length(temp_files)){#
+#
+data_bold <- read.csv(paste("_stats/", temp_files[i], sep=""), sep="\t", stringsAsFactors=F)#
+#
+data_bold <- data_bold.frame("ID"=data_bold$ID, "taxitenti"=data_bold$taxonomicidentification, "similarity"=data_bold$similarity, "order"=data_bold$order, "family"=data_bold$family, "genus"=data_bold$genus, "species"=data_bold$species, stringsAsFactors=F)#
+#data_bold <- data_bold[order(data_bold$similarity, decreasing=T),]#
+#
+data_bold$species[grep("sp.", data_bold$species)] <- data_bold$species[grep("sp.", data_bold$species)] <- NA#
+#
+data_bold$species[!data_bold$similarity>= MM[1]] <- NA#
+data_bold$genus[!data_bold$similarity>= MM[2]] <- NA#
+data_bold$family[!data_bold$similarity>= MM[3]] <- NA#
+data_bold$order[!data_bold$similarity>= MM[4]] <- NA#
+#
+data_bold[,4:7][is.na(data_bold[,4:7])] <- "NA"#
+#
+# species#
+tab_species <- as.data_bold.frame(table(data_bold$species[data_bold$similarity>= MM[1]]), stringsAsFactors=F)#
+tab_species <- tab_species[order(tab_species$Freq, decreasing=T),]#
+adj_species <- paste(tab_species[1,1], " ", tab_species$Freq[1], "/", sum(tab_species$Freq), sep="")#
+#
+# genus#
+tab_genus <- as.data_bold.frame(table(data_bold$genus[data_bold$similarity>= MM[2]]), stringsAsFactors=F)#
+tab_genus <- tab_genus[order(tab_genus$Freq, decreasing=T),]#
+adj_genus <- paste(tab_genus[1,1], " ", tab_genus$Freq[1], "/", sum(tab_genus$Freq), sep="")#
+#
+# family#
+tab_family <- as.data_bold.frame(table(data_bold$family[data_bold$similarity>= MM[3]]), stringsAsFactors=F)#
+tab_family <- tab_family[order(tab_family$Freq, decreasing=T),]#
+adj_family <- paste(tab_family[1,1], " ", tab_family$Freq[1], "/", sum(tab_family$Freq), sep="")#
+#
+# order#
+tab_order <- as.data_bold.frame(table(data_bold$order[data_bold$similarity>= MM[4]]), stringsAsFactors=F)#
+tab_order <- tab_order[order(tab_order$Freq, decreasing=T),]#
+adj_order <- paste(tab_order[1,1], " ", tab_order$Freq[1], "/", sum(tab_order$Freq), sep="")#
+#
+new_taxonomy <- rbind(new_taxonomy, c(temp_files[i], data_bold$similarity[1] , adj_order, adj_family, adj_genus, adj_species))#
+#
+}#
+#
+new_taxonomy <- data.frame(new_taxonomy, stringsAsFactors=F)#
+names(new_taxonomy) <- c("BOLD_OTU", "BOLD_best_match", "BOLD_Order", "BOLD_Family", "BOLD_Genus", "BOLD_Species")#
+new_taxonomy <- rbind(new_taxonomy, NA)
+setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP")#
+folder <- "K_U_cluster_otus"#
+file <- "5_OTU_table_0.003_SUB.csv"#
+s <- 1#
+library("JAMP")
+oldwd <- getwd()#
+setwd(folder)#
+getwd()#
+#cat(file="../log.txt", c("\n","Version v0.1", "\n"), append=T, sep="\n")#
+message("Getting taxonomy via BOLD api.")#
+#
+data <- read.csv(file, stringsAsFactors=F)#
+sequ <- which(!is.na(data$sequ)) # sequences exist#
+#
+dir.create("_BOLD_data", showWarnings = FALSE)#
+setwd("_BOLD_data")#
+dir.create("_stats", showWarnings = FALSE)#
+#
+#based on ID_engine_bp_v2_anna_NovemberR.R#
+# query sequences to bold API#
+#
+# check if data already downloaded#
+#
+sequ_inital_DL <- sequ#
+#
+# skipp if already downloaded!#
+temp_files <- paste(data$ID[sequ_inital_DL], ".csv", sep="")#
+sequ_inital_DL <- sequ_inital_DL[!temp_files%in%list.files("_stats", "csv")]#
+#
+for (i in sequ_inital_DL){#
+#
+hittable <- NULL#
+#
+hittable <- bold_identify(data$sequ[i], db="COX1")#
+#
+if(is.null(hittable[[1]])){ # no hits, check rev comp#
+revcomp <- paste(rev(comp(strsplit(data$sequ[i], "")[[1]])), collapse="")#
+hittable <- bold_identify(revcomp, db="COX1")[[1]]}#
+#
+hittable <- bold_identify_parents(hittable, wide=T)#
+hittable <- hittable[[1]]#
+hittable <- hittable[order(hittable$similarity, decreasing=T),]#
+#
+write.table(hittable, file=paste("_stats/", data$ID[i], ".csv", collapse="", sep=""), sep="\t")#
+message(i)#
+#
+}#
+#
+new_taxonomy <- NULL#
+for (i in 1:length(temp_files)){#
+#
+data_bold <- read.csv(paste("_stats/", temp_files[i], sep=""), sep="\t", stringsAsFactors=F)#
+#
+data_bold <- data.frame("ID"=data_bold$ID, "taxitenti"=data_bold$taxonomicidentification, "similarity"=data_bold$similarity, "order"=data_bold$order, "family"=data_bold$family, "genus"=data_bold$genus, "species"=data_bold$species, stringsAsFactors=F)#
+#data_bold <- data_bold[order(data_bold$similarity, decreasing=T),]#
+#
+data_bold$species[grep("sp.", data_bold$species)] <- data_bold$species[grep("sp.", data_bold$species)] <- NA#
+#
+data_bold$species[!data_bold$similarity>= MM[1]] <- NA#
+data_bold$genus[!data_bold$similarity>= MM[2]] <- NA#
+data_bold$family[!data_bold$similarity>= MM[3]] <- NA#
+data_bold$order[!data_bold$similarity>= MM[4]] <- NA#
+#
+data_bold[,4:7][is.na(data_bold[,4:7])] <- "NA"#
+#
+# species#
+tab_species <- as.data.frame(table(data_bold$species[data_bold$similarity>= MM[1]]), stringsAsFactors=F)#
+tab_species <- tab_species[order(tab_species$Freq, decreasing=T),]#
+adj_species <- paste(tab_species[1,1], " ", tab_species$Freq[1], "/", sum(tab_species$Freq), sep="")#
+#
+# genus#
+tab_genus <- as.data.frame(table(data_bold$genus[data_bold$similarity>= MM[2]]), stringsAsFactors=F)#
+tab_genus <- tab_genus[order(tab_genus$Freq, decreasing=T),]#
+adj_genus <- paste(tab_genus[1,1], " ", tab_genus$Freq[1], "/", sum(tab_genus$Freq), sep="")#
+#
+# family#
+tab_family <- as.data.frame(table(data_bold$family[data_bold$similarity>= MM[3]]), stringsAsFactors=F)#
+tab_family <- tab_family[order(tab_family$Freq, decreasing=T),]#
+adj_family <- paste(tab_family[1,1], " ", tab_family$Freq[1], "/", sum(tab_family$Freq), sep="")#
+#
+# order#
+tab_order <- as.data.frame(table(data_bold$order[data_bold$similarity>= MM[4]]), stringsAsFactors=F)#
+tab_order <- tab_order[order(tab_order$Freq, decreasing=T),]#
+adj_order <- paste(tab_order[1,1], " ", tab_order$Freq[1], "/", sum(tab_order$Freq), sep="")#
+#
+new_taxonomy <- rbind(new_taxonomy, c(temp_files[i], data_bold$similarity[1] , adj_order, adj_family, adj_genus, adj_species))#
+#
+}#
+#
+new_taxonomy <- data.frame(new_taxonomy, stringsAsFactors=F)#
+names(new_taxonomy) <- c("BOLD_OTU", "BOLD_best_match", "BOLD_Order", "BOLD_Family", "BOLD_Genus", "BOLD_Species")#
+new_taxonomy <- rbind(new_taxonomy, NA)
+new_taxonomy
+data
+cbind(data, new_taxonomy)
+export <- cbind(data, new_taxonomy)
+export <- cbind(data, new_taxonomy)
+file
+write.csv(export, file=sub(".csv", "_BOLD.csv", file), row.names=F)
+write.csv(export, file=paste("../", sub(".csv", "_BOLD.csv", file), sep=""), row.names=F)
+setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP")#
+folder <- "K_U_cluster_otus"#
+file <- "5_OTU_table_0.003_SUB.csv"#
+s <- 1#
+library("JAMP")
+tab_species <- as.data.frame(table(data_bold$species[data_bold$similarity>= MM[1]]), stringsAsFactors=F)
+tab_species
+i <- 1
+data_bold <- read.csv(paste("_stats/", temp_files[i], sep=""), sep="\t", stringsAsFactors=F)#
+#
+data_bold <- data.frame("ID"=data_bold$ID, "taxitenti"=data_bold$taxonomicidentification, "similarity"=data_bold$similarity, "order"=data_bold$order, "family"=data_bold$family, "genus"=data_bold$genus, "species"=data_bold$species, stringsAsFactors=F)#
+#data_bold <- data_bold[order(data_bold$similarity, decreasing=T),]#
+#
+data_bold$species[grep("sp.", data_bold$species)] <- data_bold$species[grep("sp.", data_bold$species)] <- NA#
+#
+data_bold$species[!data_bold$similarity>= MM[1]] <- NA#
+data_bold$genus[!data_bold$similarity>= MM[2]] <- NA#
+data_bold$family[!data_bold$similarity>= MM[3]] <- NA#
+data_bold$order[!data_bold$similarity>= MM[4]] <- NA#
+#
+data_bold[,4:7][is.na(data_bold[,4:7])] <- "NA"#
+#
+# species#
+tab_species <- as.data.frame(table(data_bold$species[data_bold$similarity>= MM[1]]), stringsAsFactors=F)#
+tab_species <- tab_species[order(tab_species$Freq, decreasing=T),]#
+adj_species <- paste(tab_species[1,1], " ", tab_species$Freq[1], "/", sum(tab_species$Freq), sep="")
+adj_species
+setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP")
+oldwd <- getwd()#
+setwd(folder)#
+getwd()#
+#cat(file="../log.txt", c("\n","Version v0.1", "\n"), append=T, sep="\n")#
+message("Getting taxonomy via BOLD api.")#
+#
+data <- read.csv(file, stringsAsFactors=F)#
+sequ <- which(!is.na(data$sequ)) # sequences exist#
+#
+dir.create("_BOLD_data", showWarnings = FALSE)#
+setwd("_BOLD_data")#
+dir.create("_stats", showWarnings = FALSE)#
+#
+#based on ID_engine_bp_v2_anna_NovemberR.R#
+# query sequences to bold API#
+#
+# check if data already downloaded#
+#
+sequ_inital_DL <- sequ#
+#
+# skipp if already downloaded!#
+temp_files <- paste(data$ID[sequ_inital_DL], ".csv", sep="")#
+sequ_inital_DL <- sequ_inital_DL[!temp_files%in%list.files("_stats", "csv")]#
+#
+for (i in sequ_inital_DL){#
+#
+hittable <- NULL#
+#
+hittable <- bold_identify(data$sequ[i], db="COX1")#
+#
+if(is.null(hittable[[1]])){ # no hits, check rev comp#
+revcomp <- paste(rev(comp(strsplit(data$sequ[i], "")[[1]])), collapse="")#
+hittable <- bold_identify(revcomp, db="COX1")[[1]]}#
+#
+hittable <- bold_identify_parents(hittable, wide=T)#
+hittable <- hittable[[1]]#
+hittable <- hittable[order(hittable$similarity, decreasing=T),]#
+#
+write.table(hittable, file=paste("_stats/", data$ID[i], ".csv", collapse="", sep=""), sep="\t")#
+message(i)
+}
+message(i)
+i
+i <- 1
+data_bold <- read.csv(paste("_stats/", temp_files[i], sep=""), sep="\t", stringsAsFactors=F)#
+#
+data_bold <- data.frame("ID"=data_bold$ID, "taxitenti"=data_bold$taxonomicidentification, "similarity"=data_bold$similarity, "order"=data_bold$order, "family"=data_bold$family, "genus"=data_bold$genus, "species"=data_bold$species, stringsAsFactors=F)#
+#data_bold <- data_bold[order(data_bold$similarity, decreasing=T),]#
+#
+data_bold$species[grep("sp.", data_bold$species)] <- data_bold$species[grep("sp.", data_bold$species)] <- NA#
+#
+data_bold$species[!data_bold$similarity>= MM[1]] <- NA#
+data_bold$genus[!data_bold$similarity>= MM[2]] <- NA#
+data_bold$family[!data_bold$similarity>= MM[3]] <- NA#
+data_bold$order[!data_bold$similarity>= MM[4]] <- NA#
+#
+data_bold[,4:7][is.na(data_bold[,4:7])] <- "NA"#
+#
+# species#
+tab_species <- as.data.frame(table(data_bold$species[data_bold$similarity>= MM[1]]), stringsAsFactors=F)#
+tab_species <- tab_species[order(tab_species$Freq, decreasing=T),]#
+adj_species <- paste(tab_species[1,1], " ", tab_species$Freq[1], "/", sum(tab_species$Freq), sep="")
+adj_species
 setwd("~/Documents/UNI_und_VORLESUNGEN/GitHub/JAMP/")
 install.packages("JAMP", repos = NULL, type="source")

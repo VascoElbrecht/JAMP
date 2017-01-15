@@ -128,22 +128,6 @@ Core(module="Mellofd")#
 Core(module="NEw script")#
 Core(module="this is a test")#
 Core(module="Glumanda!!!")
-# 161111 - JAMP tutorial!#
-setwd("~/Documents/UNI_und_VORLESUNGEN/GitHub/JAMP/") # set the path to the PrimerMinder folder you just downloaded#
-#
-# install the PrimerMiner package icl dependencies#
-install.packages("JAMP", repos = NULL, type="source", dependencies=T)#
-#
-# load the package into R#
-library("JAMP")#
-#
-setwd("Tutorial")#
-# creating configuration file and batch downloading reads#
-Core(module="Hello")#
-Core(module="Mellofd")#
-Core(module="NEw script")#
-Core(module="this is a test")#
-Core(module="Glumanda!!!")
 # Core v0.1#
 #
 Core <- function(files="last", module=NA, letter="A"){#
@@ -185,26 +169,6 @@ library("JAMP")#
 #
 setwd("Tutorial")#
 # creating configuration file and batch downloading reads#
-Core(module="Hello")#
-Core(module="Mellofd")#
-Core(module="NEw script")#
-Core(module="this is a test")#
-Core(module="Glumanda!!!")
-Core(module="Hello")#
-Core(module="Mellofd")#
-Core(module="NEw script")#
-Core(module="this is a test")#
-Core(module="Glumanda!!!")
-Core(module="Hello")#
-Core(module="Mellofd")#
-Core(module="NEw script")#
-Core(module="this is a test")#
-Core(module="Glumanda!!!")
-Core(module="Hello")#
-Core(module="Mellofd")#
-Core(module="NEw script")#
-Core(module="this is a test")#
-Core(module="Glumanda!!!")
 Core(module="Hello")#
 Core(module="Mellofd")#
 Core(module="NEw script")#
@@ -456,7 +420,6 @@ setwd("Tutorial")#
 Core(module="Hello")
 Core(module="Mellofd")
 Core(module="NEw script")
-Core(module="NEw script")
 Core(module="this is a test")
 Core(module="Glumanda!!!")
 ABC
@@ -501,40 +464,6 @@ setwd(new_folder)#
 #
 # write mudule name in log#
 temp <- paste("##########", Sys.time(), "PROCESSING MODULE:", new_folder, sep="\n")#
-#
-cat(file="../log.txt", temp, append=T, sep="\n")#
-#
-if(is.null(step)){temp <- NA} else {temp <- log[step[length(step)]+1]}#
-cat(file="robots.txt", "delete_data=", delete_data, "\n", "last_data=\"", temp, "\"\n", append=T, sep="")#
-warning("Hello World")#
-setwd("../") # remove and implement into modules!!!#
-#
-}
-# Core v0.1#
-#
-Core <- function(files="last", module=NA, letter="A", delete_data=F){#
-#
-if(files=="last"){ # look in log what last action was to load files from data folder!#
-#
-}#
-#
-ABC <- unlist(strsplit("ABCDEFGHIJKLMNOPQRSTUVWXYZ", ""))#
-ABC <- c(ABC, paste("Z", 1:74, sep=""))#
-#
-if(file.exists("log.txt")){#
-log <- readLines("log.txt") # load log#
-step <- which(log=="PROCESSING MODULE:") # detect processing modules#
-} else {step <- NULL}#
-#
-# ADD routine to remove deleted folders from log!#
-new_folder <- paste(ABC[length(step)+1], ") ", module, sep="")#
-dir.create(new_folder)#
-dir.create(paste(new_folder, "_data", sep="/"))#
-dir.create(paste(new_folder, "_stats", sep="/"))#
-setwd(new_folder)#
-#
-# write mudule name in log#
-temp <- paste("##########", Sys.time(), "PROCESSING MODULE:", new_folder,"\n\n" sep="\n")#
 #
 cat(file="../log.txt", temp, append=T, sep="\n")#
 #

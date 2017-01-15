@@ -1,6 +1,6 @@
 # Bold taxonomy
 
-Bold_taxonomy <- function(file=NA, folder=""){
+Bold_taxonomy <- function(file=NA, folder="", MM=c(0.98, 0.95, 0.90, 0.85)){
 
 oldwd <- getwd()
 setwd(folder)
@@ -23,106 +23,83 @@ dir.create("_stats", showWarnings = FALSE)
 sequ_inital_DL <- sequ
 
 # skipp if already downloaded!
-temp <- paste(data$ID[sequ_inital_DL], ".csv", sep="")
-sequ_inital_DL <- sequ_inital_DL[!temp%in%list.files("_stats", "csv")]
+temp_files <- paste(data$ID[sequ_inital_DL], ".csv", sep="")
+sequ_inital_DL <- sequ_inital_DL[!temp_files%in%list.files("_stats", "csv")]
 
 for (i in sequ_inital_DL){
 
 hittable <- NULL
 
 hittable <- bold_identify(data$sequ[i], db="COX1")
-revcomp <- paste(rev(comp(strsplit(data$sequ[i], "")[[1]])), collapse="")
+
 if(is.null(hittable[[1]])){ # no hits, check rev comp
-hittable <- bold_identify(revcomp, db="COX1")[[1]]} #else { # hits FW, add rev com hits
-	#temp <- bold_identify(revcomp, db="COX1")[[1]]
-	#if(!is.null(temp[[1]])){hittable <- rbind(temp[[1]], hittable)}
-#}
-# write bold results in file!
+revcomp <- paste(rev(comp(strsplit(data$sequ[i], "")[[1]])), collapse="")
+hittable <- bold_identify(revcomp, db="COX1")[[1]]}
+
+hittable <- bold_identify_parents(hittable, wide=T)
+hittable <- hittable[[1]]
+hittable <- hittable[order(hittable$similarity, decreasing=T),]
 
 write.table(hittable, file=paste("_stats/", data$ID[i], ".csv", collapse="", sep=""), sep="\t")
 message(i)
 
 }
 
-# download additional taxonomic information from BIN information
-if(!is.null(which(!sequ%in%sequ_inital_DL))){
-message(paste("OTUs Taxonomy identified, thus skipped:\n", paste(which(!sequ%in%sequ_inital_DL), collapse=", "), sep=""))
-}
 
+i <- 1
+new_taxonomy <- NULL
+for (i in 1:length(temp_files)){
 
-# read in hit tables and steal taxonomic information from bold! 
-otu_files <- list.files("_stats", full.names=T, pattern=".csv")
+data_bold <- read.csv(paste("_stats/", temp_files[i], sep=""), sep="\t", stringsAsFactors=F)
 
+data_bold <- data.frame("ID"=data_bold$ID, "taxitenti"=data_bold$taxonomicidentification, "similarity"=data_bold$similarity, "order"=data_bold$order, "family"=data_bold$family, "genus"=data_bold$genus, "species"=data_bold$species, stringsAsFactors=F)
+#data_bold <- data_bold[order(data_bold$similarity, decreasing=T),]
 
-sequ_inital_DL <- sequ
+data_bold$species[grep("sp.", data_bold$species)] <- data_bold$species[grep("sp.", data_bold$species)] <- NA
 
-# skipp if already downloaded!
-temp <- paste("_stats/", data$ID[sequ_inital_DL], ".csv", sep="")
-sequ_inital_DL <- sequ_inital_DL[!temp%in%list.files("_stats", "_hacked.txt")]
-message(paste("hacked taxonomy availabl, thus skipped for OTUs:\n", which(!sequ%in%sequ_inital_DL), sep=""))
+data_bold$species[!data_bold$similarity>= MM[1]] <- NA
+data_bold$genus[!data_bold$similarity>= MM[2]] <- NA
+data_bold$family[!data_bold$similarity>= MM[3]] <- NA
+data_bold$order[!data_bold$similarity>= MM[4]] <- NA
 
+data_bold[,4:7][is.na(data_bold[,4:7])] <- "NA"
 
-for(s in sequ_inital_DL){ # adjust numbers here after crash
+# species
+tab_species <- as.data.frame(table(data_bold$species[data_bold$similarity>= MM[1]]), stringsAsFactors=F)
+tab_species <- tab_species[order(tab_species$Freq, decreasing=T),]
+adj_species <- paste(tab_species[1,1], " ", tab_species$Freq[1], "/", sum(tab_species$Freq), sep="")
 
-if(readLines(otu_files[s])[1]!="\"\""){
+# genus
+tab_genus <- as.data.frame(table(data_bold$genus[data_bold$similarity>= MM[2]]), stringsAsFactors=F)
+tab_genus <- tab_genus[order(tab_genus$Freq, decreasing=T),]
+adj_genus <- paste(tab_genus[1,1], " ", tab_genus$Freq[1], "/", sum(tab_genus$Freq), sep="")
 
-tab <- read.table(otu_files[s], stringsAsFactors=F)
+# family
+tab_family <- as.data.frame(table(data_bold$family[data_bold$similarity>= MM[3]]), stringsAsFactors=F)
+tab_family <- tab_family[order(tab_family$Freq, decreasing=T),]
+adj_family <- paste(tab_family[1,1], " ", tab_family$Freq[1], "/", sum(tab_family$Freq), sep="")
 
-bins <- bold_specimens(ids=tab$ID)# get bin uri
-tab_bins <- merge(tab, bins, by.x="ID", by.y="processid")
-tab_bins <- tab_bins[order(tab_bins$similarity, decreasing=T),]
+# order
+tab_order <- as.data.frame(table(data_bold$order[data_bold$similarity>= MM[4]]), stringsAsFactors=F)
+tab_order <- tab_order[order(tab_order$Freq, decreasing=T),]
+adj_order <- paste(tab_order[1,1], " ", tab_order$Freq[1], "/", sum(tab_order$Freq), sep="")
 
+# to do:
+# Add taxonomic level
+# add taxon name!
 
-IDtab <- data.frame("ID"=tab_bins$ID, "bin_uri"=tab_bins$bin_uri, "similarity"=tab_bins$similarity, "country"=tab_bins$specimen_country, "orig_tax"=tab_bins$taxonomicidentification, "Order"=NA, "Family"=NA, "Subfamily"=NA, "Genus"=NA, "Species"=NA, stringsAsFactors=F)
-
-unique_bins <- unique(IDtab$bin_uri) # get uinique bins
-
-unique_bins <- unique_bins[unique_bins!=" "] # remove missing data?
-
-if (is.na(unique_bins[1])){}else{
-
-for (j in 1:length(unique_bins)){
-html <- htmlParse(paste("http://www.boldsystems.org/index.php/Public_BarcodeCluster?clusteruri=", unique_bins[j], sep=""), encoding="UCS-2LE")
-
-html <- readHTMLTable(html, stringsAsFactors=F) 
-length(html)
-
-if (length(html)==2){
-html <- readLines(paste("http://www.boldsystems.org/index.php/Public_BarcodeCluster?clusteruri=", unique_bins[j], sep=""), encoding="UCS-2LE", warn=F)
-Sys.sleep(1) # adding pause to not get kicked out by bold server
-
-newID <- html[grep("has been synonymized", html)]
-newID <- sub(".*clusteruri=(.*)\".*", "\\1", newID)
-html <- htmlParse(paste("http://www.boldsystems.org/index.php/Public_BarcodeCluster?clusteruri=", newID, sep=""), encoding="UCS-2LE")
-html <- readHTMLTable(html, stringsAsFactors=F) 
+new_taxonomy <- rbind(new_taxonomy, c(temp_files[i] , adj_order, adj_family, adj_genus, adj_species, data_bold$similarity[1]))
 
 }
 
-if(length(html)!=2){
-order <- html[[16]]$V3[which(html[[16]]$V2=="Order:")]
-IDtab[IDtab$bin_uri==unique_bins[j], 6] <- sub(" \\[.*\\]", "", order)
-family <- html[[16]]$V3[which(html[[16]]$V2=="Family:")]
-IDtab[IDtab$bin_uri==unique_bins[j], 7] <- sub(" \\[.*\\]", "", family)
-subfamily <- html[[16]]$V3[which(html[[16]]$V2=="Subfamily:")]
-IDtab[IDtab$bin_uri==unique_bins[j], 8] <- sub(" \\[.*\\]", "", subfamily)
-genus <- html[[16]]$V3[which(html[[16]]$V2=="Genus:")]
-IDtab[IDtab$bin_uri==unique_bins[j], 9] <- sub(" \\[.*\\]", "", genus)
-species <- html[[16]]$V3[which(html[[16]]$V2=="Species:")]
-IDtab[IDtab$bin_uri==unique_bins[j], 10] <- sub(" \\[.*\\]", "", species)
-}
-}
-write.table(IDtab, paste(sub(".csv", "", otu_files[s]), "_hacked.txt", sep="", collapse=""), sep="\t")}
-}
-
-}
+new_taxonomy <- data.frame(new_taxonomy, stringsAsFactors=F)
+names(new_taxonomy) <- c("BOLD_OTU", "BOLD_Order", "BOLD_Family", "BOLD_Genus", "BOLD_Species", "BOLD_best_match")
+new_taxonomy <- rbind(new_taxonomy, NA)
 
 
+export <- cbind(data, new_taxonomy)
 
-
-
-
-
-
+write.csv(export, file=paste("../", sub(".csv", "_BOLD.csv", file), sep=""), row.names=F)
 
 setwd(oldwd)
 }
