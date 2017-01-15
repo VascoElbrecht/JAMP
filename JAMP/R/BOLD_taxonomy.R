@@ -47,11 +47,12 @@ message(i)
 
 }
 
-i <- 41
+i <- 12
+
 new_taxonomy <- NULL
 for (i in 1:length(temp_files)){
 
-if(readLines(paste("_stats/", data$ID[i], ".csv", collapse="", sep=""))[1]=="\"\""){new_taxonomy <- rbind(new_taxonomy, c(temp_files[i] , NA, NA, NA, NA, NA))} else {#no hit
+if(readLines(paste("_stats/", data$ID[i], ".csv", collapse="", sep=""))[1]=="\"\""){new_taxonomy <- rbind(new_taxonomy, c(temp_files[i] , NA, NA, NA, NA, NA, NA, NA))} else {#no hit
 
 
 
@@ -92,17 +93,33 @@ tab_order <- as.data.frame(table(data_bold$order[data_bold$similarity>= MM[4]]),
 tab_order <- tab_order[order(tab_order$Freq, decreasing=T),]
 adj_order <- paste(tab_order[1,1], " ", tab_order$Freq[1], "/", sum(tab_order$Freq), sep="")
 
-# to do:
 # Add taxonomic level
 # add taxon name!
 
-new_taxonomy <- rbind(new_taxonomy, c(temp_files[i] , adj_order, adj_family, adj_genus, adj_species, data_bold$similarity[1]))
+bold_taxonomy <- if(!grepl("NA", adj_species)){
+bold_level <- "Species"
+bold_taxonomy <- tab_species[1,1]
+} else if(!grepl("NA", adj_genus)){
+bold_level <- "Genus"
+bold_taxonomy <- tab_genus[1,1]
+} else if(!grepl("NA", adj_family)){
+bold_level <- "Family"
+bold_taxonomy <- tab_family[1,1]
+} else if(!grepl("NA", adj_order)){
+bold_level <- "Order"
+bold_taxonomy <- tab_order[1,1]}
+
+
+new_taxonomy <- rbind(new_taxonomy, c(temp_files[i] , adj_order, adj_family, adj_genus, adj_species, data_bold$similarity[1], bold_taxonomy, bold_level))
+
+bold_level <- NA
+bold_taxonomy <- NA
 }
 
 } # end loop
 
 new_taxonomy <- data.frame(new_taxonomy, stringsAsFactors=F)
-names(new_taxonomy) <- c("BOLD_OTU", "BOLD_Order", "BOLD_Family", "BOLD_Genus", "BOLD_Species", "BOLD_best_match")
+names(new_taxonomy) <- c("BOLD_OTU", "BOLD_Order", "BOLD_Family", "BOLD_Genus", "BOLD_Species", "BOLD_best_match", "bold_taxon", "bold_level")
 new_taxonomy <- rbind(new_taxonomy, NA)
 
 
