@@ -36,9 +36,11 @@ if(is.null(hittable[[1]])){ # no hits, check rev comp
 revcomp <- paste(rev(comp(strsplit(data$sequ[i], "")[[1]])), collapse="")
 hittable <- bold_identify(revcomp, db="COX1")[[1]]}
 
+if(!is.null(hittable)){ # if matched, get taxonomy
 hittable <- bold_identify_parents(hittable, wide=T)
 hittable <- hittable[[1]]
 hittable <- hittable[order(hittable$similarity, decreasing=T),]
+}
 
 write.table(hittable, file=paste("_stats/", data$ID[i], ".csv", collapse="", sep=""), sep="\t")
 message(i)
