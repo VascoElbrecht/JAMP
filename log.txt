@@ -1,0 +1,227 @@
+##########
+2017-01-16 11:27:56
+PROCESSING MODULE:
+A_U_cluster_otus
+Version v0.1
+
+
+8 files are dereplicated (incl. singletons!):
+1_derep_inc_singletons/01_A_fwhF13_fwhR1C_PE_derep.fasta
+1_derep_inc_singletons/02_A_fwhF10_fwhR12_PE_derep.fasta
+1_derep_inc_singletons/03_B_fwhF12_fwhR1C_PE_derep.fasta
+1_derep_inc_singletons/04_B_fwhF13_fwhR11_PE_derep.fasta
+1_derep_inc_singletons/05_C_fwhF13_fwhR10_PE_derep.fasta
+1_derep_inc_singletons/06_C_fwhF12_fwhR13_PE_derep.fasta
+1_derep_inc_singletons/07_D_fwhF1B_fwhR13_PE_derep.fasta
+1_derep_inc_singletons/08_D_fwhF11_fwhR1C_PE_derep.fasta
+
+
+Denoising 8 files using unoise2 wiht a minimum cluster size of 4:
+01_A_fwhF13_fwhR1C: 297 Amplicons keept
+02_A_fwhF10_fwhR12: 545 Amplicons keept
+03_B_fwhF12_fwhR1C: 372 Amplicons keept
+04_B_fwhF13_fwhR11: 381 Amplicons keept
+05_C_fwhF13_fwhR10: 371 Amplicons keept
+06_C_fwhF12_fwhR13: 491 Amplicons keept
+07_D_fwhF1B_fwhR13: 405 Amplicons keept
+08_D_fwhF11_fwhR1C: 442 Amplicons keept
+
+8 dereplicated files where merged (inc singleotns) into file:
+"_data/2_OTU_clustering/A_all_files_united.fasta"
+Total number of sequences (not dereplicated): 3304
+
+United sequences are dereplicated with minuniquesize = 2 into a total of 1670 unique sequences.
+File prepared for OTU clustering: "B_all_derep_min2.fasta"
+
+Clustering reads from "B_all_derep_min2.fasta
+minuniquesize = 2
+otu_radius_pct = 3
+strand = plus
+Chimeras discarded: 404
+OTUs written: 465 -> file "C_all_derep_min2.fasta"
+
+Comparing 8 files with dereplicated reads (incl. singletons) against OTUs "C_all_derep_min2.fasta" using "usearch_global".
+
+01_A_fwhF13_fwhR1C_PE_derep_unoise2.fasta - 77.8% reads matched
+02_A_fwhF10_fwhR12_PE_derep_unoise2.fasta - 68.6% reads matched
+03_B_fwhF12_fwhR1C_PE_derep_unoise2.fasta - 70.0% reads matched
+04_B_fwhF13_fwhR11_PE_derep_unoise2.fasta - 69.8% reads matched
+05_C_fwhF13_fwhR10_PE_derep_unoise2.fasta - 66.6% reads matched
+06_C_fwhF12_fwhR13_PE_derep_unoise2.fasta - 59.5% reads matched
+07_D_fwhF1B_fwhR13_PE_derep_unoise2.fasta - 70.1% reads matched
+08_D_fwhF11_fwhR1C_PE_derep_unoise2.fasta - 68.4% reads matched
+
+
+OTU table generated (including OTU sequences): 3_Raw_OTU_table.csv
+Discarding OTUs with below 0.003% abundance across at least 1 out of 8 samples.
+Discarded OTUs: 291 out of 465 discarded (62.58%)
+
+
+Remapping 8 files (incl. singletons) against subsetted OTUs "_data/5_subset/5_OTU_sub_0.003.fasta" using "usearch_global".
+
+_data/1_derep_unoise2/01_A_fwhF13_fwhR1C_PE_derep_unoise2.fasta - 57.6% reads matched
+_data/1_derep_unoise2/02_A_fwhF10_fwhR12_PE_derep_unoise2.fasta - 42.8% reads matched
+_data/1_derep_unoise2/03_B_fwhF12_fwhR1C_PE_derep_unoise2.fasta - 48.7% reads matched
+_data/1_derep_unoise2/04_B_fwhF13_fwhR11_PE_derep_unoise2.fasta - 49.6% reads matched
+_data/1_derep_unoise2/05_C_fwhF13_fwhR10_PE_derep_unoise2.fasta - 47.7% reads matched
+_data/1_derep_unoise2/06_C_fwhF12_fwhR13_PE_derep_unoise2.fasta - 35.0% reads matched
+_data/1_derep_unoise2/07_D_fwhF1B_fwhR13_PE_derep_unoise2.fasta - 47.9% reads matched
+_data/1_derep_unoise2/08_D_fwhF11_fwhR1C_PE_derep_unoise2.fasta - 50.2% reads matched
+
+
+Subsetted OTU table generated (0.003% abundance in at least 1 sample): _data/5_subset/
+2017-01-16 11:28:53
+
+Module completed!
+
+##########
+2017-01-16 11:31:13
+PROCESSING MODULE:
+B_U_cluster_otus
+Version v0.1
+
+
+8 files are dereplicated (incl. singletons!):
+1_derep_inc_singletons/01_A_fwhF13_fwhR1C_PE_derep.fasta
+1_derep_inc_singletons/02_A_fwhF10_fwhR12_PE_derep.fasta
+1_derep_inc_singletons/03_B_fwhF12_fwhR1C_PE_derep.fasta
+1_derep_inc_singletons/04_B_fwhF13_fwhR11_PE_derep.fasta
+1_derep_inc_singletons/05_C_fwhF13_fwhR10_PE_derep.fasta
+1_derep_inc_singletons/06_C_fwhF12_fwhR13_PE_derep.fasta
+1_derep_inc_singletons/07_D_fwhF1B_fwhR13_PE_derep.fasta
+1_derep_inc_singletons/08_D_fwhF11_fwhR1C_PE_derep.fasta
+
+
+Denoising 8 files using unoise2 wiht a minimum cluster size of 4:
+01_A_fwhF13_fwhR1C: 297 Amplicons keept
+02_A_fwhF10_fwhR12: 545 Amplicons keept
+03_B_fwhF12_fwhR1C: 372 Amplicons keept
+04_B_fwhF13_fwhR11: 381 Amplicons keept
+05_C_fwhF13_fwhR10: 371 Amplicons keept
+06_C_fwhF12_fwhR13: 491 Amplicons keept
+07_D_fwhF1B_fwhR13: 405 Amplicons keept
+08_D_fwhF11_fwhR1C: 442 Amplicons keept
+
+8 dereplicated files where merged (inc singleotns) into file:
+"_data/2_OTU_clustering/A_all_files_united.fasta"
+Total number of sequences (not dereplicated): 3304
+
+United sequences are dereplicated with minuniquesize = 2 into a total of 1670 unique sequences.
+File prepared for OTU clustering: "B_all_derep_min2.fasta"
+
+Clustering reads from "B_all_derep_min2.fasta
+minuniquesize = 2
+otu_radius_pct = 3
+strand = plus
+Chimeras discarded: 404
+OTUs written: 465 -> file "C_all_derep_min2.fasta"
+
+Comparing 8 files with dereplicated reads (incl. singletons) against OTUs "C_all_derep_min2.fasta" using "usearch_global".
+
+01_A_fwhF13_fwhR1C_PE_derep_unoise2.fasta - 77.7% reads matched
+02_A_fwhF10_fwhR12_PE_derep_unoise2.fasta - 68.6% reads matched
+03_B_fwhF12_fwhR1C_PE_derep_unoise2.fasta - 69.6% reads matched
+04_B_fwhF13_fwhR11_PE_derep_unoise2.fasta - 69.7% reads matched
+05_C_fwhF13_fwhR10_PE_derep_unoise2.fasta - 66.6% reads matched
+06_C_fwhF12_fwhR13_PE_derep_unoise2.fasta - 59.5% reads matched
+07_D_fwhF1B_fwhR13_PE_derep_unoise2.fasta - 70.1% reads matched
+08_D_fwhF11_fwhR1C_PE_derep_unoise2.fasta - 68.1% reads matched
+
+
+OTU table generated (including OTU sequences): 3_Raw_OTU_table.csv
+Discarding OTUs with below 0.003% abundance across at least 1 out of 8 samples.
+Discarded OTUs: 291 out of 465 discarded (62.58%)
+
+
+Remapping 8 files (incl. singletons) against subsetted OTUs "_data/5_subset/5_OTU_sub_0.003.fasta" using "usearch_global".
+
+_data/1_derep_unoise2/01_A_fwhF13_fwhR1C_PE_derep_unoise2.fasta - 57.6% reads matched
+_data/1_derep_unoise2/02_A_fwhF10_fwhR12_PE_derep_unoise2.fasta - 42.8% reads matched
+_data/1_derep_unoise2/03_B_fwhF12_fwhR1C_PE_derep_unoise2.fasta - 48.7% reads matched
+_data/1_derep_unoise2/04_B_fwhF13_fwhR11_PE_derep_unoise2.fasta - 49.6% reads matched
+_data/1_derep_unoise2/05_C_fwhF13_fwhR10_PE_derep_unoise2.fasta - 47.8% reads matched
+_data/1_derep_unoise2/06_C_fwhF12_fwhR13_PE_derep_unoise2.fasta - 35.0% reads matched
+_data/1_derep_unoise2/07_D_fwhF1B_fwhR13_PE_derep_unoise2.fasta - 47.9% reads matched
+_data/1_derep_unoise2/08_D_fwhF11_fwhR1C_PE_derep_unoise2.fasta - 50.2% reads matched
+
+
+Subsetted OTU table generated (0.003% abundance in at least 1 sample): _data/5_subset/
+2017-01-16 11:32:05
+
+Module completed!
+
+##########
+2017-01-16 11:32:25
+PROCESSING MODULE:
+C_U_cluster_otus
+Version v0.1
+
+
+8 files are dereplicated (incl. singletons!):
+1_derep_inc_singletons/01_A_fwhF13_fwhR1C_PE_derep.fasta
+1_derep_inc_singletons/02_A_fwhF10_fwhR12_PE_derep.fasta
+1_derep_inc_singletons/03_B_fwhF12_fwhR1C_PE_derep.fasta
+1_derep_inc_singletons/04_B_fwhF13_fwhR11_PE_derep.fasta
+1_derep_inc_singletons/05_C_fwhF13_fwhR10_PE_derep.fasta
+1_derep_inc_singletons/06_C_fwhF12_fwhR13_PE_derep.fasta
+1_derep_inc_singletons/07_D_fwhF1B_fwhR13_PE_derep.fasta
+1_derep_inc_singletons/08_D_fwhF11_fwhR1C_PE_derep.fasta
+
+
+8 dereplicated files where merged (inc singleotns) into file:
+"_data/2_OTU_clustering/A_all_files_united.fasta"
+Total number of sequences (not dereplicated): 471305
+
+United sequences are dereplicated with minuniquesize = 2 into a total of 317567 unique sequences.
+File prepared for OTU clustering: "B_all_derep_min2.fasta"
+
+Clustering reads from "B_all_derep_min2.fasta
+minuniquesize = 2
+otu_radius_pct = 3
+strand = plus
+Chimeras discarded: 1400
+OTUs written: 1007 -> file "C_all_derep_min2.fasta"
+
+Comparing 8 files with dereplicated reads (incl. singletons) against OTUs "C_all_derep_min2.fasta" using "usearch_global".
+
+01_A_fwhF13_fwhR1C_PE_derep.fasta - 96.6% reads matched
+02_A_fwhF10_fwhR12_PE_derep.fasta - 95.5% reads matched
+03_B_fwhF12_fwhR1C_PE_derep.fasta - 95.6% reads matched
+04_B_fwhF13_fwhR11_PE_derep.fasta - 95.4% reads matched
+05_C_fwhF13_fwhR10_PE_derep.fasta - 94.7% reads matched
+06_C_fwhF12_fwhR13_PE_derep.fasta - 94.8% reads matched
+07_D_fwhF1B_fwhR13_PE_derep.fasta - 96.2% reads matched
+08_D_fwhF11_fwhR1C_PE_derep.fasta - 95.9% reads matched
+
+
+OTU table generated (including OTU sequences): 3_Raw_OTU_table.csv
+Discarding OTUs with below 0.003% abundance across at least 1 out of 8 samples.
+Discarded OTUs: 755 out of 1007 discarded (74.98%)
+
+
+Remapping 8 files (incl. singletons) against subsetted OTUs "_data/5_subset/5_OTU_sub_0.003.fasta" using "usearch_global".
+
+01_A_fwhF13_fwhR1C_PE_derep.fasta - 95.0% reads matched
+02_A_fwhF10_fwhR12_PE_derep.fasta - 93.4% reads matched
+03_B_fwhF12_fwhR1C_PE_derep.fasta - 94.0% reads matched
+04_B_fwhF13_fwhR11_PE_derep.fasta - 93.9% reads matched
+05_C_fwhF13_fwhR10_PE_derep.fasta - 92.8% reads matched
+06_C_fwhF12_fwhR13_PE_derep.fasta - 93.0% reads matched
+07_D_fwhF1B_fwhR13_PE_derep.fasta - 94.4% reads matched
+08_D_fwhF11_fwhR1C_PE_derep.fasta - 94.0% reads matched
+
+
+Subsetted OTU table generated (0.003% abundance in at least 1 sample): _data/5_subset/
+2017-01-16 11:33:50
+
+Module completed!
+
+##########
+2017-01-16 11:34:44
+PROCESSING MODULE:
+D_U_cluster_otus
+Version v0.1
+
+
+8 files are dereplicated (incl. singletons!):
+1_derep_inc_singletons/01_A_fwhF13_fwhR1C_PE_derep.fasta
