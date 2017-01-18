@@ -18,8 +18,11 @@ data <- readLines(file, warn=F)
 OTU_start <- grep("Query: ", data)
 OTU_end <- which("Sampling Sites For Top Hits (>98% Match)"==data)
 
+OTU_end <- sort(c(which("Unable to match any records in the selected database. "==data), OTU_end))
+
 
 for (i in 1:length(OTU_start)){
+
 
 temp <- data[OTU_start[i]:OTU_end[i]]
 
@@ -62,6 +65,10 @@ BOLD_tab <- NULL
 for (i in 1:length(files)){
 temp <- read.csv(paste("OTUs/", files[i], ".csv", sep=""), stringsAsFactors=F)
 
+if(nrow(temp)==0){ # no hits!
+BOLD_tab <- rbind(BOLD_tab, cbind(files[i], temp[1,]))
+
+} else {
 temp[temp==""] <- NA
 
 #remove taxa lower than treshhold!
@@ -142,7 +149,7 @@ exp <- temp[1,]
 exp[3:6] <- NA
 BOLD_tab <- rbind(BOLD_tab, cbind(files[i], temp[1,]))
 }
-
+} # "skipp no hits"
 } # taxa tab loop end
 
 
