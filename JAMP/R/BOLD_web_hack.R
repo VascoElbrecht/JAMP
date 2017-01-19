@@ -60,7 +60,7 @@ files <- sub("Query: (.*) ", "\\1", data[OTU_start])
 
 BOLD_tab <- NULL
 
-
+i <- 5
 
 for (i in 1:length(files)){
 temp <- read.csv(paste("OTUs/", files[i], ".csv", sep=""), stringsAsFactors=F)
@@ -91,7 +91,7 @@ tab_species <- as.data.frame(table(temp$Species[who_sp]), stringsAsFactors=F)
 tab_species <- tab_species[order(tab_species$Freq, decreasing=T),]
 tab_species <- if(is.vector(tab_species)){tab_species[1]} else{tab_species[1,1]}
 
-exp <- temp[which(temp$Species[who_sp]==tab_species)[1],]
+exp <- temp[who_sp[temp$Species[who_sp]==tab_species][1],]
 BOLD_tab <- rbind(BOLD_tab, cbind(files[i], exp))
 END <- F
 }
@@ -105,7 +105,7 @@ tab_genus <- as.data.frame(table(temp$Genus[who_gen]), stringsAsFactors=F)
 tab_genus <- tab_genus[order(tab_genus$Freq, decreasing=T),]
 tab_genus <- if(is.vector(tab_genus)){tab_genus[1]} else{tab_genus[1,1]}
 
-exp <- temp[which(temp$Genus[who_gen]== tab_genus)[1],]
+exp <- temp[who_gen[temp$Genus[who_gen]==tab_genus][1],]
 BOLD_tab <- rbind(BOLD_tab, cbind(files[i], exp))
 END <- F
 
@@ -121,11 +121,10 @@ tab_family <- tab_family[order(tab_family $Freq, decreasing=T),]
 tab_family <- if(is.vector(tab_family)){tab_family[1]} else{tab_family[1,1]}
 
 
-exp <- temp[which(temp$Family[who_fam]== tab_family)[1],]
+exp <- temp[who_fam[temp$Family[who_fam]==tab_family][1],]
 exp[5:6] <- NA
 BOLD_tab <- rbind(BOLD_tab, cbind(files[i], exp))
 END <- F
-
 }
 
 who_ord <- which(temp$Similarity>= MM[4]*100)
@@ -137,8 +136,7 @@ tab_order <- as.data.frame(table(temp$Order[who_ord]), stringsAsFactors=F)
 tab_order <- tab_order[order(tab_order$Freq, decreasing=T),]
 tab_order <- if(is.vector(tab_order)){tab_order[1]} else{tab_order[1,1]}
 
-
-exp <- temp[which(temp$Order[who_ord]== tab_order)[1],]
+exp <- temp[who_ord[temp$Order[who_ord]==tab_order][1],]
 exp[4:6] <- NA
 BOLD_tab <- rbind(BOLD_tab, cbind(files[i], exp))
 END <- F
