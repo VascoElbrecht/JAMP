@@ -45,44 +45,22 @@ cat(file="../log.txt", log , append=T, sep="\n")
 message(log)
 }
 
-# 2 make OTUs!
-# merge all files into one
+dir.create("_data/2_MinMax")
 
-dir.create("_data/2_OTU_clustering")
-
-cmd <- paste(paste(new_names, collapse=" "), "> _data/2_OTU_clustering/A_all_files_united.fasta", collapse=" ")
-A <- system2("cat", cmd, stdout=T, stderr=T)
-
-temp <- paste(length(files), " dereplicated files where merged into file:\n\"_data/2_OTU_clustering/A_all_files_united.fasta\"", sep="")
-message("\n", temp)
-cat(file="../log.txt", "\n", temp, append=T, sep="\n")
-
-
-cat(file="_stats/2_OTU_clustering_log.txt", temp, "", paste("cat", cmd), append=T, sep="\n")
-
-# dereplicate "A_all_files_united.fasta" using Vsearch!
-cmd <- paste("-derep_fulllength _data/2_OTU_clustering/A_all_files_united.fasta -output _data/2_OTU_clustering/B_all_derep.fasta -sizein -sizeout -relabel Uniq", sep="")
-
-A <- system2("vsearch", cmd, stdout=T, stderr=T)
-
-temp <- paste("Total number of sequences (not dereplicated): ", sub(".*nt in (.*) seqs.*", "\\1", A[grep("seqs, min", A)]), "\n", sep="")
+new_names2 <- sub("1_derep", "2_MinMax", new_names)
+# min max sequence length (cutadapt), All files!
+temp <- paste("Filtering ", length(new_names), " files for Min/Max length, keeping only sequences that are ", ampliconLength, " bp long!", sep="")
 message(temp)
-cat(file="../log.txt", temp, append=T, sep="\n")
+cat(file="../log.txt", temp , append=T, sep="\n")
 
-temp <- paste("United sequences are dereplicated + size filtered into a total of ", sub("(.*) unique sequences.*", "\\1", A[grep(" unique sequences", A)]), " unique sequences.", "\n", "File prepared for OTU clustering: B_all_derep.fasta", sep="")
-message(temp)
-cat(file="../log.txt", temp, append=T, sep="\n")
+cmd <- paste(new_names, " -o ", new_names2, " -f \"fasta\" -m ", ampliconLength, " -M ", ampliconLength, sep="")
 
-# derep log
-cat(file="_stats/2_OTU_clustering_log.txt", "\n", A, "", paste("cat", cmd), append=T, sep="\n")
 
-# min max sequence length (cutadapt)
-
-cmd <- paste("_data/2_OTU_clustering/B_all_derep.fasta -o _data/2_OTU_clustering/C_all_derep_MM.fasta -m ", ampliconLength, " -M ", ampliconLength, sep="")
-A <- system2("cutadapt", cmd, stdout=T, stderr=T)
+for (i in 1:length(new_names2)){
+A <- system2("cutadapt", cmd[i], stdout=T, stderr=T)
 getwd()
 
-cat(file="_stats/2_OTU_clustering_log.txt", "\n", A, "", paste("cutadapt", cmd), append=T, sep="\n")
+cat(file="_stats/2_MinMax.txt", "\n", A, "", paste("cutadapt", cmd[i]), append=T, sep="\n")
 
 stats <- A
 reads_in <- stats[grep("Total reads processed:", stats)[1]]
@@ -97,20 +75,59 @@ reads_out <- as.numeric(gsub(",", "", reads_out))
 keep <- round(reads_out/reads_in*100, digits=2)
 
 
-meep <- paste("Filtering ", reads_in, " reads with MIN MAX ", ampliconLength, " bp: keep ", reads_out, " (", keep, "%)", "\nWritten in file: C_all_derep_MM.fasta", sep="")
+meep <- paste("Filtering ", reads_in, " reads with min max ", ampliconLength, " bp: keep ", reads_out, " (", keep, "%)", sep="")
 cat(file="../log.txt", meep, append=T, sep="\n")
 message(meep)
+}
 
+
+
+
+
+
+
+
+
+# 2 make OTUs!
+# merge all files into one
+
+dir.create("_data/3_OTU_clustering")
+
+cmd <- paste(paste(new_names2, collapse=" "), "> _data/3_OTU_clustering/A_all_files_united.fasta", collapse=" ")
+A <- system2("cat", cmd, stdout=T, stderr=T)
+
+temp <- paste(length(files), " dereplicated files where merged into file:\n\"_data/3_OTU_clustering/A_all_files_united.fasta\"", sep="")
+message("\n", temp)
+cat(file="../log.txt", "\n", temp, append=T, sep="\n")
+
+
+cat(file="_stats/3_OTU_clustering_log.txt", temp, "", paste("cat", cmd), append=T, sep="\n")
+
+# dereplicate "A_all_files_united.fasta" using Vsearch!
+cmd <- paste("-derep_fulllength _data/3_OTU_clustering/A_all_files_united.fasta -output _data/3_OTU_clustering/B_all_derep.fasta -sizein -sizeout -relabel Uniq", sep="")
+
+A <- system2("vsearch", cmd, stdout=T, stderr=T)
+
+temp <- paste("Total number of sequences (not dereplicated): ", sub(".*nt in (.*) seqs.*", "\\1", A[grep("seqs, min", A)]), "\n", sep="")
+message(temp)
+cat(file="../log.txt", temp, append=T, sep="\n")
+
+temp <- paste("United sequences are dereplicated + size filtered into a total of ", sub("(.*) unique sequences.*", "\\1", A[grep(" unique sequences", A)]), " unique sequences.", "\n", "File prepared for OTU clustering: B_all_derep.fasta", sep="")
+message(temp)
+cat(file="../log.txt", temp, append=T, sep="\n")
+
+# derep log
+cat(file="_stats/3_OTU_clustering_log.txt", "\n", A, "", paste("cat", cmd), append=T, sep="\n")
 
 
 # Actual OTU clustering of dereplicated filtered file! 
 
-cmd <- paste(" -cluster_otus _data/2_OTU_clustering/C_all_derep_MM.fasta -otus _data/2_OTU_clustering/D_OTUs.fasta -uparseout _data/2_OTU_clustering/D_OTU_table.txt -relabel OTU_ -otu_radius_pct ", otu_radius_pct, " -strand ", strand, sep="")
+cmd <- paste(" -cluster_otus _data/3_OTU_clustering/B_all_derep.fasta -otus _data/3_OTU_clustering/C_OTUs.fasta -uparseout _data/3_OTU_clustering/C_OTU_table.txt -relabel OTU_ -otu_radius_pct ", otu_radius_pct, " -strand ", strand, sep="")
 
 A <- system2("usearch", cmd, stdout=T, stderr=T) # cluster OTUs!
 
 # cluster log
-cat(file="_stats/2_OTU_clustering_log.txt", "\n", paste("usearch", cmd), "", A, "", append=T, sep="\n")
+cat(file="_stats/3_OTU_clustering_log.txt", "\n", paste("usearch", cmd), "", A, "", append=T, sep="\n")
 
 chimeras <- sub(".*OTUs, (.*) chimeras\r", "\\1", A[grep("chimeras\r", A)])
 OTUs <- sub(".*100.0% (.*) OTUs, .* chimeras\r", "\\1", A[grep("chimeras\r", A)])
@@ -119,43 +136,46 @@ temp <- paste("\n", "Clustering reads from\n\"C_all_derep_MM.fasta\" \notu_radiu
 message(temp)
 cat(file="../log.txt", temp, append=T, sep="\n")
 
+# RNENAME
+# compare reads against dereplicated and RENAME sequences!
 
-# compare reads against dereplicated and rename sequences!
+dir.create("_data/4_rename")
 
-dir.create("_data/3_rename")
+DNA_master <- read.fasta("_data/3_OTU_clustering/B_all_derep.fasta", as.string=T, forceDNAtolower=F)
+names(DNA_master) <- sub("(.*);size=.*", "\\1", names(DNA_master))
 
-DNA_master <- read.fasta("_data/2_OTU_clustering/C_all_derep_MM.fasta", as.string=T, forceDNAtolower=F)
+new_names3 <- sub("2_MinMax", "4_rename", new_names2)
 
+for (i in 1:length(new_names2)){
 
+sample <- read.fasta(new_names2[i], as.string=T, forceDNAtolower=F)
 
-names(sample) <- names(DNA_master)[sample%in%DNA_master]
+size <- sub(".*(;size=.*;)", "\\1", names(sample))
+sequnames <- paste(names(DNA_master)[match(sample, DNA_master)], size, sep="")
 
-
-match(sample, DNA_master)
-
-sample <- read.fasta(new_names[i], as.string=T, forceDNAtolower=F)
-
-
-
-
-
-
-
+write.fasta(sample, names= sequnames, new_names3[i])
+}
+message("read renamed! ame as in \"B_all_derep.fasta\"")
+# END renaming
 
 
 # Mapp reads (filtered abund & MM) against OTUs
-blast_names <- sub("1_derep", "4_mapp", new_names)
+blast_names <- sub("4_rename", "5_mapp", new_names3)
 log_names <- sub("_data", "_stats", blast_names)
-dir.create("_data/4_mapp")
+dir.create("_data/5_mapp")
 
-cmd <- paste("-usearch_global ", new_names, " -db ", "\"_data/2_OTU_clustering/D_OTUs.fasta\"", " -strand plus -id ", (100-otu_radius_pct)/100, " -blast6out \"", blast_names, "\" -maxhits 1", sep="")
+cmd <- paste("-usearch_global ", new_names3, " -db ", "\"_data/3_OTU_clustering/C_OTUs.fasta\"", " -strand plus -id ", (100-otu_radius_pct)/100, " -blast6out \"", blast_names, "\" -maxhits 1", sep="")
 
 
 for (i in 1:length(cmd)){
 A <- system2("usearch", cmd[i], stdout=T, stderr=T)
-cat(file= "_stats/3_mapping.txt", paste("vsae rch", cmd[i], sep=""), A, "\n\n\n", append=T, sep="\n")
+cat(file= "_stats/5_mapping.txt", paste("vsearch", cmd[i], sep=""), A, "\n\n\n", append=T, sep="\n")
 }
 message("Reads remapped!")
+
+
+
+
 
 i <- 1
 # subset haplotypes
@@ -165,7 +185,7 @@ data <- read.csv(blast_names[i], header=F, sep="\t")
 
 head(data)
 
-
+data[data$V2=="OTU_20",]
 
 
 }
