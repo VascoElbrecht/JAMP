@@ -174,18 +174,60 @@ cat(file= "_stats/5_mapping.txt", paste("vsearch", cmd[i], sep=""), A, "\n\n\n",
 message("Reads remapped!")
 
 
+# subset haplotypes
 
+dir.create("_data/6_haplotypes") # make folders!
+folder <- paste("_data/6_haplotypes/", sub("_data/5_mapp/(.*)_PE_derep.*", "\\1", blast_names), sep="")
 
 
 i <- 1
-# subset haplotypes
 for (i in 1:length(blast_names)){
 
-data <- read.csv(blast_names[i], header=F, sep="\t")
+data <- read.csv(blast_names[i], header=F, sep="\t", stringsAsFactors=F)
 
-head(data)
+data$V11 <- sub("(.*);size=.*", "\\1", data$V1)
+data$V12 <- as.numeric(sub(".*;size=(.*);", "\\1", data$V1))
 
-data[data$V2=="OTU_20",]
+# subset low abundant OTUs
+temp <- aggregate(data$V12, list(data$V2), "sum")
+OTUsum <- sum(temp$x)
+
+temp <- cbind(temp, "relabund"=temp$x/OTUsum*100)
+
+# subset OTUs to keep!
+temp <- temp[temp$relabund>=minOTUabund,]
+
+data <- data[data$V2%in%temp$Group.1,]
+
+report <- paste("Subsetting OTUs with ", minOTUabund, " % anundance; Keeping ", nrow(temp), " OTUs", sep="")
+message(report)
+
+temp_foldername <- folder[i]
+dir.create(temp_foldername)
+
+#Processing of individual OTUs
+# temp = list of OTUs with high enough abundnace (minOTUabund)
+k <- 1
+for(k in 1:nrow(temp)){
+
+dir.create(paste(temp_foldername, "/", temp$Group.1[k], sep=""), showWarnings=F)
+
+meep <- data[data$V2==temp$Group.1[k],]
+
+# convert to rel abundance
+meep$V12 <- meep$V12/sum(meep$V12)*100
+
+pdf(file= paste(temp_foldername, "/", temp$Group.1[k], "/", temp$Group.1[k], "_plot.pdf", sep=""), width=6, height=6, useDingbats=F)
+plot(meep$V12, ylim=c(0.01, 100), log="y", yaxt="n", ylab="rel. proportions within OTU", main=temp$Group.1[k])
+axis(side=2, at=c(100, 10, 1, 0.1, 0.01, 0.001), labels=c("100", "10", "1", "0.1","0.01", "0.001"), las=2)
+axis(side=2, at=c(seq(20,90,10), seq(2,9,1), seq(0.2,0.9,0.1), seq(0.02,0.09,0.01)), labels=F, las=2, tck=-0.01)
+lines(c(0,nrow(meep)), c(AbundInside, AbundInside), col="Red")
+dev.off()
+
+# make plot, write fasta of sequ to keep
+
+}
+
 
 
 }
