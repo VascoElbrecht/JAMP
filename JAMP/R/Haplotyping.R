@@ -1,6 +1,6 @@
 # Haplotyping v0.1
 
-haplotyping <- function(folder=NA, ampliconLength=NA, minsize=5, minrelsize=0.001, minOTUabund=0.1, AbundInside=1, otu_radius_pct=3, strand="plus"){
+haplotyping <- function(files="latest", ampliconLength=NA, minsize=5, minrelsize=0.001, minOTUabund=0.1, AbundInside=1, otu_radius_pct=3, strand="plus"){
 
 
 
@@ -132,7 +132,7 @@ cat(file="_stats/3_OTU_clustering_log.txt", "\n", paste("usearch", cmd), "", A, 
 chimeras <- sub(".*OTUs, (.*) chimeras\r", "\\1", A[grep("chimeras\r", A)])
 OTUs <- sub(".*100.0% (.*) OTUs, .* chimeras\r", "\\1", A[grep("chimeras\r", A)])
 
-temp <- paste("\n", "Clustering reads from\n\"C_all_derep_MM.fasta\" \notu_radius_pct = ", otu_radius_pct, "\nstrand = ", strand, "\nChimeras discarded: ", chimeras, "\nOTUs written: ", OTUs, " -> file \"", OTU_file, "\"\n", sep="")
+temp <- paste("\n", "Clustering reads from\n\"B_all_derep.fasta\" \notu_radius_pct = ", otu_radius_pct, "\nstrand = ", strand, "\nChimeras discarded: ", chimeras, "\nOTUs written: ", OTUs, " -> file \"C_OTUs.fasta\"\n", sep="")
 message(temp)
 cat(file="../log.txt", temp, append=T, sep="\n")
 
@@ -207,7 +207,7 @@ dir.create(temp_foldername)
 
 #Processing of individual OTUs
 # temp = list of OTUs with high enough abundnace (minOTUabund)
-k <- 1
+k <- 15
 for(k in 1:nrow(temp)){
 
 dir.create(paste(temp_foldername, "/", temp$Group.1[k], sep=""), showWarnings=F)
@@ -217,6 +217,20 @@ meep <- data[data$V2==temp$Group.1[k],]
 # convert to rel abundance
 meep$V12 <- meep$V12/sum(meep$V12)*100
 
+meep <- cbind(meep, "keep"=meep$V12 >= AbundInside)
+
+# write table as csv!
+write.csv(meep, paste(temp_foldername, "/", temp$Group.1[k], "/", temp$Group.1[k], "_tab.csv", sep=""), row.names=F)
+
+
+# save fasta files
+# REDO WITH MATCH!!!!!!
+fasta_save <- DNA_master[names(DNA_master)%in%meep$V11[meep$keep]]
+write.fasta(fasta_save, names=meep$V1[meep$keep],paste(temp_foldername, "/", temp$Group.1[k], "/", temp$Group.1[k], "_sequ.txt", sep=""))
+
+
+
+# make plot!
 pdf(file= paste(temp_foldername, "/", temp$Group.1[k], "/", temp$Group.1[k], "_plot.pdf", sep=""), width=6, height=6, useDingbats=F)
 plot(meep$V12, ylim=c(0.01, 100), log="y", yaxt="n", ylab="rel. proportions within OTU", main=temp$Group.1[k])
 axis(side=2, at=c(100, 10, 1, 0.1, 0.01, 0.001), labels=c("100", "10", "1", "0.1","0.01", "0.001"), las=2)
@@ -228,16 +242,7 @@ dev.off()
 
 }
 
-
-
 }
-
-
-
-
-
-
-
 
 
 
