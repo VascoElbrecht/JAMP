@@ -286,8 +286,9 @@ master_tab <- merge(master_tab, exp, by="V11", all=T)
 
 master_tab <- master_tab[c(1, (1:length(folder))*4-2, (1:length(folder))*4-1, (1:length(folder))*4,(1:length(folder))*4+1)]
 
-OTU <- NULL
+master_tab$V11 <- as.character(master_tab$V11)
 
+OTU <- NULL
 
 for (i in 1:length(folder)){
 keep <- as.vector(!is.na(master_tab[(1+i)]))
@@ -298,9 +299,15 @@ master_tab <- cbind(OTU, master_tab[-c(2:(length(folder)+1))])
 
 
 master_tab <- master_tab[order(as.numeric(sub("OTU_", "", master_tab$OTU)), as.numeric(sub("Uniq", "", master_tab$V11)), decreasing=F),]
+names(master_tab)[2] <- "Haplotypes"
+
+# add sequences to table
+master_tab <- cbind(sort= c(1:nrow(master_tab)), master_tab, "sequ"=unlist(DNA_master[match(master_tab$Haplotypes, names(DNA_master))]))
+
+write.csv(master_tab, file="haplo_tab.csv", row.names=F)
 
 
-write.csv(master_tab, file="haplo_tab.csv")
+write.fasta(DNA_master[match(master_tab$Haplotypes, names(DNA_master))], names=paste(master_tab$OTU, master_tab$Haplotypes, sep="_"), "haplo_fasta.txt")
 
 
 
