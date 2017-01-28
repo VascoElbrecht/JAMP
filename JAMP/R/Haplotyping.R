@@ -174,7 +174,7 @@ cat(file= "_stats/5_mapping.txt", paste("vsearch", cmd[i], sep=""), A, "\n\n\n",
 message("Reads remapped!")
 
 
-# subset haplotypes
+# subset haplotypes + writing individual files
 
 dir.create("_data/6_haplotypes") # make folders!
 folder <- paste("_data/6_haplotypes/", sub("_data/5_mapp/(.*)_PE_derep.*", "\\1", blast_names), sep="")
@@ -224,9 +224,10 @@ write.csv(meep, paste(temp_foldername, "/", temp$Group.1[k], "/", temp$Group.1[k
 
 
 # save fasta files
-# REDO WITH MATCH!!!!!!
 fasta_save <- DNA_master[names(DNA_master)%in%meep$V11[meep$keep]]
-write.fasta(fasta_save, names=meep$V1[meep$keep],paste(temp_foldername, "/", temp$Group.1[k], "/", temp$Group.1[k], "_sequ.txt", sep=""))
+glumanda_names <- meep$V1[meep$keep][match(sub("(.*);size.*", "\\1", meep$V1[meep$keep]), names(fasta_save))] # same sorting
+
+write.fasta(fasta_save, names=glumanda_names, paste(temp_foldername, "/", temp$Group.1[k], "/", temp$Group.1[k], "_sequ.txt", sep=""))
 
 
 
@@ -241,10 +242,35 @@ dev.off()
 # make plot, write fasta of sequ to keep
 
 }
-
 }
 
+# unite haplotypes into single table
 
+master_tab <- data.frame("V11"= "Uniq86")
+
+for (i in 1:length(folder)){
+
+OTUs <- list.files(folder[i])
+
+exp <- NULL # extract individual haplotypes
+for (k in 1:length(OTUs)){
+
+otu <- read.csv(paste(folder[i], "/", OTUs[k], "/", OTUs[k], "_tab.csv", sep=""), stringsAsFactors=F)
+
+# count sequences in OTU
+otu_abund <- sum(as.numeric(sub(".*size=(.*);", "\\1", otu$V1)))
+
+otu <- otu[otu$keep,] # keep high abund haplotypes
+otu <- cbind(otu[c(2, 11, 12)], "indiv"=as.numeric(sub(".*size=(.*);", "\\1", otu$V1)), otu_abund) # extract useful info
+
+exp <- rbind(exp, otu)
+}
+
+# merge exp haplotype tables from samples
+
+master_tab <- merge(master_tab, exp, by="V11", all=T)
+
+}
 
 
 temp <- "\nModule completed!"
