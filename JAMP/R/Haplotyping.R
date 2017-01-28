@@ -244,6 +244,7 @@ dev.off()
 }
 }
 
+i<-1
 # unite haplotypes into single table
 
 master_tab <- data.frame("V11"= "Uniq86")
@@ -266,11 +267,34 @@ otu <- cbind(otu[c(2, 11, 12)], "indiv"=as.numeric(sub(".*size=(.*);", "\\1", ot
 exp <- rbind(exp, otu)
 }
 
+temp_name <- sub("_data/6_haplotypes/", "", folder[i])
+names(exp) <- c(paste(temp_name, "_OTU", sep=""), "V11", paste(temp_name, "_rel", sep=""), paste(temp_name, "_abund", sep=""), paste(temp_name, "_OTU_abund", sep=""))
+
 # merge exp haplotype tables from samples
 
 master_tab <- merge(master_tab, exp, by="V11", all=T)
 
 }
+
+# reorganise haplo table 
+
+master_tab <- master_tab[c(1, (1:length(folder))*4-2, (1:length(folder))*4-1, (1:length(folder))*4,(1:length(folder))*4+1)]
+
+OTU <- NULL
+
+
+for (i in 1:length(folder)){
+keep <- as.vector(!is.na(master_tab[(1+i)]))
+OTU[keep] <- master_tab[keep, (1+i)]
+}
+
+master_tab <- cbind(OTU, master_tab[-c(2:(length(folder)+1))])
+
+
+
+write.csv(master_tab, file="haplo_tab.csv")
+
+
 
 
 temp <- "\nModule completed!"
