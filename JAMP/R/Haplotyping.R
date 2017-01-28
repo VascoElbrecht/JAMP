@@ -174,6 +174,7 @@ cat(file= "_stats/5_mapping.txt", paste("vsearch", cmd[i], sep=""), A, "\n\n\n",
 message("Reads remapped!")
 
 
+# HAPLO TYPING STUFF
 # subset haplotypes + writing individual files
 
 dir.create("_data/6_haplotypes") # make folders!
@@ -219,6 +220,11 @@ meep$V12 <- meep$V12/sum(meep$V12)*100
 
 meep <- cbind(meep, "keep"=meep$V12 >= AbundInside)
 
+#recalculate rel abundance of OTUs left
+meep <- cbind(meep, "keeprel"=meep$V12)
+meep$keeprel[meep$keep] <- round(meep$keeprel[meep$keep]/sum(meep$keeprel[meep$keep])*100, 2)
+meep$keeprel[!meep$keep] <- NA
+
 # write table as csv!
 write.csv(meep, paste(temp_foldername, "/", temp$Group.1[k], "/", temp$Group.1[k], "_tab.csv", sep=""), row.names=F)
 
@@ -262,7 +268,7 @@ otu <- read.csv(paste(folder[i], "/", OTUs[k], "/", OTUs[k], "_tab.csv", sep="")
 otu_abund <- sum(as.numeric(sub(".*size=(.*);", "\\1", otu$V1)))
 
 otu <- otu[otu$keep,] # keep high abund haplotypes
-otu <- cbind(otu[c(2, 11, 12)], "indiv"=as.numeric(sub(".*size=(.*);", "\\1", otu$V1)), otu_abund) # extract useful info
+otu <- cbind(otu[c(2, 11, 14)], "indiv"=as.numeric(sub(".*size=(.*);", "\\1", otu$V1)), otu_abund) # extract useful info
 
 exp <- rbind(exp, otu)
 }
@@ -290,6 +296,8 @@ OTU[keep] <- master_tab[keep, (1+i)]
 
 master_tab <- cbind(OTU, master_tab[-c(2:(length(folder)+1))])
 
+
+master_tab <- master_tab[order(as.numeric(sub("OTU_", "", master_tab$OTU)), as.numeric(sub("Uniq", "", master_tab$V11)), decreasing=F),]
 
 
 write.csv(master_tab, file="haplo_tab.csv")
