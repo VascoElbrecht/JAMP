@@ -7,10 +7,13 @@ Core(module="U_merge_PE")
 cat(file="../log.txt", c("\n","Version v0.1", "\n"), append=T, sep="\n")
 message(" ")
 
-if (files=="latest"){
+if (files[1]=="latest"){
 source("robots.txt")
 file1 <- list.files(paste("../", last_data, "/_data", sep=""), full.names=T, pattern="_r1.txt")
 file2 <- list.files(paste("../", last_data, "/_data", sep=""), full.names=T, pattern="_r2.txt")
+} else {
+file1 <- sub(".*(_data/.*)", "../\\1", file2)
+file2 <- sub(".*(_data/.*)", "../\\1", file2)
 }
 
 merge_identical <- sub(".*_data/(.*)_r1.txt", "\\1", file1)==sub(".*_data/(.*)_r2.txt", "\\1",file2)
@@ -23,8 +26,9 @@ stop()
 
 if(length(grep(".*N_debris_r1.txt", file1))==1){message("N_debris are excluded and not merged.")}
 
-file1 <- file1[-grep(".*N_debris_r1.txt", file1)] # remove debres from list
-file2 <- file2[-grep(".*N_debris_r2.txt", file2)] # remove debres from list
+file1 <- file1[!grepl(".*N_debris_r1.txt", file1)] # remove debres from list
+file2 <- file2[!grepl(".*N_debris_r2.txt", file2)] # remove debres from list
+
 
 message(paste("Starting to PE merge ", length(file1), " samples.", sep=""))
 message(" ")
