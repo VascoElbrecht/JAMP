@@ -1,14 +1,16 @@
+# 170201 jamp pipeline#
+setwd("~/Documents/UNI_und_VORLESUNGEN/GitHub/JAMP/")#
+#
+#install.packages(c("bold", "XML", "seqinr"), dependencies=T)#
+#install.packages("JAMP", repos = NULL, type="source")#
+#install.packages("~/Desktop/bold-master", repos = NULL, type="source")#
+library("JAMP") #v0.17#
+library("bold")#
+library("XML")#
+# base directory#
+setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta SCHMALNAU/0 JAMP 1-20")
+? Demultiplexing_shifted
+setwd("~/Documents/UNI_und_VORLESUNGEN/GitHub/JAMP/")
 install.packages(c("bold", "XML", "seqinr"), dependencies=T)
 install.packages("~/Desktop/bold-master", repos = NULL, type="source")
-library("bold")
-session()
-sessionInfo()
-library("bold")
-sessionInfo()
-setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP")
-library("JAMP") #v0.13
-Bold_taxonomy("5_OTU_table_0.003.csv", "G_U_cluster_otus - TierMix fwh1")
-setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP")
-Bold_taxonomy("5_OTU_table_0.003.csv", "G_U_cluster_otus - TierMix fwh1")
-setwd("~/Documents/UNI_und_VORLESUNGEN/GitHub/JAMP/")
 install.packages("JAMP", repos = NULL, type="source")

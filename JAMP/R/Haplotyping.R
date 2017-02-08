@@ -1,6 +1,6 @@
 # Haplotyping v0.1
 
-haplotyping <- function(files="latest", ampliconLength=NA, minsize=5, minrelsize=0.001, minOTUabund=0.1, AbundInside=1, otu_radius_pct=3, strand="plus"){
+haplotyping <- function(files="latest", ampliconLength=NA, minsize=5, minrelsize=0.001, minOTUabund=0.1, AbundInside=1, otu_radius_pct=3, strand="plus", chimeraRM=T){
 
 
 
@@ -45,6 +45,47 @@ cat(file="../log.txt", log , append=T, sep="\n")
 message(log)
 }
 
+
+# denovo chimera removal
+if(chimeraRM){
+
+dir.create("_data/1_RMchimeras")
+new_names_chim <- sub("1_derep", "1_RMchimeras", new_names)
+new_names_chim <- sub(".txt", "_NOchim.txt", new_names_chim)
+
+temp <- paste("Removing chimeras with uchime2_denovo in ", length(new_names_chim), " files.\nThins might take some time!", sep="")
+message(temp)
+cat(file="../log.txt", temp , append=T, sep="\n")
+
+cmd <- paste(" -uchime2_denovo ", new_names, " -nonchimeras  ", new_names_chim, " -chimeras chimeras.txt", sep="")
+
+
+for (i in 1:length(new_names2)){
+A <- system2("usearch", cmd[i], stdout=T, stderr=T)
+getwd()
+
+cat(file="_stats/1_RMchimeras.txt", "\n", A, "", paste("cutadapt", cmd[i]), append=T, sep="\n")
+
+temp <- sub(".*100.0% (.*) good, (.*) chimeras\r", "good: \\1 chimeras: \\2", A[8])
+
+good <- as.numeric(sub("good: (.*) chimeras: .*", "\\1", temp))
+chimeras <- as.numeric(sub("good: .* chimeras: (.*)", "\\1", temp))
+temp <- paste(sub(".*1_derep/(.*)_PE.*", "\\1", new_names[i]), " - ", temp, " (",round(chimeras/(good+chimeras)*100, 2), "%)", sep="")
+
+message(temp)
+cat(file="../log.txt", temp , append=T, sep="\n")
+}
+
+new_names <- new_names_chim
+new_names2 <- sub("1_RMchimeras", "2_MinMax", new_names)
+
+}
+
+
+# chimera end
+#############
+
+
 dir.create("_data/2_MinMax")
 
 new_names2 <- sub("1_derep", "2_MinMax", new_names)
@@ -79,11 +120,6 @@ meep <- paste("Filtering ", reads_in, " reads with min max ", ampliconLength, " 
 cat(file="../log.txt", meep, append=T, sep="\n")
 message(meep)
 }
-
-
-
-
-
 
 
 
