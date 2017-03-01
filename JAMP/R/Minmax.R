@@ -29,8 +29,8 @@ log_names <- sub(".fast[aq]", ".txt", log_names)
 # NEED TO REDO THIS, for now only plusminus works, no individual scores, no only onesided
 # calculate min max
 if(!is.na(plusminus[1])){
-min <- plusminus[1] - 10
-max <- plusminus[1] + 10
+min <- plusminus[1] - plusminus[2]
+max <- plusminus[1] + plusminus[2]
 }
 
 

@@ -1,6 +1,6 @@
 # Haplotyping v0.1
 
-haplotyping <- function(files="latest", ampliconLength=NA, minsize=5, minrelsize=0.001, minOTUabund=0.1, AbundInside=1, otu_radius_pct=3, strand="plus", chimeraRM=T){
+haplotyping <- function(files="latest", ampliconLength=NA, minsize=5, minrelsize=0.001, minOTUabund=0.1, AbundInside=1, otu_radius_pct=3, strand="plus", chimeraRM=F){
 
 
 
