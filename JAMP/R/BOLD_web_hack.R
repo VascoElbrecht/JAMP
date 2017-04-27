@@ -40,6 +40,7 @@ Status <- temp[whois+2]
 
 whois <- c(which(temp =="Phylum\tClass\tOrder\tFamily\tGenus\tSpecies\tSubspecies\tSimilarity (%)\tStatus")+1, whois[-length(whois)]+4)
 
+
 # Phylum
 Phylum <- temp[whois]
 Class <- temp[whois+2]
@@ -49,7 +50,15 @@ Genus <- temp[whois+8]
 Species <- temp[whois+10]
 Subspecies <- temp[whois+12] # ignore subspecies for now
 
-temp_tab <- data.frame(Phylum, Class, Order, Family, Genus, Species, Similarity, Status)
+temp_tab <- data.frame(Phylum, Class, Order, Family, Genus, Species, Similarity, Status, stringsAsFactors=F)
+
+for (k in 1:nrow(temp_tab)){
+kill <- which(suppressWarnings(as.numeric(as.vector(unlist(temp_tab[k, 1:6]))))>0)[1]
+if(!is.na(kill)){
+temp_tab[k, kill:6] <- ""
+
+}
+}
 
 write.csv(temp_tab, paste("OTUs/", OTU, ".csv", sep=""), row.names=F)
 }

@@ -1,612 +1,3 @@
-otu$V1
-otu <- read.csv(paste(folder[i], "/", OTUs[k], "/", OTUs[k], "_tab.csv", sep=""), stringsAsFactors=F)
-(otu$V1)
-sub("", "", otu$V1)
-sub(".*size=(.*);", "\\1", otu$V1)
-as.numeric(sub(".*size=(.*);", "\\1", otu$V1))
-sum(as.numeric(sub(".*size=(.*);", "\\1", otu$V1)))
-abund
-abund <- sum(as.numeric(sub(".*size=(.*);", "\\1", otu$V1)))
-otu <- otu[otu$keep,]
-otu
-otu[c(2, 11, 12)]
-cbind(otu[c(2, 11, 12)], abund)
-otu <- cbind(otu[c(2, 11, 12)], abund)
-exp <- rbind(exp, otu)
-exp
-exp <- NULL#
-for (k in 1:length(OTUs)){#
-#
-otu <- read.csv(paste(folder[i], "/", OTUs[k], "/", OTUs[k], "_tab.csv", sep=""), stringsAsFactors=F)#
-#
-# count sequences in OTU#
-abund <- sum(as.numeric(sub(".*size=(.*);", "\\1", otu$V1)))#
-#
-otu <- otu[otu$keep,] # keep high abund haplotypes#
-otu <- cbind(otu[c(2, 11, 12)], abund) # extract useful info#
-#
-exp <- rbind(exp, otu)#
-}
-exp
-exp <- NULL
-# merge exp haplotype tables from samples
-otu <- otu[otu$keep,] # keep high abund haplotypes
-otu
-otu <- read.csv(paste(folder[i], "/", OTUs[k], "/", OTUs[k], "_tab.csv", sep=""), stringsAsFactors=F)#
-#
-# count sequences in OTU#
-abund <- sum(as.numeric(sub(".*size=(.*);", "\\1", otu$V1)))
-otu
-as.numeric(sub(".*size=(.*);", "\\1", otu$V1))
-otu <- otu[otu$keep,] # keep high abund haplotypes
-as.numeric(sub(".*size=(.*);", "\\1", otu$V1))
-exp
-otu <- cbind(otu[c(2, 11, 12)], as.numeric(sub(".*size=(.*);", "\\1", otu$V1)), abund) # extract useful info
-OTUs <- list.files(folder[i])#
-#
-exp <- NULL#
-for (k in 1:length(OTUs)){#
-#
-otu <- read.csv(paste(folder[i], "/", OTUs[k], "/", OTUs[k], "_tab.csv", sep=""), stringsAsFactors=F)#
-#
-# count sequences in OTU#
-abund <- sum(as.numeric(sub(".*size=(.*);", "\\1", otu$V1)))#
-#
-otu <- otu[otu$keep,] # keep high abund haplotypes#
-otu <- cbind(otu[c(2, 11, 12)], as.numeric(sub(".*size=(.*);", "\\1", otu$V1)), abund) # extract useful info#
-#
-exp <- rbind(exp, otu)#
-}
-exp
-exp <- NULL#
-for (k in 1:length(OTUs)){#
-#
-otu <- read.csv(paste(folder[i], "/", OTUs[k], "/", OTUs[k], "_tab.csv", sep=""), stringsAsFactors=F)#
-#
-# count sequences in OTU#
-abund <- sum(as.numeric(sub(".*size=(.*);", "\\1", otu$V1)))#
-#
-otu <- otu[otu$keep,] # keep high abund haplotypes#
-otu <- cbind(otu[c(2, 11, 12)], "indiv"=as.numeric(sub(".*size=(.*);", "\\1", otu$V1)), abund) # extract useful info#
-#
-exp <- rbind(exp, otu)#
-}
-exp
-OTUs <- list.files(folder[i])#
-#
-exp <- NULL#
-for (k in 1:length(OTUs)){#
-#
-otu <- read.csv(paste(folder[i], "/", OTUs[k], "/", OTUs[k], "_tab.csv", sep=""), stringsAsFactors=F)#
-#
-# count sequences in OTU#
-otu_abund <- sum(as.numeric(sub(".*size=(.*);", "\\1", otu$V1)))#
-#
-otu <- otu[otu$keep,] # keep high abund haplotypes#
-otu <- cbind(otu[c(2, 11, 12)], "indiv"=as.numeric(sub(".*size=(.*);", "\\1", otu$V1)), abund) # extract useful info#
-#
-exp <- rbind(exp, otu)#
-}
-exp
-master_tab
-master_tab <- NULL
-merge(master_tab)
-merge(master_tab, exp, )
-master_tab <- data.frame("V11"=NULL)
-master_tab
-master_tab <- data.frame("V11"=NA)
-master_tab
-master_tab <- data.frame("V11"= "Uniq86")
-master_tab
-merge(master_tab, exp, by="V11")
-merge(master_tab, exp, by="V11", all=T)
-OTUs <- list.files(folder[i])#
-#
-exp <- NULL # extract individual haplotypes#
-for (k in 1:length(OTUs)){#
-#
-otu <- read.csv(paste(folder[i], "/", OTUs[k], "/", OTUs[k], "_tab.csv", sep=""), stringsAsFactors=F)#
-#
-# count sequences in OTU#
-otu_abund <- sum(as.numeric(sub(".*size=(.*);", "\\1", otu$V1)))#
-#
-otu <- otu[otu$keep,] # keep high abund haplotypes#
-otu <- cbind(otu[c(2, 11, 12)], "indiv"=as.numeric(sub(".*size=(.*);", "\\1", otu$V1)), abund) # extract useful info#
-#
-exp <- rbind(exp, otu)#
-}#
-#
-# merge exp haplotype tables from samples#
-#
-master_tab <- merge(master_tab, exp, by="V11", all=T)
-master_tab
-exp <- NULL # extract individual haplotypes#
-for (k in 1:length(OTUs)){#
-#
-otu <- read.csv(paste(folder[i], "/", OTUs[k], "/", OTUs[k], "_tab.csv", sep=""), stringsAsFactors=F)#
-#
-# count sequences in OTU#
-otu_abund <- sum(as.numeric(sub(".*size=(.*);", "\\1", otu$V1)))#
-#
-otu <- otu[otu$keep,] # keep high abund haplotypes#
-otu <- cbind(otu[c(2, 11, 12)], "indiv"=as.numeric(sub(".*size=(.*);", "\\1", otu$V1)), abund) # extract useful info#
-#
-exp <- rbind(exp, otu)#
-}
-exp
-exp <- NULL # extract individual haplotypes#
-for (k in 1:length(OTUs)){#
-#
-otu <- read.csv(paste(folder[i], "/", OTUs[k], "/", OTUs[k], "_tab.csv", sep=""), stringsAsFactors=F)#
-#
-# count sequences in OTU#
-otu_abund <- sum(as.numeric(sub(".*size=(.*);", "\\1", otu$V1)))#
-#
-otu <- otu[otu$keep,] # keep high abund haplotypes#
-otu <- cbind(otu[c(2, 11, 12)], "indiv"=as.numeric(sub(".*size=(.*);", "\\1", otu$V1)), otu_abund) # extract useful info#
-#
-exp <- rbind(exp, otu)#
-}
-exp
-OTUs <- list.files(folder[i])#
-#
-exp <- NULL # extract individual haplotypes#
-for (k in 1:length(OTUs)){#
-#
-otu <- read.csv(paste(folder[i], "/", OTUs[k], "/", OTUs[k], "_tab.csv", sep=""), stringsAsFactors=F)#
-#
-# count sequences in OTU#
-otu_abund <- sum(as.numeric(sub(".*size=(.*);", "\\1", otu$V1)))#
-#
-otu <- otu[otu$keep,] # keep high abund haplotypes#
-otu <- cbind(otu[c(2, 11, 12)], "indiv"=as.numeric(sub(".*size=(.*);", "\\1", otu$V1)), otu_abund) # extract useful info#
-#
-exp <- rbind(exp, otu)#
-}#
-#
-# merge exp haplotype tables from samples#
-#
-master_tab <- merge(master_tab, exp, by="V11", all=T)
-master_tab
-master_tab <- data.frame("V11"= "Uniq86")#
-#
-for (i in 1:length(folder)){#
-#
-OTUs <- list.files(folder[i])#
-#
-exp <- NULL # extract individual haplotypes#
-for (k in 1:length(OTUs)){#
-#
-otu <- read.csv(paste(folder[i], "/", OTUs[k], "/", OTUs[k], "_tab.csv", sep=""), stringsAsFactors=F)#
-#
-# count sequences in OTU#
-otu_abund <- sum(as.numeric(sub(".*size=(.*);", "\\1", otu$V1)))#
-#
-otu <- otu[otu$keep,] # keep high abund haplotypes#
-otu <- cbind(otu[c(2, 11, 12)], "indiv"=as.numeric(sub(".*size=(.*);", "\\1", otu$V1)), otu_abund) # extract useful info#
-#
-exp <- rbind(exp, otu)#
-}#
-#
-# merge exp haplotype tables from samples#
-#
-master_tab <- merge(master_tab, exp, by="V11", all=T)#
-#
-}
-master_tab
-master_tab <- data.frame("V11"= "Uniq86")
-i<-1
-OTUs <- list.files(folder[i])#
-#
-exp <- NULL # extract individual haplotypes#
-for (k in 1:length(OTUs)){#
-#
-otu <- read.csv(paste(folder[i], "/", OTUs[k], "/", OTUs[k], "_tab.csv", sep=""), stringsAsFactors=F)#
-#
-# count sequences in OTU#
-otu_abund <- sum(as.numeric(sub(".*size=(.*);", "\\1", otu$V1)))#
-#
-otu <- otu[otu$keep,] # keep high abund haplotypes#
-otu <- cbind(otu[c(2, 11, 12)], "indiv"=as.numeric(sub(".*size=(.*);", "\\1", otu$V1)), otu_abund) # extract useful info#
-#
-exp <- rbind(exp, otu)#
-}#
-#
-# merge exp haplotype tables from samples#
-#
-master_tab <- merge(master_tab, exp, by="V11", all=T)
-master_tab
-folder
-exp
-names(exp)
-temp_name
-folder[i]
-temp_name <- sub("_data/6_haplotypes/", "", folder[i])
-temp_name
-names(exp)
-names(exp) <- c(paste(temp_name, "OTU", sep=""), "V11", paste(temp_name, "rel", sep=""), paste(temp_name, "abund", sep=""), paste(temp_name, "OTU_abund", sep=""))
-exp
-master_tab <- data.frame("V11"= "Uniq86")#
-#
-for (i in 1:length(folder)){#
-#
-OTUs <- list.files(folder[i])#
-#
-exp <- NULL # extract individual haplotypes#
-for (k in 1:length(OTUs)){#
-#
-otu <- read.csv(paste(folder[i], "/", OTUs[k], "/", OTUs[k], "_tab.csv", sep=""), stringsAsFactors=F)#
-#
-# count sequences in OTU#
-otu_abund <- sum(as.numeric(sub(".*size=(.*);", "\\1", otu$V1)))#
-#
-otu <- otu[otu$keep,] # keep high abund haplotypes#
-otu <- cbind(otu[c(2, 11, 12)], "indiv"=as.numeric(sub(".*size=(.*);", "\\1", otu$V1)), otu_abund) # extract useful info#
-#
-exp <- rbind(exp, otu)#
-temp_name <- sub("_data/6_haplotypes/", "", folder[i])#
-names(exp) <- c(paste(temp_name, "OTU", sep=""), "V11", paste(temp_name, "rel", sep=""), paste(temp_name, "abund", sep=""), paste(temp_name, "OTU_abund", sep=""))#
-}#
-#
-# merge exp haplotype tables from samples#
-#
-master_tab <- merge(master_tab, exp, by="V11", all=T)#
-#
-}
-master_tab
-names(exp) <- c(paste(temp_name, "OTU", sep=""), "V11", paste(temp_name, "rel", sep=""), paste(temp_name, "abund", sep=""), paste(temp_name, "OTU_abund", sep=""))
-exp
-exp <- NULL # extract individual haplotypes#
-for (k in 1:length(OTUs)){#
-#
-otu <- read.csv(paste(folder[i], "/", OTUs[k], "/", OTUs[k], "_tab.csv", sep=""), stringsAsFactors=F)#
-#
-# count sequences in OTU#
-otu_abund <- sum(as.numeric(sub(".*size=(.*);", "\\1", otu$V1)))#
-#
-otu <- otu[otu$keep,] # keep high abund haplotypes#
-otu <- cbind(otu[c(2, 11, 12)], "indiv"=as.numeric(sub(".*size=(.*);", "\\1", otu$V1)), otu_abund) # extract useful info#
-#
-exp <- rbind(exp, otu)#
-}#
-#
-temp_name <- sub("_data/6_haplotypes/", "", folder[i])#
-names(exp) <- c(paste(temp_name, "OTU", sep=""), "V11", paste(temp_name, "rel", sep=""), paste(temp_name, "abund", sep=""), paste(temp_name, "OTU_abund", sep=""))
-exp
-master_tab <- data.frame("V11"= "Uniq86")#
-#
-for (i in 1:length(folder)){#
-#
-OTUs <- list.files(folder[i])#
-#
-exp <- NULL # extract individual haplotypes#
-for (k in 1:length(OTUs)){#
-#
-otu <- read.csv(paste(folder[i], "/", OTUs[k], "/", OTUs[k], "_tab.csv", sep=""), stringsAsFactors=F)#
-#
-# count sequences in OTU#
-otu_abund <- sum(as.numeric(sub(".*size=(.*);", "\\1", otu$V1)))#
-#
-otu <- otu[otu$keep,] # keep high abund haplotypes#
-otu <- cbind(otu[c(2, 11, 12)], "indiv"=as.numeric(sub(".*size=(.*);", "\\1", otu$V1)), otu_abund) # extract useful info#
-#
-exp <- rbind(exp, otu)#
-}#
-#
-temp_name <- sub("_data/6_haplotypes/", "", folder[i])#
-names(exp) <- c(paste(temp_name, "OTU", sep=""), "V11", paste(temp_name, "rel", sep=""), paste(temp_name, "abund", sep=""), paste(temp_name, "OTU_abund", sep=""))#
-#
-# merge exp haplotype tables from samples#
-#
-master_tab <- merge(master_tab, exp, by="V11", all=T)#
-#
-}
-head(master_tab)
-write.csv(master_tab, file="haplo_tab.csv")
-cbind(names(master_tab))
-length(folder)
-1:length(folder)
-(1:length(folder))*4
-(1:length(folder))*4-2
-huhu <- master_tab[c(1, (1:length(folder))*4-2, (1:length(folder))*4-1, (1:length(folder))*4)]
-head(huhu)
-1:length(folder))*4
-(1:length(folder))*4)
-(1:length(folder))*4
-cbind(names(master_tab))
-huhu <- master_tab[c(1, (1:length(folder))*4-2, (1:length(folder))*4-1, (1:length(folder))*4,(1:length(folder))*4+1)]
-head(huhu)
-master_tab <- master_tab[c(1, (1:length(folder))*4-2, (1:length(folder))*4-1, (1:length(folder))*4,(1:length(folder))*4+1)]
-master_tab <- data.frame("V11"= "Uniq86")#
-#
-for (i in 1:length(folder)){#
-#
-OTUs <- list.files(folder[i])#
-#
-exp <- NULL # extract individual haplotypes#
-for (k in 1:length(OTUs)){#
-#
-otu <- read.csv(paste(folder[i], "/", OTUs[k], "/", OTUs[k], "_tab.csv", sep=""), stringsAsFactors=F)#
-#
-# count sequences in OTU#
-otu_abund <- sum(as.numeric(sub(".*size=(.*);", "\\1", otu$V1)))#
-#
-otu <- otu[otu$keep,] # keep high abund haplotypes#
-otu <- cbind(otu[c(2, 11, 12)], "indiv"=as.numeric(sub(".*size=(.*);", "\\1", otu$V1)), otu_abund) # extract useful info#
-#
-exp <- rbind(exp, otu)#
-}#
-#
-temp_name <- sub("_data/6_haplotypes/", "", folder[i])#
-names(exp) <- c(paste(temp_name, "_OTU", sep=""), "V11", paste(temp_name, "_rel", sep=""), paste(temp_name, "_abund", sep=""), paste(temp_name, "_OTU_abund", sep=""))#
-#
-# merge exp haplotype tables from samples#
-#
-master_tab <- merge(master_tab, exp, by="V11", all=T)#
-#
-}#
-#
-# reorganise haplo table #
-#
-master_tab <- master_tab[c(1, (1:length(folder))*4-2, (1:length(folder))*4-1, (1:length(folder))*4,(1:length(folder))*4+1)]
-write.csv(master_tab, file="haplo_tab.csv")
-OTU
-OTU <- NULL
-}
-OTU
-i<- 1
-master_tab[(1+i)]
-is.na(master_tab[(1+i)])
-keep <- !is.na(master_tab[(1+i)])
-keep
-keep <- unlist(!is.na(master_tab[(1+i)]))
-keep
-keep <- as.vector(!is.na(master_tab[(1+i)]))
-keep
-master_tab[(1+i),keep]
-(1+i)
-master_tab[keep, (1+i)]
-for (i in 1:length(folder)){#
-keep <- as.vector(!is.na(master_tab[(1+i)]))#
-OTU[keep] <- master_tab[keep, (1+i)]#
-}
-OTU
-master_tab <- cbind(OTU, master_tab)
-write.csv(master_tab, file="haplo_tab.csv")
-i<-1#
-# unite haplotypes into single table#
-#
-master_tab <- data.frame("V11"= "Uniq86")#
-#
-for (i in 1:length(folder)){#
-#
-OTUs <- list.files(folder[i])#
-#
-exp <- NULL # extract individual haplotypes#
-for (k in 1:length(OTUs)){#
-#
-otu <- read.csv(paste(folder[i], "/", OTUs[k], "/", OTUs[k], "_tab.csv", sep=""), stringsAsFactors=F)#
-#
-# count sequences in OTU#
-otu_abund <- sum(as.numeric(sub(".*size=(.*);", "\\1", otu$V1)))#
-#
-otu <- otu[otu$keep,] # keep high abund haplotypes#
-otu <- cbind(otu[c(2, 11, 12)], "indiv"=as.numeric(sub(".*size=(.*);", "\\1", otu$V1)), otu_abund) # extract useful info#
-#
-exp <- rbind(exp, otu)#
-}#
-#
-temp_name <- sub("_data/6_haplotypes/", "", folder[i])#
-names(exp) <- c(paste(temp_name, "_OTU", sep=""), "V11", paste(temp_name, "_rel", sep=""), paste(temp_name, "_abund", sep=""), paste(temp_name, "_OTU_abund", sep=""))#
-#
-# merge exp haplotype tables from samples#
-#
-master_tab <- merge(master_tab, exp, by="V11", all=T)#
-#
-}#
-#
-# reorganise haplo table #
-#
-master_tab <- master_tab[c(1, (1:length(folder))*4-2, (1:length(folder))*4-1, (1:length(folder))*4,(1:length(folder))*4+1)]#
-#
-OTU <- NULL#
-for (i in 1:length(folder)){#
-keep <- as.vector(!is.na(master_tab[(1+i)]))#
-OTU[keep] <- master_tab[keep, (1+i)]#
-}
-cbind(master_tab)
-cbind(names(master_tab))
-2:(length(folder)+1)
-master_tab <- cbind(OTU, master_tab[-c(2:(length(folder)+1))])
-cbind(names(master_tab))
-write.csv(master_tab, file="haplo_tab.csv")
-master_tab
-head(master_tab)
-sub("OTU_", "", master_tab$OTU)
-order(as.numeric(sub("OTU_", "", master_tab$OTU)))
-head(master_tab)
-as.numeric(sub("Uniq", "", master_tab$V11))
-order(as.numeric(sub("OTU_", "", master_tab$OTU)), as.numeric(sub("Uniq", "", master_tab$V11)), decreasing=T)
-?order
-master_tab <- master_tab[order(as.numeric(sub("OTU_", "", master_tab$OTU)), as.numeric(sub("Uniq", "", master_tab$V11)), decreasing=T)]
-master_tab <- master_tab[order(as.numeric(sub("OTU_", "", master_tab$OTU)), as.numeric(sub("Uniq", "", master_tab$V11)), decreasing=T),]
-head(master_tab)
-master_tab <- data.frame("V11"= "Uniq86")#
-#
-for (i in 1:length(folder)){#
-#
-OTUs <- list.files(folder[i])#
-#
-exp <- NULL # extract individual haplotypes#
-for (k in 1:length(OTUs)){#
-#
-otu <- read.csv(paste(folder[i], "/", OTUs[k], "/", OTUs[k], "_tab.csv", sep=""), stringsAsFactors=F)#
-#
-# count sequences in OTU#
-otu_abund <- sum(as.numeric(sub(".*size=(.*);", "\\1", otu$V1)))#
-#
-otu <- otu[otu$keep,] # keep high abund haplotypes#
-otu <- cbind(otu[c(2, 11, 12)], "indiv"=as.numeric(sub(".*size=(.*);", "\\1", otu$V1)), otu_abund) # extract useful info#
-#
-exp <- rbind(exp, otu)#
-}#
-#
-temp_name <- sub("_data/6_haplotypes/", "", folder[i])#
-names(exp) <- c(paste(temp_name, "_OTU", sep=""), "V11", paste(temp_name, "_rel", sep=""), paste(temp_name, "_abund", sep=""), paste(temp_name, "_OTU_abund", sep=""))#
-#
-# merge exp haplotype tables from samples#
-#
-master_tab <- merge(master_tab, exp, by="V11", all=T)#
-#
-}#
-#
-# reorganise haplo table #
-#
-master_tab <- master_tab[c(1, (1:length(folder))*4-2, (1:length(folder))*4-1, (1:length(folder))*4,(1:length(folder))*4+1)]#
-#
-OTU <- NULL#
-for (i in 1:length(folder)){#
-keep <- as.vector(!is.na(master_tab[(1+i)]))#
-OTU[keep] <- master_tab[keep, (1+i)]#
-}#
-#
-master_tab <- cbind(OTU, master_tab[-c(2:(length(folder)+1))])
-master_tab[order(as.numeric(sub("OTU_", "", master_tab$OTU)), as.numeric(sub("Uniq", "", master_tab$V11)), decreasing=T)]
-master_tab[, order(as.numeric(sub("OTU_", "", master_tab$OTU)), as.numeric(sub("Uniq", "", master_tab$V11)), decreasing=T)]
-master_tab[order(as.numeric(sub("OTU_", "", master_tab$OTU)), as.numeric(sub("Uniq", "", master_tab$V11)), decreasing=T),]
-master_tab[order(as.numeric(sub("OTU_", "", master_tab$OTU)), as.numeric(sub("Uniq", "", master_tab$V11)), decreasing=F),]
-master_tab <- master_tab[order(as.numeric(sub("OTU_", "", master_tab$OTU)), as.numeric(sub("Uniq", "", master_tab$V11)), decreasing=F),]
-head(master_tab)
-#recalculate rel abundance of OTUs left
-meep$V12
-meep$V12[meep$keep]
-meep$V12[meep$keep]/meep$V12[meep$keep]*100
-meep$V12[meep$keep] <- round(meep$V12[meep$keep]/meep$V12[meep$keep]*100, 2)
-meep$V12[!meep$keep]
-# HAPLO TYPING STUFF#
-# subset haplotypes + writing individual files#
-#
-dir.create("_data/6_haplotypes") # make folders!#
-folder <- paste("_data/6_haplotypes/", sub("_data/5_mapp/(.*)_PE_derep.*", "\\1", blast_names), sep="")#
-i <- 1#
-for (i in 1:length(blast_names)){#
-#
-data <- read.csv(blast_names[i], header=F, sep="\t", stringsAsFactors=F)#
-#
-data$V11 <- sub("(.*);size=.*", "\\1", data$V1)#
-data$V12 <- as.numeric(sub(".*;size=(.*);", "\\1", data$V1))#
-#
-# subset low abundant OTUs#
-temp <- aggregate(data$V12, list(data$V2), "sum")#
-OTUsum <- sum(temp$x)#
-#
-temp <- cbind(temp, "relabund"=temp$x/OTUsum*100)#
-#
-# subset OTUs to keep!#
-temp <- temp[temp$relabund>=minOTUabund,]#
-#
-data <- data[data$V2%in%temp$Group.1,]#
-#
-report <- paste("Subsetting OTUs with ", minOTUabund, " % anundance; Keeping ", nrow(temp), " OTUs", sep="")#
-message(report)#
-#
-temp_foldername <- folder[i]#
-dir.create(temp_foldername)#
-#
-#Processing of individual OTUs#
-# temp = list of OTUs with high enough abundnace (minOTUabund)#
-k <- 15#
-for(k in 1:nrow(temp)){#
-#
-dir.create(paste(temp_foldername, "/", temp$Group.1[k], sep=""), showWarnings=F)#
-#
-meep <- data[data$V2==temp$Group.1[k],]#
-#
-# convert to rel abundance#
-meep$V12 <- meep$V12/sum(meep$V12)*100#
-#
-meep <- cbind(meep, "keep"=meep$V12 >= AbundInside)#
-#
-#recalculate rel abundance of OTUs left#
-#
-meep$V12[meep$keep] <- round(meep$V12[meep$keep]/meep$V12[meep$keep]*100, 2)#
-#
-# write table as csv!#
-write.csv(meep, paste(temp_foldername, "/", temp$Group.1[k], "/", temp$Group.1[k], "_tab.csv", sep=""), row.names=F)#
-# save fasta files#
-fasta_save <- DNA_master[names(DNA_master)%in%meep$V11[meep$keep]]#
-glumanda_names <- meep$V1[meep$keep][match(sub("(.*);size.*", "\\1", meep$V1[meep$keep]), names(fasta_save))] # same sorting#
-#
-write.fasta(fasta_save, names=glumanda_names, paste(temp_foldername, "/", temp$Group.1[k], "/", temp$Group.1[k], "_sequ.txt", sep=""))#
-# make plot!#
-pdf(file= paste(temp_foldername, "/", temp$Group.1[k], "/", temp$Group.1[k], "_plot.pdf", sep=""), width=6, height=6, useDingbats=F)#
-plot(meep$V12, ylim=c(0.01, 100), log="y", yaxt="n", ylab="rel. proportions within OTU", main=temp$Group.1[k])#
-axis(side=2, at=c(100, 10, 1, 0.1, 0.01, 0.001), labels=c("100", "10", "1", "0.1","0.01", "0.001"), las=2)#
-axis(side=2, at=c(seq(20,90,10), seq(2,9,1), seq(0.2,0.9,0.1), seq(0.02,0.09,0.01)), labels=F, las=2, tck=-0.01)#
-lines(c(0,nrow(meep)), c(AbundInside, AbundInside), col="Red")#
-dev.off()#
-#
-# make plot, write fasta of sequ to keep#
-#
-}#
-}#
-#
-i<-1#
-# unite haplotypes into single table#
-#
-master_tab <- data.frame("V11"= "Uniq86")#
-#
-for (i in 1:length(folder)){#
-#
-OTUs <- list.files(folder[i])#
-#
-exp <- NULL # extract individual haplotypes#
-for (k in 1:length(OTUs)){#
-#
-otu <- read.csv(paste(folder[i], "/", OTUs[k], "/", OTUs[k], "_tab.csv", sep=""), stringsAsFactors=F)#
-#
-# count sequences in OTU#
-otu_abund <- sum(as.numeric(sub(".*size=(.*);", "\\1", otu$V1)))#
-#
-otu <- otu[otu$keep,] # keep high abund haplotypes#
-otu <- cbind(otu[c(2, 11, 12)], "indiv"=as.numeric(sub(".*size=(.*);", "\\1", otu$V1)), otu_abund) # extract useful info#
-#
-exp <- rbind(exp, otu)#
-}#
-#
-temp_name <- sub("_data/6_haplotypes/", "", folder[i])#
-names(exp) <- c(paste(temp_name, "_OTU", sep=""), "V11", paste(temp_name, "_rel", sep=""), paste(temp_name, "_abund", sep=""), paste(temp_name, "_OTU_abund", sep=""))#
-#
-# merge exp haplotype tables from samples#
-#
-master_tab <- merge(master_tab, exp, by="V11", all=T)#
-#
-}#
-#
-# reorganise haplo table #
-#
-master_tab <- master_tab[c(1, (1:length(folder))*4-2, (1:length(folder))*4-1, (1:length(folder))*4,(1:length(folder))*4+1)]#
-#
-OTU <- NULL#
-for (i in 1:length(folder)){#
-keep <- as.vector(!is.na(master_tab[(1+i)]))#
-OTU[keep] <- master_tab[keep, (1+i)]#
-}#
-#
-master_tab <- cbind(OTU, master_tab[-c(2:(length(folder)+1))])#
-master_tab <- master_tab[order(as.numeric(sub("OTU_", "", master_tab$OTU)), as.numeric(sub("Uniq", "", master_tab$V11)), decreasing=F),]#
-write.csv(master_tab, file="haplo_tab.csv")
-round(meep$V12[meep$keep]/meep$V12[meep$keep]*100, 2)
-meep
-cbind(meep, "keeprel"=meep$V12)
-meep$keeprel[meep$keep]
-meep <- cbind(meep, "keeprel"=meep$V12)
-meep$keeprel[meep$keep]
-round(meep$keeprel[meep$keep]/sum(meep$keeprel[meep$keep])*100, 2)
-meep$keeprel[meep$keep] <- round(meep$keeprel[meep$keep]/sum(meep$keeprel[meep$keep])*100, 2)
-meep$keeprel[!meep$keep]
-meep$keeprel[!meep$keep] <- NA
-cbind(otu[c(2, 11, 12)]
 )
 otu[c(2, 11, 12)]
 otu
@@ -1677,7 +1068,7 @@ haplotyping(files, 178)#
 # romania fwh2#
 files <- list.files("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP/F_U_max_ee/_data", full.names=T)[25:30]#
 haplotyping(files, 205)
-# 161203 jamp pipeline#
+# 170426 jamp pipeline#
 setwd("~/Documents/UNI_und_VORLESUNGEN/GitHub/JAMP/")#
 #
 #install.packages(c("bold", "XML", "seqinr"), dependencies=T)#
@@ -1686,4 +1077,726 @@ setwd("~/Documents/UNI_und_VORLESUNGEN/GitHub/JAMP/")#
 library("JAMP") #v0.17#
 library("bold")#
 library("XML")#
-# base directory
+# base directory#
+setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP")
+files <- list.files("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP/F_U_max_ee/_data", full.names=T)[11:16]
+files
+U_cluster_otus(files, filter=0.003)
+files
+file.rename("K_U_cluster_otus", "K_U_cluster_otus - fwh1")
+files <- list.files("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP/F_U_max_ee/_data", full.names=T)[25:30]
+U_cluster_otus(files, filter=0.003)
+file.rename("L_U_cluster_otus", "L_U_cluster_otus - fwh2")
+# 170426 jamp pipeline#
+setwd("~/Documents/UNI_und_VORLESUNGEN/GitHub/JAMP/")#
+#
+#install.packages(c("bold", "XML", "seqinr"), dependencies=T)#
+#install.packages("JAMP", repos = NULL, type="source")#
+#install.packages("~/Desktop/bold-master", repos = NULL, type="source")#
+library("JAMP") #v0.17#
+library("bold")#
+library("XML")#
+# base directory#
+setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP")
+Bold_web_hack("170118_bold_fwh1.txt", "K_U_cluster_otus - fwh1")
+Bold_web_hack("170118_bold_fwh1.txt", "K_U_cluster_otus - fwh1")
+setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP")
+Bold_web_hack("170118_bold_fwh1.txt", "K_U_cluster_otus - fwh1")
+setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP")
+Bold_web_hack("170118_bold_fwh1.txt", "K_U_cluster_otus - fwh1")
+setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP")
+Bold_web_hack("170118_bold_fwh1.txt", "K_U_cluster_otus - fwh1")
+Bold_web_hack("../170118_bold_fwh1.txt", "K_U_cluster_otus - fwh1")
+Bold_web_hack
+setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP")
+Bold_web_hack("170118_bold_fwh1.txt", "K_U_cluster_otus - fwh1")
+Bold_web_hack("170427_bold_romania_fwh1.txt", "K_U_cluster_otus - fwh1")
+setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP")
+Bold_web_hack("170427_bold_romania_fwh1.txt", "K_U_cluster_otus - fwh1")
+setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP")#
+#
+Bold_web_hack("170118_bold_fwh1.txt", "K_U_cluster_otus - fwh1")
+MM=c(0.98, 0.95, 0.90, 0.85)
+file="170118_bold_fwh1.txt"
+folder="K_U_cluster_otus - fwh1"
+file="170118_bold_fwh1.txt"#
+folder="K_U_cluster_otus - fwh1"
+oldwd <- getwd()#
+setwd(folder)#
+getwd()#
+#cat(file="../log.txt", c("\n","Version v0.1", "\n"), append=T, sep="\n")#
+#
+dir.create("_BOLD_web_hack", showWarnings = FALSE)#
+dir.create("_BOLD_web_hack/OTUs", showWarnings = FALSE)#
+setwd("_BOLD_web_hack")
+data <- readLines(file, warn=F)
+OTU_start <- grep("Query: ", data)#
+OTU_end <- which("Sampling Sites For Top Hits (>98% Match)"==data)#
+#
+OTU_end <- sort(c(which("Unable to match any records in the selected database. "==data), OTU_end))
+OTU_end
+setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP")
+file="170427_bold_romania_fwh1.txt"
+oldwd <- getwd()#
+setwd(folder)#
+getwd()#
+#cat(file="../log.txt", c("\n","Version v0.1", "\n"), append=T, sep="\n")#
+#
+dir.create("_BOLD_web_hack", showWarnings = FALSE)#
+dir.create("_BOLD_web_hack/OTUs", showWarnings = FALSE)#
+setwd("_BOLD_web_hack")#
+#
+data <- readLines(file, warn=F)#
+OTU_start <- grep("Query: ", data)#
+OTU_end <- which("Sampling Sites For Top Hits (>98% Match)"==data)#
+#
+OTU_end <- sort(c(which("Unable to match any records in the selected database. "==data), OTU_end))
+OTU_end
+i <- 1
+temp <- data[OTU_start[i]:OTU_end[i]]#
+#
+OTU <- sub("Query: (.*) ", "\\1", data[OTU_start[i]])#
+similarity <- as.numeric(temp)#
+whois <- which(!is.na(similarity))#
+whois_num <- whois#
+#
+Similarity <- similarity[whois]#
+Status <- temp[whois+2]#
+#
+# get phylum#
+#
+whois <- c(which(temp =="Phylum\tClass\tOrder\tFamily\tGenus\tSpecies\tSimilarity (%)\tStatus")+1, whois[-length(whois)]+4)#
+#
+# Phylum
+whois
+temp <- data[OTU_start[i]:OTU_end[i]]
+temp
+sub("Query: (.*) ", "\\1", data[OTU_start[i]])
+similarity <- as.numeric(temp)#
+whois <- which(!is.na(similarity))#
+whois_num <- whois
+whois
+whois_num
+Similarity <- similarity[whois]#
+Status <- temp[whois+2]
+Status
+temp
+whois <- c(which(temp =="Phylum\tClass\tOrder\tFamily\tGenus\tSpecies\tSubspecies\tSimilarity (%)\tStatus")+1, whois[-length(whois)]+4)
+whois
+which(temp =="Phylum\tClass\tOrder\tFamily\tGenus\tSpecies\tSubspecies\tSimilarity (%)\tStatus")+1
+Phylum <- temp[whois]
+Phylum
+Phylum <- temp[whois]#
+Class <- temp[whois+2]#
+Order <- temp[whois+4]#
+Family <- temp[whois+6]#
+Genus <- temp[whois+8]#
+Species <- temp[whois+10]
+Species
+Subspecies <- temp[whois+12]
+Subspecies
+setwd("~/Documents/UNI_und_VORLESUNGEN/GitHub/JAMP/")
+install.packages("JAMP", repos = NULL, type="source")
+library("JAMP") #v0.17
+setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP")
+Bold_web_hack("170118_bold_fwh1.txt", "K_U_cluster_otus - fwh1")
+# Bold web hack#
+Bold_web_hack <- function(file=NA, folder="", MM=c(0.98, 0.95, 0.90, 0.85)){#
+#
+oldwd <- getwd()#
+setwd(folder)#
+getwd()#
+#cat(file="../log.txt", c("\n","Version v0.1", "\n"), append=T, sep="\n")#
+#
+dir.create("_BOLD_web_hack", showWarnings = FALSE)#
+dir.create("_BOLD_web_hack/OTUs", showWarnings = FALSE)#
+setwd("_BOLD_web_hack")#
+#
+data <- readLines(file, warn=F)#
+OTU_start <- grep("Query: ", data)#
+OTU_end <- which("Sampling Sites For Top Hits (>98% Match)"==data)#
+#
+OTU_end <- sort(c(which("Unable to match any records in the selected database. "==data), OTU_end))#
+for (i in 1:length(OTU_start)){#
+temp <- data[OTU_start[i]:OTU_end[i]]#
+#
+OTU <- sub("Query: (.*) ", "\\1", data[OTU_start[i]])#
+similarity <- as.numeric(temp)#
+whois <- which(!is.na(similarity))#
+whois_num <- whois#
+#
+Similarity <- similarity[whois]#
+Status <- temp[whois+2]#
+#
+# get phylum#
+#
+whois <- c(which(temp =="Phylum\tClass\tOrder\tFamily\tGenus\tSpecies\tSubspecies\tSimilarity (%)\tStatus")+1, whois[-length(whois)]+4)#
+#
+# Phylum#
+Phylum <- temp[whois]#
+Class <- temp[whois+2]#
+Order <- temp[whois+4]#
+Family <- temp[whois+6]#
+Genus <- temp[whois+8]#
+Species <- temp[whois+10]#
+Subspecies <- temp[whois+12] # ignore subspecies for now#
+#
+temp_tab <- data.frame(Phylum, Class, Order, Family, Genus, Species, Subspecies, Similarity, Status)#
+#
+write.csv(temp_tab, paste("OTUs/", OTU, ".csv", sep=""), row.names=F)#
+}#
+# subset taxonomy stuff#
+#
+files <- sub("Query: (.*) ", "\\1", data[OTU_start])#
+#
+BOLD_tab <- NULL#
+#
+i <- 5#
+#
+for (i in 1:length(files)){#
+temp <- read.csv(paste("OTUs/", files[i], ".csv", sep=""), stringsAsFactors=F)#
+#
+if(nrow(temp)==0){ # no hits!#
+BOLD_tab <- rbind(BOLD_tab, cbind(files[i], temp[1,]))#
+#
+} else {#
+temp[temp==""] <- NA#
+#
+#remove taxa lower than treshhold!#
+A <- temp$Similarity<MM[1]*100#
+temp$Species[A] <- NA#
+A <- temp$Similarity<MM[2]*100#
+temp$Genus[A] <- NA#
+A <- temp$Similarity<MM[3]*100#
+temp$Family[A] <- NA#
+A <- temp$Similarity<MM[4]*100#
+temp$Order[A] <- NA#
+#
+# get taxon#
+END <- T # stop if written in table#
+who_sp <- which(temp$Similarity>= MM[1]*100)#
+who_sp <- which(!is.na(temp$Species[who_sp])) #rm NA#
+#
+if(length(who_sp)>0){ # if species present#
+tab_species <- as.data.frame(table(temp$Species[who_sp]), stringsAsFactors=F)#
+tab_species <- tab_species[order(tab_species$Freq, decreasing=T),]#
+tab_species <- if(is.vector(tab_species)){tab_species[1]} else{tab_species[1,1]}#
+#
+exp <- temp[who_sp[temp$Species[who_sp]==tab_species][1],]#
+BOLD_tab <- rbind(BOLD_tab, cbind(files[i], exp))#
+END <- F#
+}#
+#
+who_gen <- which(temp$Similarity>= MM[2]*100)#
+who_gen <- which(!is.na(temp$Genus[who_gen])) #rm NA#
+#
+if(length(who_gen)>0 & END){#
+#
+tab_genus <- as.data.frame(table(temp$Genus[who_gen]), stringsAsFactors=F)#
+tab_genus <- tab_genus[order(tab_genus$Freq, decreasing=T),]#
+tab_genus <- if(is.vector(tab_genus)){tab_genus[1]} else{tab_genus[1,1]}#
+#
+exp <- temp[who_gen[temp$Genus[who_gen]==tab_genus][1],]#
+BOLD_tab <- rbind(BOLD_tab, cbind(files[i], exp))#
+END <- F#
+#
+}#
+#
+who_fam <- which(temp$Similarity>= MM[3]*100)#
+who_fam <- which(!is.na(temp$Family[who_fam])) #rm NA#
+#
+if(length(who_fam)>0 & END){#
+#
+tab_family <- as.data.frame(table(temp$Family[who_fam]), stringsAsFactors=F)#
+tab_family <- tab_family[order(tab_family $Freq, decreasing=T),]#
+tab_family <- if(is.vector(tab_family)){tab_family[1]} else{tab_family[1,1]}#
+exp <- temp[who_fam[temp$Family[who_fam]==tab_family][1],]#
+exp[5:6] <- NA#
+BOLD_tab <- rbind(BOLD_tab, cbind(files[i], exp))#
+END <- F#
+}#
+#
+who_ord <- which(temp$Similarity>= MM[4]*100)#
+who_ord <- which(!is.na(temp$Order[who_ord])) #rm NA#
+#
+if(length(who_fam)>0 & END){#
+tab_order <- as.data.frame(table(temp$Order[who_ord]), stringsAsFactors=F)#
+tab_order <- tab_order[order(tab_order$Freq, decreasing=T),]#
+tab_order <- if(is.vector(tab_order)){tab_order[1]} else{tab_order[1,1]}#
+#
+exp <- temp[who_ord[temp$Order[who_ord]==tab_order][1],]#
+exp[4:6] <- NA#
+BOLD_tab <- rbind(BOLD_tab, cbind(files[i], exp))#
+END <- F#
+}#
+#
+if(END){#
+exp <- temp[1,]#
+exp[3:6] <- NA#
+BOLD_tab <- rbind(BOLD_tab, cbind(files[i], temp[1,]))#
+}#
+} # "skipp no hits"#
+} # taxa tab loop end#
+BOLD_tab2 <- data.frame(BOLD_tab, stringsAsFactors=F)#
+names(BOLD_tab2)[1] <- "OTU_ID"#
+write.csv(BOLD_tab2, file=sub(".txt", "_taxonomy.csv", file), row.names=F)#
+#
+setwd(oldwd)#
+}
+setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP")
+Bold_web_hack("170118_bold_fwh1.txt", "K_U_cluster_otus - fwh1")
+# Bold web hack#
+Bold_web_hack <- function(file=NA, folder="", MM=c(0.98, 0.95, 0.90, 0.85)){#
+#
+oldwd <- getwd()#
+setwd(folder)#
+getwd()#
+#cat(file="../log.txt", c("\n","Version v0.1", "\n"), append=T, sep="\n")#
+#
+dir.create("_BOLD_web_hack", showWarnings = FALSE)#
+dir.create("_BOLD_web_hack/OTUs", showWarnings = FALSE)#
+setwd("_BOLD_web_hack")#
+#
+data <- readLines(file, warn=F)#
+OTU_start <- grep("Query: ", data)#
+OTU_end <- which("Sampling Sites For Top Hits (>98% Match)"==data)#
+#
+OTU_end <- sort(c(which("Unable to match any records in the selected database. "==data), OTU_end))#
+for (i in 1:length(OTU_start)){#
+temp <- data[OTU_start[i]:OTU_end[i]]#
+#
+OTU <- sub("Query: (.*) ", "\\1", data[OTU_start[i]])#
+similarity <- as.numeric(temp)#
+whois <- which(!is.na(similarity))#
+whois_num <- whois#
+#
+Similarity <- similarity[whois]#
+Status <- temp[whois+2]#
+#
+# get phylum#
+#
+whois <- c(which(temp =="Phylum\tClass\tOrder\tFamily\tGenus\tSpecies\tSubspecies\tSimilarity (%)\tStatus")+1, whois[-length(whois)]+4)#
+#
+# Phylum#
+Phylum <- temp[whois]#
+Class <- temp[whois+2]#
+Order <- temp[whois+4]#
+Family <- temp[whois+6]#
+Genus <- temp[whois+8]#
+Species <- temp[whois+10]#
+Subspecies <- temp[whois+12] # ignore subspecies for now#
+#
+temp_tab <- data.frame(Phylum, Class, Order, Family, Genus, Species, Similarity, Status)#
+#
+write.csv(temp_tab, paste("OTUs/", OTU, ".csv", sep=""), row.names=F)#
+}#
+# subset taxonomy stuff#
+#
+files <- sub("Query: (.*) ", "\\1", data[OTU_start])#
+#
+BOLD_tab <- NULL#
+#
+i <- 5#
+#
+for (i in 1:length(files)){#
+temp <- read.csv(paste("OTUs/", files[i], ".csv", sep=""), stringsAsFactors=F)#
+#
+if(nrow(temp)==0){ # no hits!#
+BOLD_tab <- rbind(BOLD_tab, cbind(files[i], temp[1,]))#
+#
+} else {#
+temp[temp==""] <- NA#
+#
+#remove taxa lower than treshhold!#
+A <- temp$Similarity<MM[1]*100#
+temp$Species[A] <- NA#
+A <- temp$Similarity<MM[2]*100#
+temp$Genus[A] <- NA#
+A <- temp$Similarity<MM[3]*100#
+temp$Family[A] <- NA#
+A <- temp$Similarity<MM[4]*100#
+temp$Order[A] <- NA#
+#
+# get taxon#
+END <- T # stop if written in table#
+who_sp <- which(temp$Similarity>= MM[1]*100)#
+who_sp <- which(!is.na(temp$Species[who_sp])) #rm NA#
+#
+if(length(who_sp)>0){ # if species present#
+tab_species <- as.data.frame(table(temp$Species[who_sp]), stringsAsFactors=F)#
+tab_species <- tab_species[order(tab_species$Freq, decreasing=T),]#
+tab_species <- if(is.vector(tab_species)){tab_species[1]} else{tab_species[1,1]}#
+#
+exp <- temp[who_sp[temp$Species[who_sp]==tab_species][1],]#
+BOLD_tab <- rbind(BOLD_tab, cbind(files[i], exp))#
+END <- F#
+}#
+#
+who_gen <- which(temp$Similarity>= MM[2]*100)#
+who_gen <- which(!is.na(temp$Genus[who_gen])) #rm NA#
+#
+if(length(who_gen)>0 & END){#
+#
+tab_genus <- as.data.frame(table(temp$Genus[who_gen]), stringsAsFactors=F)#
+tab_genus <- tab_genus[order(tab_genus$Freq, decreasing=T),]#
+tab_genus <- if(is.vector(tab_genus)){tab_genus[1]} else{tab_genus[1,1]}#
+#
+exp <- temp[who_gen[temp$Genus[who_gen]==tab_genus][1],]#
+BOLD_tab <- rbind(BOLD_tab, cbind(files[i], exp))#
+END <- F#
+#
+}#
+#
+who_fam <- which(temp$Similarity>= MM[3]*100)#
+who_fam <- which(!is.na(temp$Family[who_fam])) #rm NA#
+#
+if(length(who_fam)>0 & END){#
+#
+tab_family <- as.data.frame(table(temp$Family[who_fam]), stringsAsFactors=F)#
+tab_family <- tab_family[order(tab_family $Freq, decreasing=T),]#
+tab_family <- if(is.vector(tab_family)){tab_family[1]} else{tab_family[1,1]}#
+exp <- temp[who_fam[temp$Family[who_fam]==tab_family][1],]#
+exp[5:6] <- NA#
+BOLD_tab <- rbind(BOLD_tab, cbind(files[i], exp))#
+END <- F#
+}#
+#
+who_ord <- which(temp$Similarity>= MM[4]*100)#
+who_ord <- which(!is.na(temp$Order[who_ord])) #rm NA#
+#
+if(length(who_fam)>0 & END){#
+tab_order <- as.data.frame(table(temp$Order[who_ord]), stringsAsFactors=F)#
+tab_order <- tab_order[order(tab_order$Freq, decreasing=T),]#
+tab_order <- if(is.vector(tab_order)){tab_order[1]} else{tab_order[1,1]}#
+#
+exp <- temp[who_ord[temp$Order[who_ord]==tab_order][1],]#
+exp[4:6] <- NA#
+BOLD_tab <- rbind(BOLD_tab, cbind(files[i], exp))#
+END <- F#
+}#
+#
+if(END){#
+exp <- temp[1,]#
+exp[3:6] <- NA#
+BOLD_tab <- rbind(BOLD_tab, cbind(files[i], temp[1,]))#
+}#
+} # "skipp no hits"#
+} # taxa tab loop end#
+BOLD_tab2 <- data.frame(BOLD_tab, stringsAsFactors=F)#
+names(BOLD_tab2)[1] <- "OTU_ID"#
+write.csv(BOLD_tab2, file=sub(".txt", "_taxonomy.csv", file), row.names=F)#
+#
+setwd(oldwd)#
+}
+setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP")
+Bold_web_hack("170118_bold_fwh1.txt", "K_U_cluster_otus - fwh1")
+setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP")
+setwd("~/Documents/UNI_und_VORLESUNGEN/GitHub/JAMP/")
+install.packages("JAMP", repos = NULL, type="source")
+Bold_web_hack("170118_bold_fwh1.txt", "K_U_cluster_otus - fwh1")
+setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP")
+Bold_web_hack("170118_bold_fwh1.txt", "K_U_cluster_otus - fwh1")
+setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP")
+Bold_web_hack("170427_bold_romania_fwh1.txt", "K_U_cluster_otus - fwh1")
+setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP")
+setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP")
+file="170427_bold_romania_fwh1.txt"#
+folder="K_U_cluster_otus - fwh1"
+oldwd <- getwd()#
+setwd(folder)#
+getwd()#
+#cat(file="../log.txt", c("\n","Version v0.1", "\n"), append=T, sep="\n")#
+#
+dir.create("_BOLD_web_hack", showWarnings = FALSE)#
+dir.create("_BOLD_web_hack/OTUs", showWarnings = FALSE)#
+setwd("_BOLD_web_hack")#
+#
+data <- readLines(file, warn=F)#
+OTU_start <- grep("Query: ", data)#
+OTU_end <- which("Sampling Sites For Top Hits (>98% Match)"==data)#
+#
+OTU_end <- sort(c(which("Unable to match any records in the selected database. "==data), OTU_end))
+i <- 6
+temp <- data[OTU_start[i]:OTU_end[i]]
+temp
+temp <- data[OTU_start[i]:OTU_end[i]]#
+#
+OTU <- sub("Query: (.*) ", "\\1", data[OTU_start[i]])#
+similarity <- as.numeric(temp)#
+whois <- which(!is.na(similarity))#
+whois_num <- whois#
+#
+Similarity <- similarity[whois]#
+Status <- temp[whois+2]#
+#
+# get phylum#
+#
+whois <- c(which(temp =="Phylum\tClass\tOrder\tFamily\tGenus\tSpecies\tSubspecies\tSimilarity (%)\tStatus")+1, whois[-length(whois)]+4)#
+#
+# Phylum#
+Phylum <- temp[whois]#
+Class <- temp[whois+2]#
+Order <- temp[whois+4]#
+Family <- temp[whois+6]#
+Genus <- temp[whois+8]#
+Species <- temp[whois+10]#
+Subspecies <- temp[whois+12] # ignore subspecies for now#
+#
+temp_tab <- data.frame(Phylum, Class, Order, Family, Genus, Species, Similarity, Status)
+temp_tab
+whois[-length(whois)]+4
+length(whois[-length(whois)]+4)
+temp <- data[OTU_start[i]:OTU_end[i]]
+OTU <- sub("Query: (.*) ", "\\1", data[OTU_start[i]])
+similarity <- as.numeric(temp)
+similarity
+whois <- which(!is.na(similarity))
+whois
+length(whois)
+whois_num <- whois
+whois_num
+similarity[whois]
+temp[whois+2]
+temp_tab <- data.frame(Phylum, Class, Order, Family, Genus, Species, Similarity, Status)
+temp_tab
+nrow(temp_tab)
+k
+k <- 9
+temp_tab[k, 1:6]
+is.numeric(temp_tab[k, 1:6])
+temp_tab[k, 1:6]
+is.numeric(unlist(temp_tab[k, 1:6]))
+is.numeric(c(temp_tab[k, 1:6]))
+c(temp_tab[k, 1:6])
+is.numeric(as.vector(temp_tab[k, 1:6]))
+as.vector(temp_tab[k, 1:6])
+is.numeric(as.vector(c(temp_tab[k, 1:6])))
+as.vector(c(temp_tab[k, 1:6]))
+as.vector(unlist(temp_tab[k, 1:6]))
+is.numeric(as.vector(unlist(temp_tab[k, 1:6])))
+as.numeric(as.vector(unlist(temp_tab[k, 1:6])))
+is.numeric(as.numeric(as.vector(unlist(temp_tab[k, 1:6]))))
+as.numeric(as.vector(unlist(temp_tab[k, 1:6])))>0
+which(as.numeric(as.vector(unlist(temp_tab[k, 1:6])))>0)
+which(as.numeric(as.vector(unlist(temp_tab[k, 1:6])))>0, warn=F)
+which(as.numeric(as.vector(unlist(temp_tab[k, 1:6])))>0, warnings=F)
+which(as.numeric(as.vector(unlist(temp_tab[k, 1:6])))>0)
+kill <- which(as.numeric(as.vector(unlist(temp_tab[k, 1:6])))>0)
+is.numeric(kill)
+temp_tab[k, kill:6]
+temp_tab[k, kill:6] <- ""
+temp_tab
+temp_tab[k, kill:6] <- "a"
+temp_tab[k, kill:6] <- "aads"
+temp_tab[k, kill:6]
+k <- 8
+temp_tab[k, kill:6]
+temp_tab[k, kill:6] <- "aads"
+temp_tab[k, 6:6]
+temp_tab <- data.frame(Phylum, Class, Order, Family, Genus, Species, Similarity, Status, stringsAsFactors=F)
+temp_tab
+for (k in 1:nrow(temp_tab)){#
+kill <- which(as.numeric(as.vector(unlist(temp_tab[k, 1:6])))>0)[1]#
+if(is.numeric(kill)){#
+temp_tab[k, kill:6] <- "aads"#
+#
+}#
+}
+temp_tab
+temp_tab[k, kill:6] <- "aads"
+temp_tab
+k <- 9
+kill <- which(as.numeric(as.vector(unlist(temp_tab[k, 1:6])))>0)[1]
+kill
+is.numeric(kill)
+temp_tab[k, kill:6]
+temp_tab[k, kill:6] <- ""
+temp_tab
+which(as.numeric(as.vector(unlist(temp_tab[k, 1:6])))>0)
+for (k in 1:nrow(temp_tab)){#
+kill <- which(as.numeric(as.vector(unlist(temp_tab[k, 1:6])))>0)[1]#
+if(is.numeric(kill)){#
+temp_tab[k, kill:6] <- ""#
+#
+}#
+}
+kill
+for (k in 1:nrow(temp_tab)){#
+kill <- which(as.numeric(as.vector(unlist(temp_tab[k, 1:6])))>0)[1]#
+if(!is.na(kill)){#
+temp_tab[k, kill:6] <- ""#
+#
+}#
+}
+temp_tab
+?as.numeric
+kill <- which(suppressWarnings(as.numeric(as.vector(unlist(temp_tab[k, 1:6]))))>0)[1]
+temp_tab <- data.frame(Phylum, Class, Order, Family, Genus, Species, Similarity, Status, stringsAsFactors=F)#
+#
+for (k in 1:nrow(temp_tab)){#
+kill <- which(suppressWarnings(as.numeric(as.vector(unlist(temp_tab[k, 1:6]))))>0)[1]#
+if(!is.na(kill)){#
+temp_tab[k, kill:6] <- ""#
+#
+}#
+}
+temp_tab
+# Bold web hack#
+Bold_web_hack <- function(file=NA, folder="", MM=c(0.98, 0.95, 0.90, 0.85)){#
+#
+oldwd <- getwd()#
+setwd(folder)#
+getwd()#
+#cat(file="../log.txt", c("\n","Version v0.1", "\n"), append=T, sep="\n")#
+#
+dir.create("_BOLD_web_hack", showWarnings = FALSE)#
+dir.create("_BOLD_web_hack/OTUs", showWarnings = FALSE)#
+setwd("_BOLD_web_hack")#
+#
+data <- readLines(file, warn=F)#
+OTU_start <- grep("Query: ", data)#
+OTU_end <- which("Sampling Sites For Top Hits (>98% Match)"==data)#
+#
+OTU_end <- sort(c(which("Unable to match any records in the selected database. "==data), OTU_end))#
+#
+i <- 6#
+for (i in 1:length(OTU_start)){#
+temp <- data[OTU_start[i]:OTU_end[i]]#
+#
+OTU <- sub("Query: (.*) ", "\\1", data[OTU_start[i]])#
+similarity <- as.numeric(temp)#
+whois <- which(!is.na(similarity))#
+whois_num <- whois#
+#
+Similarity <- similarity[whois]#
+Status <- temp[whois+2]#
+#
+# get phylum#
+#
+whois <- c(which(temp =="Phylum\tClass\tOrder\tFamily\tGenus\tSpecies\tSubspecies\tSimilarity (%)\tStatus")+1, whois[-length(whois)]+4)#
+# Phylum#
+Phylum <- temp[whois]#
+Class <- temp[whois+2]#
+Order <- temp[whois+4]#
+Family <- temp[whois+6]#
+Genus <- temp[whois+8]#
+Species <- temp[whois+10]#
+Subspecies <- temp[whois+12] # ignore subspecies for now#
+#
+temp_tab <- data.frame(Phylum, Class, Order, Family, Genus, Species, Similarity, Status, stringsAsFactors=F)#
+#
+for (k in 1:nrow(temp_tab)){#
+kill <- which(suppressWarnings(as.numeric(as.vector(unlist(temp_tab[k, 1:6]))))>0)[1]#
+if(!is.na(kill)){#
+temp_tab[k, kill:6] <- ""#
+#
+}#
+}#
+#
+write.csv(temp_tab, paste("OTUs/", OTU, ".csv", sep=""), row.names=F)#
+}#
+# subset taxonomy stuff#
+#
+files <- sub("Query: (.*) ", "\\1", data[OTU_start])#
+#
+BOLD_tab <- NULL#
+#
+i <- 5#
+#
+for (i in 1:length(files)){#
+temp <- read.csv(paste("OTUs/", files[i], ".csv", sep=""), stringsAsFactors=F)#
+#
+if(nrow(temp)==0){ # no hits!#
+BOLD_tab <- rbind(BOLD_tab, cbind(files[i], temp[1,]))#
+#
+} else {#
+temp[temp==""] <- NA#
+#
+#remove taxa lower than treshhold!#
+A <- temp$Similarity<MM[1]*100#
+temp$Species[A] <- NA#
+A <- temp$Similarity<MM[2]*100#
+temp$Genus[A] <- NA#
+A <- temp$Similarity<MM[3]*100#
+temp$Family[A] <- NA#
+A <- temp$Similarity<MM[4]*100#
+temp$Order[A] <- NA#
+#
+# get taxon#
+END <- T # stop if written in table#
+who_sp <- which(temp$Similarity>= MM[1]*100)#
+who_sp <- which(!is.na(temp$Species[who_sp])) #rm NA#
+#
+if(length(who_sp)>0){ # if species present#
+tab_species <- as.data.frame(table(temp$Species[who_sp]), stringsAsFactors=F)#
+tab_species <- tab_species[order(tab_species$Freq, decreasing=T),]#
+tab_species <- if(is.vector(tab_species)){tab_species[1]} else{tab_species[1,1]}#
+#
+exp <- temp[who_sp[temp$Species[who_sp]==tab_species][1],]#
+BOLD_tab <- rbind(BOLD_tab, cbind(files[i], exp))#
+END <- F#
+}#
+#
+who_gen <- which(temp$Similarity>= MM[2]*100)#
+who_gen <- which(!is.na(temp$Genus[who_gen])) #rm NA#
+#
+if(length(who_gen)>0 & END){#
+#
+tab_genus <- as.data.frame(table(temp$Genus[who_gen]), stringsAsFactors=F)#
+tab_genus <- tab_genus[order(tab_genus$Freq, decreasing=T),]#
+tab_genus <- if(is.vector(tab_genus)){tab_genus[1]} else{tab_genus[1,1]}#
+#
+exp <- temp[who_gen[temp$Genus[who_gen]==tab_genus][1],]#
+BOLD_tab <- rbind(BOLD_tab, cbind(files[i], exp))#
+END <- F#
+#
+}#
+#
+who_fam <- which(temp$Similarity>= MM[3]*100)#
+who_fam <- which(!is.na(temp$Family[who_fam])) #rm NA#
+#
+if(length(who_fam)>0 & END){#
+#
+tab_family <- as.data.frame(table(temp$Family[who_fam]), stringsAsFactors=F)#
+tab_family <- tab_family[order(tab_family $Freq, decreasing=T),]#
+tab_family <- if(is.vector(tab_family)){tab_family[1]} else{tab_family[1,1]}#
+exp <- temp[who_fam[temp$Family[who_fam]==tab_family][1],]#
+exp[5:6] <- NA#
+BOLD_tab <- rbind(BOLD_tab, cbind(files[i], exp))#
+END <- F#
+}#
+#
+who_ord <- which(temp$Similarity>= MM[4]*100)#
+who_ord <- which(!is.na(temp$Order[who_ord])) #rm NA#
+#
+if(length(who_fam)>0 & END){#
+tab_order <- as.data.frame(table(temp$Order[who_ord]), stringsAsFactors=F)#
+tab_order <- tab_order[order(tab_order$Freq, decreasing=T),]#
+tab_order <- if(is.vector(tab_order)){tab_order[1]} else{tab_order[1,1]}#
+#
+exp <- temp[who_ord[temp$Order[who_ord]==tab_order][1],]#
+exp[4:6] <- NA#
+BOLD_tab <- rbind(BOLD_tab, cbind(files[i], exp))#
+END <- F#
+}#
+#
+if(END){#
+exp <- temp[1,]#
+exp[3:6] <- NA#
+BOLD_tab <- rbind(BOLD_tab, cbind(files[i], temp[1,]))#
+}#
+} # "skipp no hits"#
+} # taxa tab loop end#
+BOLD_tab2 <- data.frame(BOLD_tab, stringsAsFactors=F)#
+names(BOLD_tab2)[1] <- "OTU_ID"#
+write.csv(BOLD_tab2, file=sub(".txt", "_taxonomy.csv", file), row.names=F)#
+#
+setwd(oldwd)#
+}
+setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 JAMP")
+Bold_web_hack("170427_bold_romania_fwh1.txt", "K_U_cluster_otus - fwh1")
+Bold_web_hack("170427_bold_romania_fwh2.txt", "L_U_cluster_otus - fwh2")
+warnings
+warnings()
+setwd("~/Documents/UNI_und_VORLESUNGEN/GitHub/JAMP/")
+install.packages("JAMP", repos = NULL, type="source")
