@@ -38,7 +38,7 @@ Status <- temp[whois+2]
 
 # get phylum
 
-whois <- c(which(temp =="Phylum\tClass\tOrder\tFamily\tGenus\tSpecies\tSimilarity (%)\tStatus")+1, whois[-length(whois)]+4)
+whois <- c(which(temp =="Phylum\tClass\tOrder\tFamily\tGenus\tSpecies\tSubspecies\tSimilarity (%)\tStatus")+1, whois[-length(whois)]+4)
 
 # Phylum
 Phylum <- temp[whois]
@@ -47,6 +47,7 @@ Order <- temp[whois+4]
 Family <- temp[whois+6]
 Genus <- temp[whois+8]
 Species <- temp[whois+10]
+Subspecies <- temp[whois+12] # ignore subspecies for now
 
 temp_tab <- data.frame(Phylum, Class, Order, Family, Genus, Species, Similarity, Status)
 
