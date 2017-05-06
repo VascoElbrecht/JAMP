@@ -16,9 +16,9 @@ data <- readLines(file, warn=F)
 
 
 OTU_start <- grep("Query: ", data)
-OTU_end <- which("Sampling Sites For Top Hits (>98% Match)"==data)
-
-OTU_end <- sort(c(which("Unable to match any records in the selected database. "==data), OTU_end))
+#OTU_end <- which("Sampling Sites For Top Hits (>98% Match)"==data)
+#OTU_end <- sort(c(which("Unable to match any records in the selected database. "==data), OTU_end))
+OTU_end <- c(OTU_start[-1]-1, length(data))
 
 
 for (i in 1:length(OTU_start)){
@@ -26,8 +26,13 @@ for (i in 1:length(OTU_start)){
 
 temp <- data[OTU_start[i]:OTU_end[i]]
 
+
 OTU <- sub("Query: (.*) ", "\\1", data[OTU_start[i]])
 
+if(temp[5]=="Unable to match any records in the selected database. "){
+temp_tab <- data.frame(Phylum, Class, Order, Family, Genus, Species, Similarity, Status, stringsAsFactors=F)
+write.csv(temp_tab, paste("OTUs/", OTU, ".csv", sep=""), row.names=F)
+} else {
 
 similarity <- as.numeric(temp)
 whois <- which(!is.na(similarity))
@@ -61,6 +66,7 @@ temp_tab[k, kill:6] <- ""
 }
 
 write.csv(temp_tab, paste("OTUs/", OTU, ".csv", sep=""), row.names=F)
+}
 }
 
 
