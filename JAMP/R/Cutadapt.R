@@ -6,13 +6,13 @@ Core(module="Cutadapt")
 cat(file="../log.txt", c("Module Version: v0.1", "\n"), append=T, sep="\n")
 
 # cutadapt version
-temp <- paste("Util Version: ", "Cutadapt v", system2("cutadapt", "--v", stdout=T, stderr=T), sep="")
+temp <- paste("Using Version: ", "Cutadapt v", system2("cutadapt", "--v", stdout=T, stderr=T), sep="")
 message(temp)
 cat(file="../log.txt", temp, append=T, sep="\n")
 message(" ")
 
 
-if (files=="latest"){
+if (files[1]=="latest"){
 source("robots.txt")
 files <- list.files(paste("../", last_data, "/_data", sep=""), full.names=T)
 }
@@ -23,6 +23,17 @@ new_names <- sub(".fast", "_cut.fast", new_names)
 
 # get primer sequences / names
 primers <- read.csv(paste(system.file(package="JAMP"), "/primers.csv", sep=""), stringsAsFactors=F)
+
+
+# match primer number to number of files!
+
+if(length(files)>1 & length(forward)==1){
+forward <- rep(forward, length(files))
+}
+if(length(files)>1 & length(reverse)==1){
+reverse <- rep(reverse, length(files))
+}
+
 
 
 # replace primer name with sequence
