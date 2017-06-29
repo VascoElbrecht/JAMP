@@ -1,7 +1,7 @@
 # U_merge_PE v0.1
 # maybe add option to split and merge large files automatically?
 
-U_merge_PE <- function(files="latest", file1=NA, file2=NA, fastq_maxdiffs=99, fastq_maxdiffpct=99, fastq=T){
+U_merge_PE <- function(files="latest", file1=NA, file2=NA, fastq_maxdiffs=99, fastq_pctid=90, fastq=T){
 
 Core(module="U_merge_PE")
 cat(file="../log.txt", c("\n","Version v0.1", "\n"), append=T, sep="\n")
@@ -43,7 +43,7 @@ dir.create("_stats/merge_stats")
 log_names <- sub("_data", "_stats/merge_stats", new_names)
 log_names <- sub("_PE.fast[aq]", "_PE_log.txt", log_names)
 
-cmd <- paste(" -fastq_mergepairs \"", file1, "\" -reverse \"", file2,  "\" ", if(fastq){"-fastqout"} else {"-fastaout"}, " \"", new_names, "\"", " -report ", log_names, " -fastq_maxdiffs ", fastq_maxdiffs , " -fastq_maxdiffpct ", fastq_maxdiffpct ," -fastq_trunctail 0", sep="")
+cmd <- paste(" -fastq_mergepairs \"", file1, "\" -reverse \"", file2,  "\" ", if(fastq){"-fastqout"} else {"-fastaout"}, " \"", new_names, "\"", " -report ", log_names, " -fastq_maxdiffs ", fastq_maxdiffs , " -fastq_pctid ", fastq_pctid ," -fastq_trunctail 0", sep="")
 
 tab_exp <- NULL
 for (i in 1:length(cmd)){
