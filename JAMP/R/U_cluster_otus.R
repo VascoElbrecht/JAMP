@@ -1,6 +1,6 @@
 # U_cluster_otus v0.1
 
-U_cluster_otus <- function(files="latest", minuniquesize=2, otu_radius_pct=3, strand="plus", filter=0.01, filterN=1, unoise_min=NA){
+U_cluster_otus <- function(files="latest", minuniquesize=2, strand="plus", filter=0.01, filterN=1, unoise_min=NA){
 
 Core(module="U_cluster_otus")
 cat(file="../log.txt", c("Version v0.1", "\n"), append=T, sep="\n")
@@ -110,14 +110,14 @@ cat(file="_stats/2_OTU_clustering_log.txt", "\n", A, "", paste("cat", cmd), appe
 OTU_file <- sub(".fasta", "_OTUs.fasta", filename_all_unique)
 OTU_file <- sub("B_", "C_", filename_all_unique)
 
-cmd <- paste(" -cluster_otus _data/2_OTU_clustering/", filename_all_unique, " -otus _data/2_OTU_clustering/", OTU_file, " -uparseout _data/2_OTU_clustering/", sub(".fasta", "_OTUtab.txt", OTU_file), " -relabel OTU_ -otu_radius_pct ", otu_radius_pct, " -strand ", strand, sep="")
+cmd <- paste(" -cluster_otus _data/2_OTU_clustering/", filename_all_unique, " -otus _data/2_OTU_clustering/", OTU_file, " -uparseout _data/2_OTU_clustering/", sub(".fasta", "_OTUtab.txt", OTU_file), " -relabel OTU_ -strand ", strand, sep="")
 
 A <- system2("usearch", cmd, stdout=T, stderr=T) # cluster OTUs!
 
 chimeras <- sub(".*OTUs, (.*) chimeras\r", "\\1", A[grep("chimeras\r", A)])
 OTUs <- sub(".*100.0% (.*) OTUs, .* chimeras\r", "\\1", A[grep("chimeras\r", A)])
 
-temp <- paste("\n", "Clustering reads from \"", filename_all_unique, "\nminuniquesize = ", minuniquesize, "\notu_radius_pct = ", otu_radius_pct, "\nstrand = ", strand, "\nChimeras discarded: ", chimeras, "\nOTUs written: ", OTUs, " -> file \"", OTU_file, "\"\n", sep="")
+temp <- paste("\n", "Clustering reads from \"", filename_all_unique, "\nminuniquesize = ", minuniquesize, "\nstrand = ", strand, "\nChimeras discarded: ", chimeras, "\nOTUs written: ", OTUs, " -> file \"", OTU_file, "\"\n", sep="")
 message(temp)
 cat(file="../log.txt", temp, append=T, sep="\n")
 
