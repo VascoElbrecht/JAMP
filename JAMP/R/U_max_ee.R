@@ -1,6 +1,6 @@
 # U_max_ee v0.1
 
-U_max_ee <- function(files="latest", max_ee=0.5){
+U_max_ee <- function(files="latest", max_ee=0.5, fastq=F){
 
 Core(module="U_max_ee")
 cat(file="../log.txt", c("\n","Version v0.1", "\n"), append=T, sep="\n")
@@ -18,14 +18,19 @@ cat(file="../log.txt", temp, append=T, sep="\n")
 
 # new file names
 new_names <- sub(".*(_data/.*)", "\\1", files)
-new_names <- sub(".fastq", "_ee.fasta", new_names)
+
+if(fastq){
+new_names <- sub(".fastq", "_ee.fastq", new_names) # keep fastq
+} else {
+new_names <- sub(".fastq", "_ee.fasta", new_names) # convert to fasta
+}
 
 dir.create("_stats/merge_stats")
 log_names <- sub("_data", "_stats/merge_stats", new_names)
-log_names <- sub("_ee.fasta", "_ee.txt", log_names)
+log_names <- sub("_ee.fast.", "_ee.txt", log_names)
 
 # cmd max EE
-cmd <- paste("-fastq_filter \"", files, "\" -fastaout \"", new_names, "\" -fastq_maxee ", max_ee, sep="")
+cmd <- paste("-fastq_filter \"", files, "\"", if(fastq){" -fastqout "} else {" -fastaout "}, "\"", new_names, "\" -fastq_maxee ", max_ee, sep="")
 
 
 tab_exp <- NULL
