@@ -20,7 +20,7 @@ tagL <- nchar(barcodes[1,1])
 combos <- read.csv(combinations, stringsAsFactors=F)
 
 #basic log stats
-temp <- paste(Sys.time(), "Starting demultiplexing using:", paste("Barcode table:", tags, sep=""), paste("Searching for ", nrow(combos)/2, " samples as given in table: ", combinations, sep=""), paste("Raw data format: ", paste(unique(compression), collapse=" "), sep=""), paste("Read 1 RAW data: ", paste(file1, collapse=" "), sep=""), paste("Read 2 RAW data: ", paste(file2, collapse=" "), sep=""), "\n", sep="\n")
+temp <- paste(Sys.time(), "Starting demultiplexing using:", paste("Barcode table:", tags, sep=""), paste("Searching for ", nrow(combos), " samples as given in table: ", combinations, sep=""), paste("Raw data format: ", paste(unique(compression), collapse=" "), sep=""), paste("Read 1 RAW data: ", paste(file1, collapse=" "), sep=""), paste("Read 2 RAW data: ", paste(file2, collapse=" "), sep=""), "\n", sep="\n")
 cat(file="../log.txt", temp, append=T, sep="\n")
 
 

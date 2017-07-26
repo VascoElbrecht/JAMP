@@ -1,16 +1,33 @@
-setwd("~/Documents/UNI_und_VORLESUNGEN/11 phd projects/1 Meta HAPLOTYPING/1 R scripts/1 DADA2")
-source("https://bioconductor.org/biocLite.R")
-biocLite("dada2")
-library("dada2")
-library("dada2")
-library("JAMP") #v0.17#
+fw <- c(rep("BF1", 10), rep("BF2", 10), rep("BR1", 10), rep("BR2", 10))#
+rw <- c(rep(c("BR1", "BR2"), 10), rep(c("BF1", "BF2"), 10))#
+cbind(list.files("C_U_revcomp/_data"), fw, rw)
+cbind(list.files("/Volumes/NGS 2TB/170725 tiermix haplo/C_U_revcomp/_data"), fw, rw)
+fw <- c(rep("BF1", 10), rep("BF2", 10), rep("BF1", 10), rep("BF2", 10))#
+rw <- c(rep(c("BR1", "BR2"), 10), rep(c("BR1", "BR2"), 10))#
+cbind(list.files("/Volumes/NGS 2TB/170725 tiermix haplo/C_U_revcomp/_data"), fw, rw)
+fw <- c(rep("BF1", 10), rep("BF2", 10), rep(c("BF1", "BF2"), 10))#
+rw <- c(rep(c("BR1", "BR2"), 10), rep("BR1", 10), rep("BR2", 10))#
+cbind(list.files("/Volumes/NGS 2TB/170725 tiermix haplo/C_U_revcomp/_data"), fw, rw)
+cbind(list.files("/Volumes/NGS 2TB/170725 tiermix haplo/C_U_revcomp/_data"), fw, rw)
+minL <- c(rep(c(217, 316), 10), rep(c(322, 421), 10), rep(c(217, 316), 10), rep(c(322, 421), 10))
+cbind(list.files("/Volumes/NGS 2TB/170725 tiermix haplo/C_U_revcomp/_data"), minL)
+cbind(list.files("/Volumes/NGS 2TB/170725 tiermix haplo/C_U_revcomp/_data"), minL)#
+minL <- c(rep(c(217, 316), 5), rep(c(322, 421), 5), rep(c(217, 316), 5), rep(c(322, 421), 5))
+cbind(list.files("/Volumes/NGS 2TB/170725 tiermix haplo/C_U_revcomp/_data"), minL)#
+minL <- c(rep(c(217, 316), 5), rep(c(322, 421), 5), rep(c(217, 322), 5), rep(c(421, 316), 5))
+minL <- c(rep(c(217, 316), 5), rep(c(322, 421), 5), rep(c(217, 322), 5), rep(c(316, 421), 5))
+# 170725 jamp pipeline - tiermix data#
+setwd("~/Documents/UNI_und_VORLESUNGEN/GitHub/JAMP/")#
+#
+#install.packages(c("bold", "XML", "seqinr"), dependencies=T)#
+#install.packages("JAMP", repos = NULL, type="source")#
+#install.packages("~/Desktop/bold-master", repos = NULL, type="source")#
+library("JAMP") #v0.22#
 library("bold")#
-library("XML")
-# 170426 jamp pipeline#
-setwd("~/Documents/UNI_und_VORLESUNGEN/GitHub/JAMP/")
-install.packages(c("bold", "XML", "seqinr"), dependencies=T)
-install.packages("JAMP", repos = NULL, type="source")
-U_cluster_otus
-library("JAMP") #v0.17#
-library("bold")#
-library("XML")
+library("XML")#
+# base directory, extrenal HDD#
+setwd("/Volumes/NGS 2TB/170725 tiermix haplo")
+cbind(minL)
+minL <- c(rep(c(217, 316), 5), rep(c(322, 421), 5), rep(c(217, 322), 5), rep(c(316, 421), 5))
+cbind(minL)
+table(minL)
