@@ -60,7 +60,7 @@ cat(file="_stats/1_derep_logs.txt", paste("\nCombining all files in a single fil
 cat(file="../log.txt", "\nCombining all files in a single file (samples_pooled.txt)\n", append=T, sep="\n")
 
 # dereplicating pooled file
-message("Combining all files in a single file (samples_pooled.txt)")
+message("\nCombining all files in a single file (samples_pooled.txt)")
 cmd <- paste(paste(new_names, collapse=" "), "> _data/1_derep/samples_pooled.txt")
 system2("cat", cmd)
 
@@ -76,7 +76,7 @@ cat(file="_stats/1_derep_logs.txt", paste("usearch", cmd, sep=""), append=T, sep
 cat(file="_stats/1_derep_logs.txt", A, append=T, sep="\n")
 
 # renaming all sequences!
-info <- "Renaming pooled sequences, and applying same names to the dereplicated files."
+info <- "Renaming pooled sequences, and applying same names to the dereplicated files.\n"
 message(info)
 cat(file="../log.txt", info, append=T, sep="\n")
 
@@ -108,7 +108,7 @@ write.fasta(new_sample, new_haplo_seque_names, renamed[i])
 # UNOISE3
 # Apply denoising on the POOLED dereplicated renamed file!
 
-info <- paste("Denoising the file 1_derep/samples_pooled_derep_renamed.txt (containing", length(renamed), "samples).")
+info <- paste("\nDenoising the file 1_derep/samples_pooled_derep_renamed.txt (containing", length(renamed), "samples).")
 message(info)
 cat(file="../log.txt", info, append=T, sep="\n")
 
@@ -117,7 +117,7 @@ cmd <- paste("-unoise3 \"_data/1_derep/samples_pooled_derep_renamed.txt\" -zotus
 A <- system2("usearch", cmd, stdout=T, stderr=T)
 cat(file="_stats/2_unoise.txt", c(info, "", paste("usearch", cmd), "", A), append=T, sep="\n")
 
-info <- paste("Denoising compelte! ", Count_sequences("_data/1_derep/samples_pooled_derep_renamed.txt", fastq=F), " sequences were denoised using ", strategy, ".", "\nA total of ", sub(".*100.0% (.*) good, .* chimeras\r", "\\1", A[length(A)-1]), " haplotypes remained after denoising!", sep="")
+info <- paste("Denoising compelte! ", Count_sequences("_data/1_derep/samples_pooled_derep_renamed.txt", fastq=F), " sequences were denoised using ", strategy, ".", "\nA total of ", sub(".*100.0% (.*) good, .* chimeras\r", "\\1", A[length(A)-1]), " haplotypes remained after denoising!\n", sep="")
 message(info)
 cat(file="../log.txt", info, append=T, sep="\n")
 
@@ -143,9 +143,9 @@ denoised_sequences <- sub("2_renamed", "3_unoise", renamed)
 denoised_sequences <- sub("PE_derep_size_", "", denoised_sequences)
 denoised_sequences <- sub("_renamed.txt", "_denoised.txt", denoised_sequences)
 
-i<-1
-# chack dereplicated files agains the list of haplotypes (unoise3 all files)
-for (i in 1:length(cmd)){
+
+# check dereplicated files agains the list of haplotypes (unoise3 all files)
+for (i in 1:length(denoised_sequences)){
 
 sample <- read.fasta(renamed[i], as.string=T, forceDNAtolower=F)
 sample_keep <- sample[sample%in%haplotypes]
@@ -160,245 +160,67 @@ cat(file="../log.txt", info, append=T, sep="\n")
 }
 
 
-# bringing size back!
+# Cluster into OTUs (for OTU table information)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# 2 make OTUs!
-# merge all files into one
-
-dir.create("_data/3_OTU_clustering")
-
-cmd <- paste(paste(new_names2, collapse=" "), "> _data/3_OTU_clustering/A_all_files_united.fasta", collapse=" ")
-A <- system2("cat", cmd, stdout=T, stderr=T)
-
-temp <- paste(length(files), " dereplicated files where merged into file:\n\"_data/3_OTU_clustering/A_all_files_united.fasta\"", sep="")
-message("\n", temp)
-cat(file="../log.txt", "\n", temp, append=T, sep="\n")
-
-
-cat(file="_stats/3_OTU_clustering_log.txt", temp, "", paste("cat", cmd), append=T, sep="\n")
-
-# dereplicate "A_all_files_united.fasta" using Vsearch!
-cmd <- paste("-derep_fulllength _data/3_OTU_clustering/A_all_files_united.fasta -output _data/3_OTU_clustering/B_all_derep.fasta -sizein -sizeout -relabel Uniq", sep="")
-
-A <- system2("vsearch", cmd, stdout=T, stderr=T)
-
-temp <- paste("Total number of sequences (not dereplicated): ", sub(".*nt in (.*) seqs.*", "\\1", A[grep("seqs, min", A)]), "\n", sep="")
-message(temp)
-cat(file="../log.txt", temp, append=T, sep="\n")
-
-temp <- paste("United sequences are dereplicated + size filtered into a total of ", sub("(.*) unique sequences.*", "\\1", A[grep(" unique sequences", A)]), " unique sequences.", "\n", "File prepared for OTU clustering: B_all_derep.fasta", sep="")
-message(temp)
-cat(file="../log.txt", temp, append=T, sep="\n")
-
-# derep log
-cat(file="_stats/3_OTU_clustering_log.txt", "\n", A, "", paste("cat", cmd), append=T, sep="\n")
-
-
-# Actual OTU clustering of dereplicated filtered file! 
-
-cmd <- paste(" -cluster_otus _data/3_OTU_clustering/B_all_derep.fasta -otus _data/3_OTU_clustering/C_OTUs.fasta -uparseout _data/3_OTU_clustering/C_OTU_table.txt -relabel OTU_ -otu_radius_pct ", otu_radius_pct, " -strand ", strand, sep="")
+cmd <- paste(" -cluster_otus _data/1_derep/samples_pooled_+_denoised_renamed.txt -otus _data/1_derep/samples_pooled_+_denoised_renamed_OTUsequ.txt -uparseout _data/1_derep/samples_pooled_+_denoised_renamed_OTUtable.txt -relabel OTU_ -strand plus", sep="")
 
 A <- system2("usearch", cmd, stdout=T, stderr=T) # cluster OTUs!
 
-# cluster log
-cat(file="_stats/3_OTU_clustering_log.txt", "\n", paste("usearch", cmd), "", A, "", append=T, sep="\n")
+cat(file="_stats/2_unoise.txt", c("Clustering haplotypes into OTUs for OTU table!", "", paste("usearch", cmd), "", A), append=T, sep="\n")
 
-chimeras <- sub(".*OTUs, (.*) chimeras\r", "\\1", A[grep("chimeras\r", A)])
-OTUs <- sub(".*100.0% (.*) OTUs, .* chimeras\r", "\\1", A[grep("chimeras\r", A)])
+chimeras <- as.numeric(sub(".*100.0% .* OTUs, (.*) chimeras\r", "\\1", A[grep("chimeras\r", A)]))
+OTUs <- as.numeric(sub(".*100.0% (.*) OTUs, .* chimeras\r", "\\1", A[grep("chimeras\r", A)]))
+if(is.na(chimeras)){chimeras<-0}
 
-temp <- paste("\n", "Clustering reads from\n\"B_all_derep.fasta\" \notu_radius_pct = ", otu_radius_pct, "\nstrand = ", strand, "\nChimeras discarded: ", chimeras, "\nOTUs written: ", OTUs, " -> file \"C_OTUs.fasta\"\n", sep="")
-message(temp)
-cat(file="../log.txt", temp, append=T, sep="\n")
-
-# RNENAME
-# compare reads against dereplicated and RENAME sequences!
-
-dir.create("_data/4_rename")
-
-DNA_master <- read.fasta("_data/3_OTU_clustering/B_all_derep.fasta", as.string=T, forceDNAtolower=F)
-names(DNA_master) <- sub("(.*);size=.*", "\\1", names(DNA_master))
-
-new_names3 <- sub("2_MinMax", "4_rename", new_names2)
-
-for (i in 1:length(new_names2)){
-
-sample <- read.fasta(new_names2[i], as.string=T, forceDNAtolower=F)
-
-size <- sub(".*(;size=.*;)", "\\1", names(sample))
-sequnames <- paste(names(DNA_master)[match(sample, DNA_master)], size, sep="")
-
-write.fasta(sample, names= sequnames, new_names3[i])
-}
-message("read renamed! ame as in \"B_all_derep.fasta\"")
-# END renaming
+info <- paste("Clustered ", length(haplotypes), " haplotype sequences (cluster_otus, 3% simmilarity) into ", OTUs, " OTUs (+", chimeras, " chimeras).\nOTUs and (potentially) chimeric sequences will be included in the Haplotype table!\n", sep="" )
+message(info)
+cat(file="../log.txt", info, append=T, sep="\n")
 
 
-# Mapp reads (filtered abund & MM) against OTUs
-blast_names <- sub("4_rename", "5_mapp", new_names3)
-log_names <- sub("_data", "_stats", blast_names)
-dir.create("_data/5_mapp")
+# generate one united haplotype table!
 
-cmd <- paste("-usearch_global ", new_names3, " -db ", "\"_data/3_OTU_clustering/C_OTUs.fasta\"", " -strand plus -id ", (100-otu_radius_pct)/100, " -blast6out \"", blast_names, "\" -maxhits 1", sep="")
+OTUs <- read.csv("_data/1_derep/samples_pooled_+_denoised_renamed_OTUtable.txt", stringsAsFactors=F, sep="\t", header=F)
 
+k <- 1
+OTU_list <- NULL
+for (i in 1:nrow(OTUs)){
 
-for (i in 1:length(cmd)){
-A <- system2("usearch", cmd[i], stdout=T, stderr=T)
-cat(file= "_stats/5_mapping.txt", paste("vsearch", cmd[i], sep=""), A, "\n\n\n", append=T, sep="\n")
-}
-message("Reads remapped!")
-
-
-# HAPLO TYPING STUFF
-# subset haplotypes + writing individual files
-
-dir.create("_data/6_haplotypes") # make folders!
-folder <- paste("_data/6_haplotypes/", sub("_data/5_mapp/(.*)_PE_derep.*", "\\1", blast_names), sep="")
-
-
-i <- 1
-for (i in 1:length(blast_names)){
-
-data <- read.csv(blast_names[i], header=F, sep="\t", stringsAsFactors=F)
-
-data$V11 <- sub("(.*);size=.*", "\\1", data$V1)
-data$V12 <- as.numeric(sub(".*;size=(.*);", "\\1", data$V1))
-
-# subset low abundant OTUs
-temp <- aggregate(data$V12, list(data$V2), "sum")
-OTUsum <- sum(temp$x)
-
-temp <- cbind(temp, "relabund"=temp$x/OTUsum*100)
-
-# subset OTUs to keep!
-temp <- temp[temp$relabund>=minOTUabund,]
-
-data <- data[data$V2%in%temp$Group.1,]
-
-report <- paste("Subsetting OTUs with ", minOTUabund, " % anundance; Keeping ", nrow(temp), " OTUs", sep="")
-message(report)
-
-temp_foldername <- folder[i]
-dir.create(temp_foldername)
-
-#Processing of individual OTUs
-# temp = list of OTUs with high enough abundnace (minOTUabund)
-k <- 15
-for(k in 1:nrow(temp)){
-
-dir.create(paste(temp_foldername, "/", temp$Group.1[k], sep=""), showWarnings=F)
-
-meep <- data[data$V2==temp$Group.1[k],]
-
-# convert to rel abundance
-meep$V12 <- meep$V12/sum(meep$V12)*100
-
-meep <- cbind(meep, "keep"=meep$V12 >= AbundInside)
-
-#recalculate rel abundance of OTUs left
-meep <- cbind(meep, "keeprel"=meep$V12)
-meep$keeprel[meep$keep] <- round(meep$keeprel[meep$keep]/sum(meep$keeprel[meep$keep])*100, 2)
-meep$keeprel[!meep$keep] <- NA
-
-# write table as csv!
-write.csv(meep, paste(temp_foldername, "/", temp$Group.1[k], "/", temp$Group.1[k], "_tab.csv", sep=""), row.names=F)
-
-
-# save fasta files
-fasta_save <- DNA_master[names(DNA_master)%in%meep$V11[meep$keep]]
-glumanda_names <- meep$V1[meep$keep][match(sub("(.*);size.*", "\\1", meep$V1[meep$keep]), names(fasta_save))] # same sorting
-
-write.fasta(fasta_save, names=glumanda_names, paste(temp_foldername, "/", temp$Group.1[k], "/", temp$Group.1[k], "_sequ.txt", sep=""))
-
-
-
-# make plot!
-pdf(file= paste(temp_foldername, "/", temp$Group.1[k], "/", temp$Group.1[k], "_plot.pdf", sep=""), width=6, height=6, useDingbats=F)
-plot(meep$V12, ylim=c(0.01, 100), log="y", yaxt="n", ylab="rel. proportions within OTU", main=temp$Group.1[k])
-axis(side=2, at=c(100, 10, 1, 0.1, 0.01, 0.001), labels=c("100", "10", "1", "0.1","0.01", "0.001"), las=2)
-axis(side=2, at=c(seq(20,90,10), seq(2,9,1), seq(0.2,0.9,0.1), seq(0.02,0.09,0.01)), labels=F, las=2, tck=-0.01)
-lines(c(0,nrow(meep)), c(AbundInside, AbundInside), col="Red")
-dev.off()
-
-# make plot, write fasta of sequ to keep
-
-}
-}
-
-i<-1
-# unite haplotypes into single table
-
-master_tab <- data.frame("V11"= "Uniq86")
-
-for (i in 1:length(folder)){
-
-OTUs <- list.files(folder[i])
-
-exp <- NULL # extract individual haplotypes
-for (k in 1:length(OTUs)){
-
-otu <- read.csv(paste(folder[i], "/", OTUs[k], "/", OTUs[k], "_tab.csv", sep=""), stringsAsFactors=F)
-
-# count sequences in OTU
-otu_abund <- sum(as.numeric(sub(".*size=(.*);", "\\1", otu$V1)))
-
-otu <- otu[otu$keep,] # keep high abund haplotypes
-otu <- cbind(otu[c(2, 11, 14)], "indiv"=as.numeric(sub(".*size=(.*);", "\\1", otu$V1)), otu_abund) # extract useful info
-
-exp <- rbind(exp, otu)
-}
-
-temp_name <- sub("_data/6_haplotypes/", "", folder[i])
-names(exp) <- c(paste(temp_name, "_OTU", sep=""), "V11", paste(temp_name, "_rel", sep=""), paste(temp_name, "_abund", sep=""), paste(temp_name, "_OTU_abund", sep=""))
-
-# merge exp haplotype tables from samples
-
-master_tab <- merge(master_tab, exp, by="V11", all=T)
+if(OTUs$V2[i]=="OTU"){OTU_list[i] <- paste("OTU_", k, sep="")
+k <- k+1} else
+if(OTUs$V2[i]=="match"){OTU_list[i] <- sub(".*;top=(OTU_.*)\\(.*", "\\1", OTUs$V3[i])} else {OTU_list[i] <- OTUs$V2[i]}
 
 }
 
-# reorganise haplo table 
 
-master_tab <- master_tab[c(1, (1:length(folder))*4-2, (1:length(folder))*4-1, (1:length(folder))*4,(1:length(folder))*4+1)]
+data <- data.frame("haplotype"=names(haplotypes), "OTU"=OTU_list, stringsAsFactors=F)
 
-master_tab$V11 <- as.character(master_tab$V11)
+for (i in 1:length(denoised_sequences)){
+sample <- names(read.fasta(denoised_sequences[i]))
+matched <- match(sub(";size=.*;", "", sample), data$haplotype)
+abundance <- rep(0, nrow(data))
+abundance[matched] <- as.numeric(sub(".*;size=(.*);", "\\1", sample))
 
-OTU <- NULL
-
-for (i in 1:length(folder)){
-keep <- as.vector(!is.na(master_tab[(1+i)]))
-OTU[keep] <- master_tab[keep, (1+i)]
+data <- cbind(data, abundance)
+names(data)[i+2] <- sub("_data/3_unoise/(.*)_denoised.txt", "\\1", denoised_sequences[i])
 }
 
-master_tab <- cbind(OTU, master_tab[-c(2:(length(folder)+1))])
+data <- cbind(data, "sequences"=unlist(haplotypes), stringsAsFactors=F)
+# sort by OTUs
+data <- data[order(as.numeric(sub("OTU_", "", data$OTU))),]
+data <- cbind("sort"=1:nrow(data), data)
+
+data <- rbind(data, c(nrow(data)+1, NA, "rm_bydenoising",  counts, NA))
+
+dir.create("_data/4_denoised")
+
+write.csv(file="_data/4_denoised/Raw_haplotable.csv", data, row.names=F)
+
+write.fasta(as.list(data$sequences[-nrow(data)]), paste(data$OTU[-nrow(data)], data$haplotype[-nrow(data)], sep="__"), "_data/4_denoised/Raw_haplo_sequ_byOTU.txt")
 
 
-master_tab <- master_tab[order(as.numeric(sub("OTU_", "", master_tab$OTU)), as.numeric(sub("Uniq", "", master_tab$V11)), decreasing=F),]
-names(master_tab)[2] <- "Haplotypes"
-
-# add sequences to table
-master_tab <- cbind(sort= c(1:nrow(master_tab)), master_tab, "sequ"=unlist(DNA_master[match(master_tab$Haplotypes, names(DNA_master))]))
-
-write.csv(master_tab, file="haplo_tab.csv", row.names=F)
 
 
-write.fasta(DNA_master[match(master_tab$Haplotypes, names(DNA_master))], names=paste(master_tab$OTU, master_tab$Haplotypes, sep="_"), "haplo_fasta.txt")
-
-
+head(data)
 
 
 temp <- "\nModule completed!"
