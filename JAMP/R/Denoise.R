@@ -1,10 +1,10 @@
 # Haplotyping v0.1
 
-haplotyping <- function(files="latest", ampliconLength=NA, minsize=5, minrelsize=0.001, minOTUabund=0.1, AbundInside=1, otu_radius_pct=3, strand="plus", chimeraRM=F){
+Denoise <- function(files="latest",  strategy="unoise", unoise_alpha=5, minsize=10, minrelsize=0.001){
 
 
 
-Core(module="Haplotyping")
+Core(module="Denoising")
 cat(file="../log.txt", c("Version v0.1", "\n"), append=T, sep="\n")
 message(" ")
 
@@ -13,113 +13,166 @@ source("robots.txt")
 files <- list.files(paste("../", last_data, "/_data", sep=""), full.names=T)
 }
 
-# Dereplicate files using Usearch
-dir.create("_data/1_derep")
+
 
 # count sequences in each file
 counts <- Count_sequences(files, fastq=F)
 size <- round(counts* minrelsize/100) # get nim abundance
-size[size<=minsize] <- minsize # min size!
+size[size<minsize] <- minsize # min size!
+
+
+
+# Dereplicate files using Usearch
+dir.create("_data/1_derep")
 
 
 new_names <- sub(".*(_data/.*)", "\\1", files)
 new_names <- sub("_PE.*", "_PE_derep", new_names)
-new_names <- paste(new_names, "_", size, ".txt", sep="")
+new_names <- paste(new_names, "_size_", size, ".txt", sep="")
 new_names <- sub("_data", "_data/1_derep", new_names)
 
 cmd <- paste("-fastx_uniques \"", files, "\" -fastaout \"", new_names, "\" -sizeout", " -minuniquesize ", size,  sep="")
 
-temp <- paste(length(files), " files are dereplicated and relative sequence abundance bwelow ", minrelsize, "% (or minuniqesize of ", minsize, ") are beeing discarded:", sep="")
+temp <- paste(length(files), " files are dereplicated and sequences in each sample below ", minrelsize, "% (or minuniqesize of ", minsize,")  are beeing discarded:", sep="")
 cat(file="../log.txt", temp , append=T, sep="\n")
 message(temp)
+
 
 temp <- new_names
 for (i in 1:length(cmd)){
 A <- system2("usearch", cmd[i], stdout=T, stderr=T)
 meep <- sub(".*_data/(.*)", "\\1", temp[i])
+cat(file="_stats/1_derep_logs.txt", paste("usearch ", cmd[i], sep="") , append=T, sep="\n")
 cat(file="_stats/1_derep_logs.txt", meep, A, "\n", append=T, sep="\n")
 
-log_count <- Count_sequences(paste("_data/", meep, sep=""))
+
+log_count <- Count_sequences(new_names[i], count_size=T)
 log <- paste(sub(".*_data/1_derep/(.*)", "\\1", temp[i]), ": ", log_count, " of ", counts[i], " keept (", round((log_count/counts[i])*100, digits=4), "%, min size: ", size[i],")", sep="")
 cat(file="../log.txt", log , append=T, sep="\n")
 message(log)
 }
 
 
-# denovo chimera removal
-if(chimeraRM){
-
-dir.create("_data/1_RMchimeras")
-new_names_chim <- sub("1_derep", "1_RMchimeras", new_names)
-new_names_chim <- sub(".txt", "_NOchim.txt", new_names_chim)
-
-temp <- paste("Removing chimeras with uchime2_denovo in ", length(new_names_chim), " files.\nThins might take some time!", sep="")
-message(temp)
-cat(file="../log.txt", temp , append=T, sep="\n")
-
-cmd <- paste(" -uchime2_denovo ", new_names, " -nonchimeras  ", new_names_chim, " -chimeras chimeras.txt", sep="")
+# merge all files into one!
 
 
-for (i in 1:length(new_names2)){
-A <- system2("usearch", cmd[i], stdout=T, stderr=T)
-getwd()
+cat(file="_stats/1_derep_logs.txt", paste("\nCombining all files in a single file (samples_pooled.txt):\n", paste("cmd", cmd, collapse="", sep=""), collapse="", sep="") , append=T, sep="\n")
+cat(file="../log.txt", "\nCombining all files in a single file (samples_pooled.txt)\n", append=T, sep="\n")
 
-cat(file="_stats/1_RMchimeras.txt", "\n", A, "", paste("cutadapt", cmd[i]), append=T, sep="\n")
+# dereplicating pooled file
+message("Combining all files in a single file (samples_pooled.txt)")
+cmd <- paste(paste(new_names, collapse=" "), "> _data/1_derep/samples_pooled.txt")
+system2("cat", cmd)
 
-temp <- sub(".*100.0% (.*) good, (.*) chimeras\r", "good: \\1 chimeras: \\2", A[8])
+# dereplicating files
+info <- "Dereplicating pooled sequences! (no min size)"
+message(info)
+cat(file="../log.txt", info, append=T, sep="\n")
 
-good <- as.numeric(sub("good: (.*) chimeras: .*", "\\1", temp))
-chimeras <- as.numeric(sub("good: .* chimeras: (.*)", "\\1", temp))
-temp <- paste(sub(".*1_derep/(.*)_PE.*", "\\1", new_names[i]), " - ", temp, " (",round(chimeras/(good+chimeras)*100, 2), "%)", sep="")
+cmd <- "-fastx_uniques \"_data/1_derep/samples_pooled.txt\" -fastaout \"_data/1_derep/samples_pooled_derep.txt\" -sizein -sizeout"
+A <- system2("usearch", cmd, stdout=T, stderr=T)
 
-message(temp)
-cat(file="../log.txt", temp , append=T, sep="\n")
+cat(file="_stats/1_derep_logs.txt", paste("usearch", cmd, sep=""), append=T, sep="\n")
+cat(file="_stats/1_derep_logs.txt", A, append=T, sep="\n")
+
+# renaming all sequences!
+info <- "Renaming pooled sequences, and applying same names to the dereplicated files."
+message(info)
+cat(file="../log.txt", info, append=T, sep="\n")
+
+
+haplo <- read.fasta("_data/1_derep/samples_pooled_derep.txt", forceDNAtolower=F, as.string=T)
+
+temp <- sub(".*(;size=.*;)", "\\1", names(haplo))
+temp2 <- paste("haplo_", 1:length(haplo), temp, sep="")
+
+write.fasta(haplo, temp2, "_data/1_derep/samples_pooled_derep_renamed.txt")
+
+
+# rename single files!
+dir.create("_data/2_renamed")
+renamed <- sub(".txt", "_renamed.txt", new_names)
+renamed <- sub("/1_derep/", "/2_renamed/", renamed)
+
+
+for (i in 1:length(new_names)){
+sample <- read.fasta(new_names[i], as.string=T, forceDNAtolower=F)
+matched <- match(sample, haplo)
+
+new_sample <- haplo[matched] # DNA sequences
+new_haplo_seque_names <- paste("haplo_", matched, sub(".*(;size=.*;)", "\\1", names(sample)), sep="") # sizes
+
+write.fasta(new_sample, new_haplo_seque_names, renamed[i])
 }
 
-new_names <- new_names_chim
-new_names2 <- sub("1_RMchimeras", "2_MinMax", new_names)
+# UNOISE3
+# Apply denoising on the POOLED dereplicated renamed file!
+
+info <- paste("Denoising the file 1_derep/samples_pooled_derep_renamed.txt (containing", length(renamed), "samples).")
+message(info)
+cat(file="../log.txt", info, append=T, sep="\n")
+
+cmd <- paste("-unoise3 \"_data/1_derep/samples_pooled_derep_renamed.txt\" -zotus \"_data/1_derep/samples_pooled_+_denoised.txt\" -unoise_alpha ", unoise_alpha,  sep="")
+
+A <- system2("usearch", cmd, stdout=T, stderr=T)
+cat(file="_stats/2_unoise.txt", c(info, "", paste("usearch", cmd), "", A), append=T, sep="\n")
+
+info <- paste("Denoising compelte! ", Count_sequences("_data/1_derep/samples_pooled_derep_renamed.txt", fastq=F), " sequences were denoised using ", strategy, ".", "\nA total of ", sub(".*100.0% (.*) good, .* chimeras\r", "\\1", A[length(A)-1]), " haplotypes remained after denoising!", sep="")
+message(info)
+cat(file="../log.txt", info, append=T, sep="\n")
+
+
+
+#Zotus, get old names back (original haplotypes)!
+
+Zotus <- read.fasta("_data/1_derep/samples_pooled_+_denoised.txt", as.string=T, forceDNAtolower=F)
+renamed_sequ <- read.fasta("_data/1_derep/samples_pooled_derep_renamed.txt", as.string=T, forceDNAtolower=F)
+
+matched <- match(Zotus, renamed_sequ)
+new_sample <- renamed_sequ[matched] # DNA sequences
+
+write.fasta(new_sample, names(new_sample), "_data/1_derep/samples_pooled_+_denoised_renamed.txt")
+
+
+names(new_sample) <- sub(";size(.*);", "", names(new_sample))
+haplotypes <- new_sample
+
+dir.create("_data/3_unoise")
+
+denoised_sequences <- sub("2_renamed", "3_unoise", renamed)
+denoised_sequences <- sub("PE_derep_size_", "", denoised_sequences)
+denoised_sequences <- sub("_renamed.txt", "_denoised.txt", denoised_sequences)
+
+i<-1
+# chack dereplicated files agains the list of haplotypes (unoise3 all files)
+for (i in 1:length(cmd)){
+
+sample <- read.fasta(renamed[i], as.string=T, forceDNAtolower=F)
+sample_keep <- sample[sample%in%haplotypes]
+
+write.fasta(sample_keep, names(sample_keep), denoised_sequences[i])
+
+
+info <- paste(sub("_data/3_unoise/(.*)_denoised.txt", "\\1", denoised_sequences[i]), ": ", length(sample_keep), " of ", length(sample), " sequences remained after denoising (", round(length(sample_keep)/length(sample)*100, 2), "%)", sep="")
+message(info)
+cat(file="../log.txt", info, append=T, sep="\n")
 
 }
 
 
-# chimera end
-#############
+# bringing size back!
 
 
-dir.create("_data/2_MinMax")
-
-new_names2 <- sub("1_derep", "2_MinMax", new_names)
-# min max sequence length (cutadapt), All files!
-temp <- paste("Filtering ", length(new_names), " files for Min/Max length, keeping only sequences that are ", ampliconLength, " bp long!", sep="")
-message(temp)
-cat(file="../log.txt", temp , append=T, sep="\n")
-
-cmd <- paste(new_names, " -o ", new_names2, " -f \"fasta\" -m ", ampliconLength, " -M ", ampliconLength, sep="")
 
 
-for (i in 1:length(new_names2)){
-A <- system2("cutadapt", cmd[i], stdout=T, stderr=T)
-getwd()
-
-cat(file="_stats/2_MinMax.txt", "\n", A, "", paste("cutadapt", cmd[i]), append=T, sep="\n")
-
-stats <- A
-reads_in <- stats[grep("Total reads processed:", stats)[1]]
-reads_in <- sub(".* processed: +", "", reads_in)
-reads_in <- as.numeric(gsub(",", "", reads_in))
-
-reads_out <- stats[grep("Reads written \\(passing filters\\):", stats)[1]]
-reads_out <- sub(".* filters.: +", "", reads_out)
-reads_out <- sub(" .*", "", reads_out)
-reads_out <- as.numeric(gsub(",", "", reads_out))
-
-keep <- round(reads_out/reads_in*100, digits=2)
 
 
-meep <- paste("Filtering ", reads_in, " reads with min max ", ampliconLength, " bp: keep ", reads_out, " (", keep, "%)", sep="")
-cat(file="../log.txt", meep, append=T, sep="\n")
-message(meep)
-}
+
+
+
+
+
+
 
 
 
