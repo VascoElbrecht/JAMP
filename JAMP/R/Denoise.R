@@ -1,6 +1,6 @@
 # Haplotyping v0.1
 
-Denoise <- function(files="latest",  strategy="unoise", unoise_alpha=5, minsize=10, minhaplosize=0.003){
+Denoise <- function(files="latest",  strategy="unoise", unoise_alpha=5, minsize=10, minrelsize=0.0001, minhaplosize=0.003){
 
 
 
@@ -232,8 +232,6 @@ temp <- data[i+3]/sum(data[i+3])*100
 data[nrow(data), i+3] <- data[nrow(data), i+3] + sum(data[i+3][temp < minhaplosize])
 data[i+3][temp < minhaplosize] <- 0
 }
-
-tail(data)
 
 
 # remove all rows with 0!
