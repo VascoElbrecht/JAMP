@@ -24,7 +24,7 @@ new_names <- sub(".*(_data/.*)", "\\1", files)
 new_names <- sub(".fast", "_trunc.fast", new_names)
 
 
-cmd <- paste("-fastx_truncate \"", files,"\"", " -stripleft ", left, " -stripright ", right, " -fastqout \"", new_names, "\"", sep="")
+cmd <- paste("-fastx_truncate \"", files,"\"", " -stripleft ", left, " -stripright ", right, if(fastq){" -fastqout "} else {" -fastaout "}, "\"", new_names, "\"", sep="")
 
 
 tab_exp <- NULL
