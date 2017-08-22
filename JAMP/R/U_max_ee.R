@@ -24,6 +24,9 @@ new_names <- sub(".fastq", "_ee.fastq", new_names) # keep fastq
 } else {
 new_names <- sub(".fastq", "_ee.fasta", new_names) # convert to fasta
 }
+new_names <- sub("_ee\\.", paste("_ee", max_ee, ".", sep=""), new_names)
+
+
 
 dir.create("_stats/merge_stats")
 log_names <- sub("_data", "_stats/merge_stats", new_names)
