@@ -206,10 +206,10 @@ names(data)[i+2] <- sub("_data/3_unoise/(.*)_denoised.txt", "\\1", denoised_sequ
 
 data <- cbind(data, "sequences"=unlist(haplotypes), stringsAsFactors=F)
 # sort by OTUs
-data <- data[order(as.numeric(sub("OTU_", "", data$OTU))),]
+data <- data[order(suppressWarnings(as.numeric(sub("OTU_", "", data$OTU)))),]
 data <- cbind("sort"=1:nrow(data), data)
 
-data <- rbind(data, c(nrow(data)+1, NA, "rm_bydenoising",  counts, NA))
+data <- rbind(data, c(nrow(data)+1, NA, "rm_bydenoising",  counts-colSums(data[4:(ncol(data)-1)]), NA))
 
 dir.create("_data/4_denoised")
 
