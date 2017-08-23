@@ -239,8 +239,8 @@ data <- data[rowSums(data[5:ncol(data)-1])!=0,]
 
 data[nrow(data), 3] <- paste("denoised+below", minhaplosize, sep="")
 
-write.csv(file=paste("_data/4_denoised/haplotable_", minhaplosize, ".csv", sep=""), data, row.names=F)
-write.csv(file=paste("haplotable_", minhaplosize, ".csv", sep=""), data, row.names=F)
+write.csv(file=paste("_data/4_denoised/haplotable_alpha_", unoise_alpha, "_haplosize_", minhaplosize, ".csv", sep=""), data, row.names=F)
+write.csv(file=paste("haplotable_alpha_", unoise_alpha, "_haplosize_", minhaplosize, ".csv", sep=""), data, row.names=F)
 
 write.fasta(as.list(data$sequences[-nrow(data)]), paste(data$OTU[-nrow(data)], data$haplotype[-nrow(data)], sep="__"), paste("_data/4_denoised/haplo_sequ_byOTU", minhaplosize, ".txt", sep=""))
 write.fasta(as.list(data$sequences[-nrow(data)]), data$haplotype[-nrow(data)], paste("_data/4_denoised/haplo_sequ_", minhaplosize, ".txt", sep=""))
