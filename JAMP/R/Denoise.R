@@ -255,7 +255,7 @@ temp <- data[5:ncol(data)-1]
 sums <- colSums(temp)
 exp <- aggregate(unlist(temp[1]), list(data$OTU), "sum")[1]
 
-
+i<-1
 for (i in 1:ncol(temp)){
 exp <- cbind(exp, aggregate(unlist(temp[i]), list(data$OTU), "sum")[2])
 exp[i+1] <- exp[i+1]/sums[i]*100
@@ -265,7 +265,10 @@ exp[i+1] <- exp[i+1] >= OTUmin
 keep <- rowSums(exp[-1])
 keep2 <- exp$Group.1[keep>0]
 
+discarded <- data[!data$OTU %in% keep2,] # adddiscarded reads to count
 data <- data[data$OTU %in% keep2,]
+data[nrow(data), (5:ncol(data)-1)] <- data[nrow(data), (5:ncol(data)-1)] + colSums(discarded[5:ncol(data)-1])
+
 
 
 info <- paste(sum(keep>0), " of ", length(exp$Group.1), " OTUs remain in the dataset. ", sum(keep==0), " OTUs were discarded (", round(sum(keep==0)/length(exp$Group.1)*100, 2), "%)\n", sep="", "\nDiscarded OTUs are:\n", paste(exp$Group.1[keep==0], sep="", collapse=", "), "\n\n")
