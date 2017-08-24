@@ -1,6 +1,6 @@
 # Haplotyping v0.1
 
-Denoise <- function(files="latest",  strategy="unoise", unoise_alpha=5, minsize=10, minrelsize=0.0001, minhaplosize=0.003){
+Denoise <- function(files="latest",  strategy="unoise", unoise_alpha=5, minsize=10, minrelsize=0.0001, OTUmin=0.01, minhaplosize=0.003){
 
 
 
@@ -241,10 +241,48 @@ data <- data[rowSums(data[5:ncol(data)-1])!=0,]
 data[nrow(data), 3] <- paste("denoised+below", minhaplosize, sep="")
 
 write.csv(file=paste("_data/4_denoised/haplotable_alpha_", unoise_alpha, "_haplosize_", minhaplosize, ".csv", sep=""), data, row.names=F)
-write.csv(file=paste("haplotable_alpha_", unoise_alpha, "_haplosize_", minhaplosize, ".csv", sep=""), data, row.names=F)
 
-write.fasta(as.list(data$sequences[-nrow(data)]), paste(data$OTU[-nrow(data)], data$haplotype[-nrow(data)], sep="__"), paste("_data/4_denoised/haplo_sequ_byOTU", minhaplosize, ".txt", sep=""))
-write.fasta(as.list(data$sequences[-nrow(data)]), data$haplotype[-nrow(data)], paste("_data/4_denoised/haplo_sequ_", minhaplosize, ".txt", sep=""))
+# ADD OTU subsetting based on OTUmin
+
+info <- paste("\nSubsetting OTUs based on minimum relative abundance. OTUs with not at least ", OTUmin, "% abundance in ONE of the ", length(files)," samples are removed from the dataset!\n\n", sep="")
+message(info)
+cat(file="../log.txt", info, append=T, sep="\n")
+
+
+data <- read.csv(file=paste("_data/4_denoised/haplotable_alpha_", unoise_alpha, "_haplosize_", minhaplosize, ".csv", sep=""), stringsAsFactors=F)
+
+temp <- data[5:ncol(data)-1]
+sums <- colSums(temp)
+exp <- aggregate(unlist(temp[1]), list(data$OTU), "sum")[1]
+
+
+for (i in 1:ncol(temp)){
+exp <- cbind(exp, aggregate(unlist(temp[i]), list(data$OTU), "sum")[2])
+exp[i+1] <- exp[i+1]/sums[i]*100
+exp[i+1] <- exp[i+1] >= OTUmin
+}
+
+keep <- rowSums(exp[-1])
+keep2 <- exp$Group.1[keep>0]
+
+data <- data[data$OTU %in% keep2,]
+
+
+info <- paste(sum(keep>0), " of ", length(exp$Group.1), " OTUs remain in the dataset. ", sum(keep==0), " OTUs were discarded (", round(sum(keep==0)/length(exp$Group.1)*100, 2), "%)\n", sep="", "\nDiscarded OTUs are:\n", paste(exp$Group.1[keep==0], sep="", collapse=", "), "\n\n")
+message(info)
+cat(file="../log.txt", info, append=T, sep="\n")
+
+round(sum(keep==0)/length(exp$Group.1)*100, 2)
+
+
+#### end OTU subsetting, write final fasta files
+
+write.csv(file=paste("haplotable_alpha_", unoise_alpha, "_haplosize_", minhaplosize, "_minOTU_", OTUmin, ".csv", sep=""), data, row.names=F)
+write.csv(file=paste("_data/4_denoised/haplotable_alpha_", unoise_alpha, "_haplosize_", minhaplosize, "_minOTU_", OTUmin, ".csv", sep=""), data, row.names=F)
+
+
+write.fasta(as.list(data$sequences[-nrow(data)]), paste(data$OTU[-nrow(data)], data$haplotype[-nrow(data)], sep="__"), paste("_data/4_denoised/haplo_sequ_byOTU", minhaplosize, "_minOTU_", OTUmin, ".txt", sep=""))
+write.fasta(as.list(data$sequences[-nrow(data)]), data$haplotype[-nrow(data)], paste("_data/4_denoised/haplo_sequ_", minhaplosize, "_minOTU_", OTUmin, ".txt", sep=""))
 
 
 
