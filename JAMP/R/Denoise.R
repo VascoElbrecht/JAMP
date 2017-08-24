@@ -218,7 +218,7 @@ write.csv(file="_data/4_denoised/Raw_haplotable.csv", data, row.names=F)
 write.fasta(as.list(data$sequences[-nrow(data)]), paste(data$OTU[-nrow(data)], data$haplotype[-nrow(data)], sep="__"), "_data/4_denoised/Raw_haplo_sequ_byOTU.txt")
 write.fasta(as.list(data$sequences[-nrow(data)]), data$haplotype[-nrow(data)], "_data/4_denoised/Raw_haplo_sequ.txt")
 
-info <- paste("\nHaplotype table generated!\nRaw data and fasta files are available in _data/4_denoised (no subsetting)\n\nNow appling subsetting to the dataset!\nHaplotypes below ", minhaplosize, "% abundance in at least one sample are beeing discarded. The relative abundance is based on the number of sequences available before denoising (imput files).\nWaringing: All abundances in the table below ", minhaplosize, "% are set to 0. See Raw_haplotable.csv tble for orignial data without subsetting!\n\n", sep="")
+info <- paste("\nHaplotype table generated!\nRaw data and fasta files are available in _data/4_denoised (no subsetting)\n\nNow appling subsetting to the dataset!\n\nHaplotypes below ", minhaplosize, "% abundance (GLOBAL ABUNDANCE, across all haplotypes in a sample) in at least one sample are beeing discarded. The relative abundance is based on the number of sequences available before denoising (imput files).\nWaringing: All abundances in the table below ", minhaplosize, "% are set to 0. See Raw_haplotable.csv tble for orignial data without subsetting!\n\n", sep="")
 message(info)
 cat(file="../log.txt", info, append=T, sep="\n")
 
@@ -227,6 +227,7 @@ cat(file="../log.txt", info, append=T, sep="\n")
 
 data <- read.csv("_data/4_denoised/Raw_haplotable.csv", stringsAsFactors=F)
 
+# minhaplosize (on each haplotype)
 for (i in 1:(ncol(data)-4)){ # set to 0!
 temp <- data[i+3]/sum(data[i+3])*100
 data[nrow(data), i+3] <- data[nrow(data), i+3] + sum(data[i+3][temp < minhaplosize])
