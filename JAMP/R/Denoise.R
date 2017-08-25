@@ -284,12 +284,12 @@ write.csv(file=paste("haplotable_alpha_", unoise_alpha, "_haplosize_", minhaplos
 write.csv(file=paste("_data/4_denoised/haplotable_alpha_", unoise_alpha, "_haplosize_", minhaplosize, "_minOTU_", OTUmin, ".csv", sep=""), data, row.names=F)
 
 
-write.fasta(as.list(data$sequences[-nrow(data)]), paste(data$OTU[-nrow(data)], data$haplotype[-nrow(data)], sep="__"), paste("_data/4_denoised/haplo_sequ_byOTU", minhaplosize, "_minOTU_", OTUmin, ".txt", sep=""))
+write.fasta(as.list(data$sequences[-nrow(data)]), paste(data$OTU[-nrow(data)], data$haplotype[-nrow(data)], sep="__"), paste("_data/4_denoised/haplo_sequ_byOTU_", minhaplosize, "_minOTU_", OTUmin, ".txt", sep=""))
 write.fasta(as.list(data$sequences[-nrow(data)]), data$haplotype[-nrow(data)], paste("_data/4_denoised/haplo_sequ_", minhaplosize, "_minOTU_", OTUmin, ".txt", sep=""))
 
-
-
-
+centroids <- which(!duplicated(data$OTU))
+centroids <- centroids[-length(centroids)]
+write.fasta(as.list(data$sequences[centroids]), data$OTU[centroids], paste("_data/4_denoised/haplo_OTU_Centroids_", minhaplosize, "_minOTU_", OTUmin, ".txt", sep=""))
 
 
 temp <- "\nModule completed!"
