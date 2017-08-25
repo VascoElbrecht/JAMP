@@ -1,10 +1,13 @@
 # Bold web hack
 
 
-Bold_web_hack <- function(file=NA, folder="", MM=c(0.98, 0.95, 0.90, 0.85)){
+Bold_web_hack <- function(file=NA, folder=NULL, MM=c(0.98, 0.95, 0.90, 0.85)){
 
 oldwd <- getwd()
+if(!is.null(folder)){
+dir.create(folder, showWarnings = FALSE)
 setwd(folder)
+}
 getwd()
 #cat(file="../log.txt", c("\n","Version v0.1", "\n"), append=T, sep="\n")
 
@@ -12,7 +15,12 @@ dir.create("_BOLD_web_hack", showWarnings = FALSE)
 dir.create("_BOLD_web_hack/OTUs", showWarnings = FALSE)
 setwd("_BOLD_web_hack")
 
-data <- readLines(file, warn=F)
+if(!is.null(folder)){
+data <- readLines(paste("../../", file, sep=""), warn=F)
+} else {
+data <- readLines(paste("../", file, sep=""), warn=F)
+}
+
 
 
 OTU_start <- grep("Query: ", data)
@@ -34,7 +42,7 @@ temp_tab <- data.frame(Phylum, Class, Order, Family, Genus, Species, Similarity,
 write.csv(temp_tab, paste("OTUs/", OTU, ".csv", sep=""), row.names=F)
 } else {
 
-similarity <- as.numeric(temp)
+similarity <- suppressWarnings(as.numeric(temp))
 whois <- which(!is.na(similarity))
 whois_num <- whois
 
