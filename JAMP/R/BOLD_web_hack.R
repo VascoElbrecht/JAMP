@@ -38,7 +38,7 @@ temp <- data[OTU_start[i]:OTU_end[i]]
 OTU <- sub("Query: (.*) ", "\\1", data[OTU_start[i]])
 
 if(temp[5]=="Unable to match any records in the selected database. "){
-temp_tab <- data.frame(Phylum, Class, Order, Family, Genus, Species, Similarity, Status, stringsAsFactors=F)
+temp_tab <- data.frame("Phylum"=NA, "Class"=NA, "Order"=NA, "Family"=NA, "Genus"=NA, "Species"=NA, "Similarity"=NA, "Status"=NA, stringsAsFactors=F)
 write.csv(temp_tab, paste("OTUs/", OTU, ".csv", sep=""), row.names=F)
 } else {
 
