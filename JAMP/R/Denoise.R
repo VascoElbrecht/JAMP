@@ -1,6 +1,6 @@
 # Haplotyping v0.1
 
-Denoise <- function(files="latest",  strategy="unoise", unoise_alpha=5, minsize=10, minrelsize=0.0001, OTUmin=0.01, minhaplosize=0.003){
+Denoise <- function(files="latest",  strategy="unoise", unoise_alpha=5, minsize=10, minrelsize=0.0001, OTUmin=0.01, minhaplosize=0.003, withinOTU=5, eachsampleOTUmin=NULL){
 
 
 
@@ -213,10 +213,10 @@ data <- rbind(data, c(nrow(data)+1, NA, "rm_bydenoising",  counts-colSums(data[4
 
 dir.create("_data/4_denoised")
 
-write.csv(file="_data/4_denoised/Raw_haplotable.csv", data, row.names=F)
+write.csv(file="_data/4_denoised/A_Raw_haplotable.csv", data, row.names=F)
 
-write.fasta(as.list(data$sequences[-nrow(data)]), paste(data$OTU[-nrow(data)], data$haplotype[-nrow(data)], sep="__"), "_data/4_denoised/Raw_haplo_sequ_byOTU.txt")
-write.fasta(as.list(data$sequences[-nrow(data)]), data$haplotype[-nrow(data)], "_data/4_denoised/Raw_haplo_sequ.txt")
+write.fasta(as.list(data$sequences[-nrow(data)]), paste(data$OTU[-nrow(data)], data$haplotype[-nrow(data)], sep="__"), "_data/4_denoised/A_Raw_haplo_sequ_byOTU.txt")
+write.fasta(as.list(data$sequences[-nrow(data)]), data$haplotype[-nrow(data)], "_data/4_denoised/A_Raw_haplo_sequ.txt")
 
 info <- paste("\nHaplotype table generated!\nRaw data and fasta files are available in _data/4_denoised (no subsetting)\n\nNow appling subsetting to the dataset!\n\nHaplotypes below ", minhaplosize, "% abundance (GLOBAL ABUNDANCE, across all haplotypes in a sample) in at least one sample are beeing discarded. The relative abundance is based on the number of sequences available before denoising (imput files).\nWaringing: All abundances in the table below ", minhaplosize, "% are set to 0. See Raw_haplotable.csv tble for orignial data without subsetting!\n\n", sep="")
 message(info)
@@ -225,7 +225,7 @@ cat(file="../log.txt", info, append=T, sep="\n")
 
 # apply subsetting!
 
-data <- read.csv("_data/4_denoised/Raw_haplotable.csv", stringsAsFactors=F)
+data <- read.csv("_data/4_denoised/A_Raw_haplotable.csv", stringsAsFactors=F)
 
 # minhaplosize (on each haplotype)
 for (i in 1:(ncol(data)-4)){ # set to 0!
@@ -240,7 +240,7 @@ data <- data[rowSums(data[5:ncol(data)-1])!=0,]
 
 data[nrow(data), 3] <- paste("denoised+below", minhaplosize, sep="")
 
-write.csv(file=paste("_data/4_denoised/haplotable_alpha_", unoise_alpha, "_haplosize_", minhaplosize, ".csv", sep=""), data, row.names=F)
+write.csv(file=paste("_data/4_denoised/B_haplotable_alpha_", unoise_alpha, "_haplosize_", minhaplosize, ".csv", sep=""), data, row.names=F)
 
 # ADD OTU subsetting based on OTUmin
 
@@ -249,7 +249,7 @@ message(info)
 cat(file="../log.txt", info, append=T, sep="\n")
 
 
-data <- read.csv(file=paste("_data/4_denoised/haplotable_alpha_", unoise_alpha, "_haplosize_", minhaplosize, ".csv", sep=""), stringsAsFactors=F)
+data <- read.csv(file=paste("_data/4_denoised/B_haplotable_alpha_", unoise_alpha, "_haplosize_", minhaplosize, ".csv", sep=""), stringsAsFactors=F)
 
 temp <- data[5:ncol(data)-1]
 sums <- colSums(temp)
@@ -280,16 +280,114 @@ round(sum(keep==0)/length(exp$Group.1)*100, 2)
 
 #### end OTU subsetting, write final fasta files
 
-write.csv(file=paste("haplotable_alpha_", unoise_alpha, "_haplosize_", minhaplosize, "_minOTU_", OTUmin, ".csv", sep=""), data, row.names=F)
-write.csv(file=paste("_data/4_denoised/haplotable_alpha_", unoise_alpha, "_haplosize_", minhaplosize, "_minOTU_", OTUmin, ".csv", sep=""), data, row.names=F)
+#write.csv(file=paste("haplotable_alpha_", unoise_alpha, "_haplosize_", minhaplosize, "_minOTU_", OTUmin, ".csv", sep=""), data, row.names=F)
+write.csv(file=paste("_data/4_denoised/C_haplotable_alpha_", unoise_alpha, "_haplosize_", minhaplosize, "_minOTU_", OTUmin, ".csv", sep=""), data, row.names=F)
 
 
-write.fasta(as.list(data$sequences[-nrow(data)]), paste(data$OTU[-nrow(data)], data$haplotype[-nrow(data)], sep="__"), paste("_data/4_denoised/haplo_sequ_byOTU_", minhaplosize, "_minOTU_", OTUmin, ".txt", sep=""))
-write.fasta(as.list(data$sequences[-nrow(data)]), data$haplotype[-nrow(data)], paste("_data/4_denoised/haplo_sequ_", minhaplosize, "_minOTU_", OTUmin, ".txt", sep=""))
+write.fasta(as.list(data$sequences[-nrow(data)]), paste(data$OTU[-nrow(data)], data$haplotype[-nrow(data)], sep="__"), paste("_data/4_denoised/C_haplo_sequ_byOTU_", minhaplosize, "_minOTU_", OTUmin, ".txt", sep=""))
+write.fasta(as.list(data$sequences[-nrow(data)]), data$haplotype[-nrow(data)], paste("_data/4_denoised/C_haplo_sequ_", minhaplosize, "_minOTU_", OTUmin, ".txt", sep=""))
 
 centroids <- which(!duplicated(data$OTU))
 centroids <- centroids[-length(centroids)]
-write.fasta(as.list(data$sequences[centroids]), data$OTU[centroids], paste("_data/4_denoised/haplo_OTU_Centroids_", minhaplosize, "_minOTU_", OTUmin, ".txt", sep=""))
+write.fasta(as.list(data$sequences[centroids]), data$OTU[centroids], paste("_data/4_denoised/C_haplo_OTU_Centroids_", minhaplosize, "_minOTU_", OTUmin, ".txt", sep=""))
+
+
+# "D" additionall filtering! remove haplotypes within OTUs and OTUs in indiv. samples with below X number of reads.
+# withinOTU
+# eachsampleOTUmin
+
+
+otus <- unique(data$OTU)
+otus <- otus[1:(length(otus)-1)] # don't considder last row (stats only)
+
+# poduce table indicating what was deleted
+PA_tab <- data
+
+
+
+
+data <- read.csv("/Volumes/Vasco_4TB/2017 finland haplo/Q_Denoising/_data/4_denoised/C_haplotable_alpha_5_haplosize_0.01_minOTU_0.1.csv", stringsAsFactors=F)
+
+colSumsAbund <- colSums(data[4:(ncol(data)-1)]) # tracke lost reads
+
+for(i in 4:(ncol(data)-1)){
+
+for(k in 1:length(otus)){
+select <- which(data$OTU== otus[k])
+temp <- data[select, i]/sum(data[select, i])*100
+temp[is.na(temp)] <- 0  # replace if NA because 0
+
+#PA_tab
+PA_tab[select[which(temp!=0&temp<withinOTU)], i] <- "low_Haplo"
+count_haplo <- sum(temp!=0&temp<withinOTU)+count_haplo
+
+temp[temp<withinOTU] <- 0 # delete haplotypes below treshhold within each OTU
+temp[temp>0] <- data[select, i][temp>0]
+data[select, i] <- temp
+
+
+if(!is.null(eachsampleOTUmin)){ #delete OTU with to low abundance 
+if(sum(data[select, i])<eachsampleOTUmin&sum(data[select, i])!=0){
+data[select, i] <- 0
+PA_tab[select, i] <- "low_OTU"
+count_OTU <- count_OTU+1
+}
+} # end delete low abundance OTUs
+
+}
+}
+
+# add lost sequences
+data[nrow(data), 4:(ncol(data)-1)] <- colSumsAbund - colSums(data[-nrow(data), 4:(ncol(data)-1)])
+
+
+
+# remove empty haplotypes!
+# report some stats!
+previous_haplo <- nrow(data)
+
+data <- data[rowSums(data[4:(ncol(data)-1)])>0,]
+PA_tab <- PA_tab[rowSums(data[4:(ncol(data)-1)])>0,]
+
+report <- paste("\nRemoved ", previous_haplo - nrow(data), " of ", previous_haplo, " haplotypes (", round((previous_haplo - nrow(data))/previous_haplo*100, 2), "%), based on min haplo abundance withing OTU = ", withinOTU, " (withinOTU) and min number of sequences within each OTU in each sample = ", if(is.null(eachsampleOTUmin)){"NULL"}else{eachsampleOTUmin}, " (eachsampleOTUmin).\nnumber of intances where a haplotype in a sample was set to zero: ", count_haplo, "\nNumber of OTUs below ", " in individual samples: ", count_OTU,   sep="")
+message(report)
+cat(file="../log.txt", report, append=T, sep="\n")
+
+# end additional filtering
+
+# generate relative abuncnance haplotype table!
+data_rel <- data
+
+for(i in 4:(ncol(data)-1)){
+
+for(k in 1:length(otus)){
+select <- which(data$OTU== otus[k])
+temp <- data[select, i]/sum(data[select, i])*100
+temp[is.na(temp)] <- 0  # replace if NA because 0
+data_rel[select, i] <- temp
+
+}
+}
+
+# save files!
+
+write.csv(file=paste("_data/4_denoised/D_haplotable_HIGHLIGHT_alpha_", unoise_alpha, "_haplosize_", minhaplosize, "_minOTU_", OTUmin, "_withinOTU_", withinOTU, "_eachsampleOTUmin_", if(is.null(eachsampleOTUmin)){"NULL"}else{eachsampleOTUmin},  ".csv", sep=""), PA_tab, row.names=F)
+
+write.csv(file=paste("D_haplotable_alpha_", unoise_alpha, "_haplosize_", minhaplosize, "_minOTU_", OTUmin, "_withinOTU_", withinOTU, "_eachsampleOTUmin_", if(is.null(eachsampleOTUmin)){"NULL"}else{eachsampleOTUmin},  ".csv", sep=""), data, row.names=F)
+write.csv(file=paste("_data/4_denoised/D_haplotable_alpha_", unoise_alpha, "_haplosize_", minhaplosize, "_minOTU_", OTUmin, "_withinOTU_", withinOTU, "_eachsampleOTUmin_", if(is.null(eachsampleOTUmin)){"NULL"}else{eachsampleOTUmin},  ".csv", sep=""), data, row.names=F)
+
+write.csv(file=paste("D_haplotable_RELabund_alpha_", unoise_alpha, "_haplosize_", minhaplosize, "_minOTU_", OTUmin, "_withinOTU_", withinOTU, "_eachsampleOTUmin_", if(is.null(eachsampleOTUmin)){"NULL"}else{eachsampleOTUmin},  ".csv", sep=""), data_rel, row.names=F)
+write.csv(file=paste("_data/4_denoised/D_haplotable_RELabund_alpha_", unoise_alpha, "_haplosize_", minhaplosize, "_minOTU_", OTUmin, "_withinOTU_", withinOTU, "_eachsampleOTUmin_", if(is.null(eachsampleOTUmin)){"NULL"}else{eachsampleOTUmin},  ".csv", sep=""), data_rel, row.names=F)
+
+
+write.fasta(as.list(data$sequences[-nrow(data)]), paste(data$OTU[-nrow(data)], data$haplotype[-nrow(data)], sep="__"), paste("_data/4_denoised/D_haplo_sequ_byOTU_", minhaplosize, "_minOTU_", OTUmin, "_withinOTU_", withinOTU, "_eachsampleOTUmin_", if(is.null(eachsampleOTUmin)){"NULL"}else{eachsampleOTUmin}, ".txt", sep=""))
+write.fasta(as.list(data$sequences[-nrow(data)]), data$haplotype[-nrow(data)], paste("_data/4_denoised/D_haplo_sequ_", minhaplosize, "_minOTU_", OTUmin, "_withinOTU_", withinOTU, "_eachsampleOTUmin_", if(is.null(eachsampleOTUmin)){"NULL"}else{eachsampleOTUmin},".txt", sep=""))
+
+centroids <- which(!duplicated(data$OTU))
+centroids <- centroids[-length(centroids)]
+write.fasta(as.list(data$sequences[centroids]), data$OTU[centroids], paste("_data/4_denoised/D_haplo_OTU_Centroids_", minhaplosize, "_minOTU_", OTUmin, "_withinOTU_", withinOTU, "_eachsampleOTUmin_", if(is.null(eachsampleOTUmin)){"NULL"}else{eachsampleOTUmin}, ".txt", sep=""))
+
+
 
 
 temp <- "\nModule completed!"
