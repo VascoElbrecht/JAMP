@@ -303,11 +303,6 @@ otus <- otus[1:(length(otus)-1)] # don't considder last row (stats only)
 # poduce table indicating what was deleted
 PA_tab <- data
 
-
-
-
-data <- read.csv("/Volumes/Vasco_4TB/2017 finland haplo/Q_Denoising/_data/4_denoised/C_haplotable_alpha_5_haplosize_0.01_minOTU_0.1.csv", stringsAsFactors=F)
-
 colSumsAbund <- colSums(data[4:(ncol(data)-1)]) # tracke lost reads
 
 for(i in 4:(ncol(data)-1)){
@@ -371,7 +366,7 @@ data_rel[select, i] <- temp
 
 # save files!
 
-write.csv(file=paste("_data/4_denoised/D_haplotable_HIGHLIGHT_alpha_", unoise_alpha, "_haplosize_", minhaplosize, "_minOTU_", OTUmin, "_withinOTU_", withinOTU, "_eachsampleOTUmin_", if(is.null(eachsampleOTUmin)){"NULL"}else{eachsampleOTUmin},  ".csv", sep=""), PA_tab, row.names=F)
+write.csv(file=paste("_data/4_denoised/C_haplotable_HIGHLIGHT_alpha_", unoise_alpha, "_haplosize_", minhaplosize, "_minOTU_", OTUmin, "_withinOTU_", withinOTU, "_eachsampleOTUmin_", if(is.null(eachsampleOTUmin)){"NULL"}else{eachsampleOTUmin},  ".csv", sep=""), PA_tab, row.names=F)
 
 write.csv(file=paste("D_haplotable_alpha_", unoise_alpha, "_haplosize_", minhaplosize, "_minOTU_", OTUmin, "_withinOTU_", withinOTU, "_eachsampleOTUmin_", if(is.null(eachsampleOTUmin)){"NULL"}else{eachsampleOTUmin},  ".csv", sep=""), data, row.names=F)
 write.csv(file=paste("_data/4_denoised/D_haplotable_alpha_", unoise_alpha, "_haplosize_", minhaplosize, "_minOTU_", OTUmin, "_withinOTU_", withinOTU, "_eachsampleOTUmin_", if(is.null(eachsampleOTUmin)){"NULL"}else{eachsampleOTUmin},  ".csv", sep=""), data, row.names=F)
