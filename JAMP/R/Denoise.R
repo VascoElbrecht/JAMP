@@ -304,6 +304,8 @@ otus <- otus[1:(length(otus)-1)] # don't considder last row (stats only)
 PA_tab <- data
 
 colSumsAbund <- colSums(data[4:(ncol(data)-1)]) # tracke lost reads
+count_haplo <- 0
+count_OTU <- 0
 
 for(i in 4:(ncol(data)-1)){
 
