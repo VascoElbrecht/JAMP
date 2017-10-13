@@ -33,7 +33,7 @@ log_names <- sub("_data", "_stats/merge_stats", new_names)
 log_names <- sub("_ee.fast.", "_ee.txt", log_names)
 
 # cmd max EE
-cmd <- paste("-fastq_filter \"", files, "\"", if(fastq){" -fastqout "} else {" -fastaout "}, "\"", new_names, "\" -fastq_maxee ", max_ee, sep="")
+cmd <- paste("-fastq_filter \"", files, "\"", if(fastq){" -fastqout "} else {" -fastaout "}, "\"", new_names, "\" -fastq_maxee ", max_ee, " -fastq_qmax 60", sep="")
 
 
 tab_exp <- NULL
