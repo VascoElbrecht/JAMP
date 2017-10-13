@@ -27,7 +27,7 @@ dir.create("_data/1_derep")
 
 
 new_names <- sub(".*(_data/.*)", "\\1", files)
-new_names <- sub("_PE.*", "_PE_derep", new_names)
+new_names <- sub(".fasta", "_derep.fasta", new_names)
 new_names <- paste(new_names, "_size_", size, ".txt", sep="")
 new_names <- sub("_data", "_data/1_derep", new_names)
 
@@ -61,7 +61,7 @@ cat(file="../log.txt", "\nCombining all files in a single file (samples_pooled.t
 
 # dereplicating pooled file
 message("\nCombining all files in a single file (samples_pooled.txt)")
-cmd <- paste(paste(new_names, collapse=" "), "> _data/1_derep/samples_pooled.txt")
+cmd <- paste(paste(paste("\"", new_names, "\"", sep=""), collapse=" "), "> _data/1_derep/samples_pooled.txt")
 system2("cat", cmd)
 
 # dereplicating files
