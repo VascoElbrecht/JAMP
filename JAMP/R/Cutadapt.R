@@ -22,8 +22,9 @@ files <- list.files(paste("../", last_data, "/_data", sep=""), full.names=T)
 }
 
 # new file names
-new_names <- sub(".*(_data/.*)", "\\1", files)
+new_names <- sub(".*/(.*)", "\\1", files)
 new_names <- sub(".fast", "_cut.fast", new_names)
+new_names <- paste("_data/", new_names, sep="")
 
 if(!fastq){ #rename to fasta if fastq=F
 new_names <- sub(".fastq", ".fasta", new_names)
