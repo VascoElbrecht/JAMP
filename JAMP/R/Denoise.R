@@ -1,6 +1,6 @@
 # Haplotyping v0.1
 
-Denoise <- function(files="latest",  strategy="unoise", unoise_alpha=5, minsize=10, minrelsize=0.0001, OTUmin=0.01, minhaplosize=0.003, withinOTU=5, eachsampleOTUmin=NULL, minHaploPresence=1, minOTUPresence=1){
+Denoise <- function(files="latest",  strategy="unoise", unoise_alpha=5, minsize=10, minrelsize=0.0001, OTUmin=0.01, minhaplosize=0.003, withinOTU=5, eachsampleOTUmin=NULL, minHaploPresence=1, minOTUPresence=1, renameSamples="(.*_.*)_cut.*"){
 
 
 
@@ -213,6 +213,9 @@ data <- rbind(data, c(nrow(data)+1, NA, "rm_bydenoising",  counts-colSums(data[4
 
 dir.create("_data/4_denoised")
 
+#right place?
+names(data) <- sub(renameSamples, "\\1", names(data))
+
 write.csv(file="_data/4_denoised/A_Raw_haplotable.csv", data, row.names=F)
 
 write.fasta(as.list(data$sequences[-nrow(data)]), paste(data$OTU[-nrow(data)], data$haplotype[-nrow(data)], sep="__"), "_data/4_denoised/A_Raw_haplo_sequ_byOTU.txt")
@@ -385,7 +388,8 @@ centroids <- centroids[-length(centroids)]
 write.fasta(as.list(data$sequences[centroids]), data$OTU[centroids], paste("_data/4_denoised/D_haplo_OTU_Centroids_", minhaplosize, "_minOTU_", OTUmin, "_withinOTU_", withinOTU, "_eachsampleOTUmin_", if(is.null(eachsampleOTUmin)){"NULL"}else{eachsampleOTUmin}, ".txt", sep=""))
 
 
-
+###########
+###########
 # additional subsetting recommended for LARGE datasets, OTUs and haplotypes have to be present in at least XXX samples.
 info <- paste("Carryng out additional presence based subsetting (on OTUs / haplotypes). This is useful for large data sets to reduce noise!\nminHaploPresence = ", minHaploPresence, " (All haplotypes which are not present on more than ", minHaploPresence, " are discarded).\n", sep="")
 message(info)
@@ -414,28 +418,125 @@ haplo_list[haplo_low] <- c(temp$Nhaplo>= minHaploPresence)
 PA_tab2 <- data.frame(PA_tab[,-ncol(PA_tab)], "minHaploPresence"= haplo_list, PA_tab[,ncol(PA_tab)])
 #write.csv(file="PA_tab2.csv", PA_tab2, row.names=F)
 
+
+# haplo frequency
+X <- data.frame(table(temp$Nhaplo[-length(temp$Nhaplo)]))
+X$Var1 <- as.numeric(as.character(X$Var1))
+Y <- data.frame("y"=c(1:c(ncol(data)-4)))
+XY <- merge(X, Y, by.x="Var1", by.y="y", sort=T, all=T)
+XY$Freq[is.na(XY$Freq)] <- 0
+
+write.csv(file="_stats/E_Haplotypes_frequency.csv", XY, row.names=F)
+
 pdf(file="_stats/E_Haplotype_presence.pdf")
-hist(temp$Nhaplo, breaks=ncol(data)-4, xlim=c(1,ncol(data)), col="Gray", border=NA, xlab="Number of samples in which\nthe respective haplotype is present", main=paste(100-round(c(nrow(data)-1)/ond_nrow*100, 2), "% of haplotypes are discared!", sep=""))
+hist(temp$Nhaplo[-length(temp$Nhaplo)], breaks=ncol(data)-4, xlim=c(1,ncol(data)), col="Gray", border=NA, xlab="Number of samples in which\nthe respective haplotype is present", main=paste(100-round(c(nrow(data)-1)/ond_nrow*100, 2), "% of haplotypes are discared!", sep=""))
 lines(c(minHaploPresence, minHaploPresence), c(0, length(temp$Nhaplo)), col="Red")
 dev.off()
 
-info <- paste(ond_nrow-nrow(data)-1, " of ", ond_nrow, " haplotypes discarded (", 100-round(c(nrow(data)-1)/ond_nrow*100, 2), "%), because they are present in less than ", minHaploPresence, " samples.\nA histogram plot showing the haplotype distribution across samples was written in the stats folder (_stats/E_Haplotype_presence.pdf).", sep="")
+info <- paste(ond_nrow-nrow(data), " of ", ond_nrow-1, " haplotypes discarded (", 100-round(c(nrow(data)-1)/(ond_nrow-1)*100, 2), "%), because they are present in less than ", minHaploPresence, " samples.\nA histogram plot showing the haplotype distribution across samples was written in the stats folder (_stats/E_Haplotype_presence.pdf).\n\n", sep="")
 message(info)
 cat(file="../log.txt", info, append=T, sep="\n")
 
 
 
+# next subset
+# remove all OTUs present in only 5 locations
+
+# remove noisy_chimera / perfect_chimera
+
+info <- "Discarding chimeras! Sequences discarded:"
+Nold <- nrow(data)
+data <- data[data$OTU!="noisy_chimera",]
+info <- c(info, paste("noisy_chimera: ", Nold-nrow(data), sep=""))
+Nold <- nrow(data)
+data <- data[data$OTU!="perfect_chimera",]
+info <- c(info, paste("perfect_chimera: ", Nold-nrow(data), sep=""))
+
+message(paste(info, collapse="\n"), "\n")
+cat(file="../log.txt", info, "\n", append=T, sep="\n")
 
 
 
 
+OTU_list <- unique(data$OTU)
+keep_list <- rep(length(OTU_list), F) # save OTUs to keep
+
+
+for (i in 1:length(OTU_list)){
+
+keep <- which(data$OTU==OTU_list[i])
+mycols <- colSums(data[keep,-c(1:3,ncol(data))]>0)
+OTUsum <- sum(mycols>0) # was at 1 before
+
+keep_list <- c(keep_list, rep(OTUsum, length(keep)))
+}
+
+#nrow(data)
+
+#data$OTU[!duplicated(data$OTU)]
+pdf(file="_stats/E_OTU_presence_across_samples.pdf")
+plot(keep_list[!duplicated(data$OTU)][-length(keep_list[!duplicated(data$OTU)])], xlab="OTU", ylab="Presence in N samples", ylim=c(0,43))
+lines(c(-100, length(keep_list[!duplicated(data$OTU)])+100), c(minOTUPresence-0.5, minOTUPresence-0.5), col="Red")
+dev.off()
+
+
+# write highlight file!
+
+PA_tab2$haplotype[is.na(PA_tab$haplotype)] <- "NA"
+data$haplotype[is.na(data$haplotype)] <- "NA"
+
+# OTUs keept
+keepme <- keep_list>=minOTUPresence
+
+OTU_list <- rep("NA", length(PA_tab2$haplotype))
+OTU_low <- match(data$haplotype, PA_tab2$haplotype)
+OTU_list[OTU_low] <- keepme
+
+PA_tab3 <- data.frame(PA_tab2[,-ncol(PA_tab2)], "minOTUPresence"= OTU_list, "sequences"=PA_tab2[,ncol(PA_tab2)])
+
+# write highlight table
+write.csv(PA_tab3, "_data/4_denoised/E_highlight.csv", row.names=F)
+
+# do actual OTU subsetting
+oldN <- nrow(data)
+
+data <- data[keep_list>=minOTUPresence,] # OTU subsetting!
+
+info <- paste("Discarting OUTs present in not at least ", minOTUPresence, " out of ", ncol(data)-4, " samples.\n", oldN - nrow(data), " of ", oldN, " OTUs discarded (", round(c(oldN - nrow(data))/oldN*100, 2), "%).\n", sep="")
+
+message(info)
+cat(file="../log.txt", info, "\n", append=T, sep="\n")
+
+# write files
+
+data_rel <- data
+
+for(i in 4:(ncol(data)-1)){
+
+for(k in 1:length(otus)){
+select <- which(data$OTU== otus[k])
+temp <- data[select, i]/sum(data[select, i])*100
+temp[is.na(temp)] <- 0  # replace if NA because 0
+data_rel[select, i] <- temp
+
+}
+}
+
+
+write.csv(data, "_data/4_denoised/E_haplo_table.csv", row.names=F)
+write.csv(data, "E_haplo_table.csv", row.names=F)
+
+write.csv(data_rel, "_data/4_denoised/E_haplo_table_rel.csv", row.names=F)
+write.csv(data_rel, "E_haplo_table_rel.csv", row.names=F)
 
 
 
+write.fasta(as.list(data$sequences[-nrow(data)]), paste(data$OTU[-nrow(data)], data$haplotype[-nrow(data)], sep="__"), paste("_data/4_denoised/E_haplo_sequ_by_OTU.txt", sep=""))
+write.fasta(as.list(data$sequences[-nrow(data)]), data$haplotype[-nrow(data)], paste("_data/4_denoised/D_haplo_sequ.txt", sep=""))
 
-
-
-
+centroids <- which(!duplicated(data$OTU))
+centroids <- centroids[-length(centroids)]
+write.fasta(as.list(data$sequences[centroids]), data$OTU[centroids], paste("_data/4_denoised/D_haplo_OTU_Centroids.txt", sep=""))
 
 
 
