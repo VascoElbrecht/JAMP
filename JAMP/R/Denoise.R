@@ -532,11 +532,11 @@ write.csv(data_rel, "E_haplo_table_rel.csv", row.names=F)
 
 
 write.fasta(as.list(data$sequences[-nrow(data)]), paste(data$OTU[-nrow(data)], data$haplotype[-nrow(data)], sep="__"), paste("_data/4_denoised/E_haplo_sequ_by_OTU.txt", sep=""))
-write.fasta(as.list(data$sequences[-nrow(data)]), data$haplotype[-nrow(data)], paste("_data/4_denoised/D_haplo_sequ.txt", sep=""))
+write.fasta(as.list(data$sequences[-nrow(data)]), data$haplotype[-nrow(data)], paste("_data/4_denoised/E_haplo_sequ.txt", sep=""))
 
 centroids <- which(!duplicated(data$OTU))
 centroids <- centroids[-length(centroids)]
-write.fasta(as.list(data$sequences[centroids]), data$OTU[centroids], paste("_data/4_denoised/D_haplo_OTU_Centroids.txt", sep=""))
+write.fasta(as.list(data$sequences[centroids]), data$OTU[centroids], paste("_data/4_denoised/E_haplo_OTU_Centroids.txt", sep=""))
 
 
 
