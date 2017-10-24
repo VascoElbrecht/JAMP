@@ -435,10 +435,6 @@ XY$Freq[is.na(XY$Freq)] <- 0
 
 write.csv(file="_stats/E_Haplotypes_frequency.csv", XY, row.names=F)
 
-hist(temp$Nhaplo[-length(temp$Nhaplo)])
-
-table(temp$Nhaplo[-length(temp$Nhaplo)])
-?hist
 
 pdf(file="_stats/E_Haplotype_presence.pdf")
 plot(NULL, ylim=c(0, max(XY$Freq)*1.05), xlim=c(0.5,ncol(data)-3.5), xlab="Number of samples in which\nthe respective haplotype is present", main=paste(100-round(c(nrow(data)-1)/ond_nrow*100, 2), "% of haplotypes are discared!", sep=""), xaxt="n", ylab="Haplotype abundance")
