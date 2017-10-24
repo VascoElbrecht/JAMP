@@ -391,7 +391,7 @@ write.fasta(as.list(data$sequences[centroids]), data$OTU[centroids], paste("_dat
 ###########
 ###########
 # additional subsetting recommended for LARGE datasets, OTUs and haplotypes have to be present in at least XXX samples.
-info <- paste("Carryng out additional presence based subsetting (on OTUs / haplotypes). This is useful for large data sets to reduce noise!\nminHaploPresence = ", minHaploPresence, " (All haplotypes which are not present on more than ", minHaploPresence, " are discarded).\n", sep="")
+info <- paste("\nCarryng out additional presence based subsetting (on OTUs / haplotypes). This is useful for large data sets to reduce noise!\nminHaploPresence = ", minHaploPresence, " (All haplotypes which are not present on more than ", minHaploPresence, " are discarded).\n", sep="")
 message(info)
 cat(file="../log.txt", info, append=T, sep="\n")
 
@@ -403,7 +403,14 @@ temp <- cbind(temp, "Nhaplo"=rowSums(temp[, -c(1:3)]))
 
 ond_nrow <- nrow(data)-1
 # remove all haplotypes present on only minHaploPresence locations
+
+addme <- colSums(data[temp$Nhaplo< minHaploPresence, -c(1:3, ncol(data))]) # add discarded counts
+
+# discarded sequences!
 data <- data[temp$Nhaplo>= minHaploPresence,]
+
+data[nrow(data), -c(1:3, ncol(data))] <- data[nrow(data), -c(1:3, ncol(data))]+ addme # add discarded counts to table
+
 
 # add discarded haplotypes to highlight list!
 # match highlight list
@@ -485,6 +492,8 @@ dev.off()
 PA_tab2$haplotype[is.na(PA_tab$haplotype)] <- "NA"
 data$haplotype[is.na(data$haplotype)] <- "NA"
 
+
+
 # OTUs keept
 keepme <- keep_list>=minOTUPresence
 
@@ -500,7 +509,17 @@ write.csv(PA_tab3, "_data/4_denoised/E_highlight.csv", row.names=F)
 # do actual OTU subsetting
 oldN <- nrow(data)
 
+
+#count number of discarded sequences
+
+
+addme <- colSums(data[keep_list<minOTUPresence, -c(1:3, ncol(data))]) # add discarded counts
+
 data <- data[keep_list>=minOTUPresence,] # OTU subsetting!
+
+data[nrow(data), -c(1:3, ncol(data))] <- data[nrow(data), -c(1:3, ncol(data))]+ addme # add discarded counts to table
+
+
 
 info <- paste("Discarting OUTs present in not at least ", minOTUPresence, " out of ", ncol(data)-4, " samples.\n", oldN - nrow(data), " of ", oldN, " OTUs discarded (", round(c(oldN - nrow(data))/oldN*100, 2), "%).\n", sep="")
 
