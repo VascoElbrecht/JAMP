@@ -436,11 +436,12 @@ XY$Freq[is.na(XY$Freq)] <- 0
 write.csv(file="_stats/E_Haplotypes_frequency.csv", XY, row.names=F)
 
 pdf(file="_stats/E_Haplotype_presence.pdf")
-hist(temp$Nhaplo[-length(temp$Nhaplo)], breaks=ncol(data)-4, xlim=c(1,ncol(data)), col="Gray", border=NA, xlab="Number of samples in which\nthe respective haplotype is present", main=paste(100-round(c(nrow(data)-1)/ond_nrow*100, 2), "% of haplotypes are discared!", sep=""))
+x <- hist(temp$Nhaplo[-length(temp$Nhaplo)], breaks=ncol(data)-4, xlim=c(1,ncol(data)), col="Gray", border=NA, xlab="Number of samples in which\nthe respective haplotype is present", main=paste(100-round(c(nrow(data)-1)/ond_nrow*100, 2), "% of haplotypes are discared!", sep=""), xaxt="n")
+axis(1, at=x$mids, labels=x$mids-0.5)
 lines(c(minHaploPresence, minHaploPresence), c(0, length(temp$Nhaplo)), col="Red")
 dev.off()
 
-info <- paste(ond_nrow-nrow(data), " of ", ond_nrow-1, " haplotypes discarded (", 100-round(c(nrow(data)-1)/(ond_nrow-1)*100, 2), "%), because they are present in less than ", minHaploPresence, " samples.\nA histogram plot showing the haplotype distribution across samples was written in the stats folder (_stats/E_Haplotype_presence.pdf).\n\n", sep="")
+info <- paste((ond_nrow)-(nrow(data)-1), " of ", ond_nrow-1, " haplotypes discarded (", round(c((ond_nrow)-(nrow(data)-1))/(ond_nrow)*100, 2), "%), because they are present in less than ", minHaploPresence, " samples.\nA histogram plot showing the haplotype distribution across samples was written in the stats folder (_stats/E_Haplotype_presence.pdf).\n\n", sep="")
 message(info)
 cat(file="../log.txt", info, append=T, sep="\n")
 
@@ -485,7 +486,7 @@ pdf(file="_stats/E_OTU_presence_across_samples.pdf")
 plot(keep_list[!duplicated(data$OTU)][-length(keep_list[!duplicated(data$OTU)])], xlab="OTU", ylab="Presence in N samples", ylim=c(0,43))
 lines(c(-100, length(keep_list[!duplicated(data$OTU)])+100), c(minOTUPresence-0.5, minOTUPresence-0.5), col="Red")
 dev.off()
-
+tail(data)
 
 # write highlight file!
 
