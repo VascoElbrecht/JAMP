@@ -488,7 +488,7 @@ keep_list <- c(keep_list, rep(OTUsum, length(keep)))
 
 #data$OTU[!duplicated(data$OTU)]
 pdf(file="_stats/E_OTU_presence_across_samples.pdf")
-plot(keep_list[!duplicated(data$OTU)][-length(keep_list[!duplicated(data$OTU)])], xlab="OTU", ylab="Presence in N samples", ylim=c(0,43))
+plot(keep_list[!duplicated(data$OTU)][-length(keep_list[!duplicated(data$OTU)])], xlab="OTU", ylab="Presence in N samples", ylim=c(0,ncol(data)-4))
 lines(c(-100, length(keep_list[!duplicated(data$OTU)])+100), c(minOTUPresence-0.5, minOTUPresence-0.5), col="Red")
 dev.off()
 tail(data)
