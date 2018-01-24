@@ -1,7 +1,7 @@
 # U_merge_PE v0.1
 # maybe add option to split and merge large files automatically?
 
-U_merge_PE <- function(files="latest", file1=NA, file2=NA, fastq_maxdiffs=99, fastq_pctid=90, fastq=T){
+U_merge_PE <- function(files="latest", file1=NA, file2=NA, fastq_maxdiffs=99, fastq_pctid=75, fastq=T){
 
 Core(module="U_merge_PE")
 cat(file="../log.txt", c("\n","Version v0.1", "\n"), append=T, sep="\n")
