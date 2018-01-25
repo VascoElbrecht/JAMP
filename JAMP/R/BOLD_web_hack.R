@@ -28,7 +28,7 @@ OTU_start <- grep("Query: ", data)
 #OTU_end <- sort(c(which("Unable to match any records in the selected database. "==data), OTU_end))
 OTU_end <- c(OTU_start[-1]-1, length(data))
 
-
+i <- 1
 for (i in 1:length(OTU_start)){
 
 
@@ -47,7 +47,7 @@ whois <- which(!is.na(similarity))
 whois_num <- whois
 
 Similarity <- similarity[whois]
-Status <- temp[whois+2]
+Status <- temp[whois+1]
 
 # get phylum
 
@@ -56,12 +56,12 @@ whois <- c(which(temp =="Phylum\tClass\tOrder\tFamily\tGenus\tSpecies\tSubspecie
 
 # Phylum
 Phylum <- temp[whois]
-Class <- temp[whois+2]
-Order <- temp[whois+4]
-Family <- temp[whois+6]
-Genus <- temp[whois+8]
-Species <- temp[whois+10]
-Subspecies <- temp[whois+12] # ignore subspecies for now
+Class <- temp[whois+1]
+Order <- temp[whois+2]
+Family <- temp[whois+3]
+Genus <- temp[whois+4]
+Species <- temp[whois+5]
+Subspecies <- temp[whois+6] # ignore subspecies for now
 
 temp_tab <- data.frame(Phylum, Class, Order, Family, Genus, Species, Similarity, Status, stringsAsFactors=F)
 
