@@ -9,3 +9,11 @@ At this point it is intended for internal @leeselab use ONLY, as it is in active
 
 
 For a a short tutorial on extracting haplotypes from metabarcoding datasets take a look at the [denoising quick guide](https://github.com/VascoElbrecht/JAMP/wiki/3)-Denoising-quick-guide!).
+
+## Example of a system wide installation on a ubuntu|debian server:
+```bash
+wget https://github.com/VascoElbrecht/JAMP/archive/v0.35.tar.gz
+tar -xzf v0.35.tar.gz
+cd JAMP-0.35
+sudo R CMD INSTALL JAMP
+```
