@@ -6,6 +6,12 @@
 # MiSeq Run1, R2 direction:
 # https://dx.doi.org/10.6084/m9.figshare.4039860.v1
 # 
+# Installing dependencies needed fro JAMP
+install.packages(c("bold", "XML", "seqinr", "devtools"), dependencies=T)
+# Load devtools and install package directly from GitHub
+library("devtools")
+install_github("VascoElbrecht/JAMP", subdir="JAMP")
+
 
 
 setwd("~/Desktop/JAMP_pipeline")

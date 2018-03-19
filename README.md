@@ -9,7 +9,14 @@ For a a short tutorial on extracting haplotypes from metabarcoding datasets take
 
 
 ## To install JAMP locally
-Make sure the packages needed for JAMP are installed in R by running `install.packages(c("bold", "XML", "seqinr"), dependencies=T)`. Downlaod the [latest release of JAMP](https://github.com/VascoElbrecht/JAMP/releases), extract and intall within R using `install.packages("JAMP", repos = NULL, type="source")`
+```# Recommended method
+# Installing dependencies needed fro JAMP
+install.packages(c("bold", "XML", "seqinr", "devtools"), dependencies=T)
+# Load devtools and install package directly from GitHub
+library("devtools")
+install_github("VascoElbrecht/JAMP", subdir="JAMP")
+```
+You can also download the [latest release of JAMP](https://github.com/VascoElbrecht/JAMP/releases), extract and intal within R using `install.packages("JAMP", repos = NULL, type="source")`
 
 ## Example of a system wide installation on a ubuntu|debian server:
 ```bash
