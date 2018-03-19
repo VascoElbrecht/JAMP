@@ -1,2 +1,0 @@
-setwd("~/Documents/UNI_und_VORLESUNGEN/GitHub/JAMP/")
-install.packages("JAMP", repos = NULL, type="source")
