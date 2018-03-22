@@ -35,7 +35,7 @@ new_names <- sub(".fastq", "_sub.fastq", new_names) # keep fastq
 } else {
 new_names <- sub(".fast.", "_sub.fasta", new_names) # keep fasta
 }
-new_names <- sub("_sub", paste("_N", sample_size, sep=""), new_names)
+new_names <- sub("(_sub).fast.", paste("_N", sample_size, sep=""), new_names)
 
 dir.create(paste(folder, "/_stats/subset_stats", sep=""))
 log_names <- sub("_data", "_stats/subset_stats", new_names)
