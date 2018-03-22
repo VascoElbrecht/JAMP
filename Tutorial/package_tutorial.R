@@ -19,7 +19,7 @@ list.files()
 
 library("JAMP")
 
-Demultiplexing_shifted(file1="../16_S10_L001_R1_001_run1.fastq", file2="../16_S10_L001_R2_001_run1.fastq", tags="../_converter/indexe_1.csv", combinations="../_converter/combos_1.csv")
+Demultiplexing_shifted(file1="16_S10_L001_R1_001_run1.fastq", file2="16_S10_L001_R2_001_run1.fastq", tags="_converter/indexe_1.csv", combinations="_converter/combos_1.csv")
 
 # Paired end merging
 U_merge_PE(fastq_pctid=75)
@@ -34,7 +34,7 @@ Cutadapt(forward="GGWACWGGWTGAACWGTWTAYCCYCC", # mlCOIintF
 reverse="TANACYTCNGGRTGNCCRAARAAYCA") # jgHCO, I (inosin) replaced with N
 
 # trim reads in different orrientation
-PEmerged <- list.files("~/Desktop/JAMP_pipeline/B_U_merge_PE/_data", full.names=T)
+PEmerged <- list.files("~/Desktop/JAMP_pipeline copy/B_U_merge_PE/_data", full.names=T)
 
 Cutadapt(files= PEmerged, forward="TANACYTCNGGRTGNCCRAARAAYCA", # jgHCO, I (inosin) replaced with N
 reverse="GGWACWGGWTGAACWGTWTAYCCYCC") # mlCOIintF
@@ -53,7 +53,7 @@ RC <- list.files("E_U_revcomp/_data", full.names=T)
 i <- 1
 
 for (i in 1:length(FW)){
-system2("cat", paste(FW[i], " ", RC[i], " > F_merge/_data/", sub("E_U_revcomp/_data/(.*_).*", "\\1", RC[i]), "merged.txt", sep=""))
+system2("cat", paste(FW[i], " ", RC[i], " > F_merge/_data/", sub("E_U_revcomp/_data/(.*_).*", "\\1", RC[i]), "merged.fastq", sep=""))
 }
 
 cat(file="log.txt", append=T, c("\nPROCESSING MODULE:", "F_merge"), sep="\n")
@@ -69,6 +69,8 @@ U_max_ee(max_ee=1)
 U_subset(sample_size=60000)
 
 
+
+
 #cluster OTUs
 U_cluster_otus(filter=0.01)
 file.rename("J_U_cluster_otus", "J_U_cluster_otus - 60k")
@@ -78,28 +80,9 @@ no_subset <- list.files("~/Desktop/JAMP_pipeline/H_U_max_ee/_data", full.names=T
 
 U_cluster_otus(files= no_subset, filter=0.01)
 
-
 # assign taxonomy to OTUs without sub setting! K_U_cluster_otus
 Bold_web_hack(file="K_bold_results.txt")
 
-
-# setting read counts below 0.01% to 0
-data <- read.csv("K_U_cluster_otus/5_OTU_table_0.01.csv", stringsAsFactors=F)
-colSum <- colSums(data[,3:9])
-i <- 3
-for(i in 3:9){
-keep <- data[-nrow(data),i]/colSum[i-2]*100>=0.01 # find values blow 0.01
-data[nrow(data),i] <- data[nrow(data),i]+sum(data[,i][!keep]) # below 0.01
-data[,i][!keep] <- 0 # set lavues to 0
-}
-write.csv(data, "K_U_cluster_otus/data_cleaned.csv", row.names=F)
-
-data2 <- data
-#relative abundance
-for(i in 3:9){
-data2[,i] <- round(data2[,i]/colSum[i-2]*100, 4) #converte data into relative abundance
-}
-write.csv(data2, "K_U_cluster_otus/data_cleaned_rel.csv", row.names=F)
 
 
 
@@ -108,15 +91,16 @@ write.csv(data2, "K_U_cluster_otus/data_cleaned_rel.csv", row.names=F)
 # from merged data:
 no_subset <- list.files("~/Desktop/JAMP_pipeline/G_Minmax/_data", full.names=T)
 
-#Keep only sequences of 313 bp length
+# Keep only sequences of 313 bp length
 Minmax(file=no_subset, min=313, max=313)
 
-# stricter EE filtering
+# Stricter EE filtering
 U_max_ee(max_ee=0.2)
 
-#rename files to fasta files (Will fix this in the future)
-file.rename(list.files("M_U_max_ee/_data", full.names=T), sub("txt", "fasta", list.files("M_U_max_ee/_data",  full.names=T)))
+# Extracting haplotypes from the metabarcoding data
+Denoise(minsize=5, minrelsize=0.001, OTUmin=0.1, minHaploPresence=1)
 
-Denoise(minsize=5, minrelsize=0.001, OTUmin=0.1, minHaploPresence=2)
+
+
 
 

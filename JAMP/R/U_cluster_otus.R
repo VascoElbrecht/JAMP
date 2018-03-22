@@ -241,9 +241,13 @@ cat(file="log.txt", meep, append=T, sep="\n")
 exp <- tab2[subset2,]
 exp <- rbind(exp, NA)
 
+
+
 exp[nrow(exp), start:stop] <- colSums(tab2[!subset2, start:stop])
 exp$ID[nrow(exp)] <- paste("below_", filter, sep="")
 exp$sort[nrow(exp)] <- exp$sort[nrow(exp)-1]
+
+tail(exp)
 
 
 # make folder 
@@ -341,8 +345,36 @@ subSums <- as.vector(c(subSums[nrow(subSums)-1, 1]+1, paste("below_", filter, se
 
 tab3 <- rbind(tab2, subSums)
 
-write.csv(file=paste(folder, "/5_OTU_table_", filter,".csv", sep=""), tab3, row.names=F)
 
+# set values 2 zero
+
+expZERO <- tab3
+#d <- 8
+for (d in 3:(ncol(expZERO)-1)){
+
+ZERO <- as.numeric(expZERO[,d])/sampleabundance[d-2]*100>=filter
+discarded <- sum(as.numeric(expZERO[-nrow(expZERO),d][!ZERO[-nrow(expZERO)]]))
+expZERO[-nrow(expZERO),d][!ZERO[-nrow(expZERO)]] <- 0 # set zero
+
+expZERO[nrow(expZERO),d] <- as.numeric(expZERO[nrow(expZERO),d])+ discarded # add counts to discarded
+
+}
+
+#relative abundance table
+expZEROrel <- expZERO
+#d <- 8
+for (d in 3:(ncol(expZERO)-1)){
+
+expZEROrel[,d] <- as.numeric(expZERO[,d])/sampleabundance[d-2]*100
+
+
+}
+
+
+
+write.csv(file=paste(folder, "/5_OTU_table_", filter,".csv", sep=""), tab3, row.names=F)
+write.csv(file=paste(folder, "/5_OTU_table_", filter,"_ZERO.csv", sep=""), expZERO, row.names=F)
+write.csv(file=paste(folder, "/5_OTU_table_", filter,"_ZERO_rel.csv", sep=""), expZEROrel, row.names=F)
 
 temp <- paste("\n\nSubsetted OTU table generated (", filter, "% abundance in at least ", filterN," sample): ", sub(paste(folder, "/_data/5_subset/", sep=""), "", OTU_sub_filename), sep="")
 message(temp)
