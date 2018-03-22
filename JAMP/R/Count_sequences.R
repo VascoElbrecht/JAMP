@@ -2,6 +2,10 @@
 
 Count_sequences <- function(files=NA, fastq=T, count_size=F){
 
+# add autodetect of fastq or not!
+
+
+
 if(!count_size){
 if(fastq){ #count fastq
 cmd <- paste("", files, " | wc -l", sep="")

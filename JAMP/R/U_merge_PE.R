@@ -3,17 +3,17 @@
 
 U_merge_PE <- function(files="latest", file1=NA, file2=NA, fastq_maxdiffs=99, fastq_pctid=75, fastq=T){
 
-Core(module="U_merge_PE")
-cat(file="../log.txt", c("\n","Version v0.1", "\n"), append=T, sep="\n")
+folder <- Core(module="U_merge_PE")
+cat(file="log.txt", c("\n","Version v0.2", "\n"), append=T, sep="\n")
 message(" ")
 
 if (files[1]=="latest"){
-source("robots.txt")
-file1 <- list.files(paste("../", last_data, "/_data", sep=""), full.names=T, pattern="_r1.txt")
-file2 <- list.files(paste("../", last_data, "/_data", sep=""), full.names=T, pattern="_r2.txt")
+source(paste(folder, "/robots.txt", sep=""))
+file1 <- list.files(paste(last_data, "/_data", sep=""), full.names=T, pattern="_r1.txt")
+file2 <- list.files(paste(last_data, "/_data", sep=""), full.names=T, pattern="_r2.txt")
 } else {
-file1 <- sub(".*(_data/.*)", "../\\1", file2)
-file2 <- sub(".*(_data/.*)", "../\\1", file2)
+file1 #<- sub(".*(_data/.*)", "../\\1", file2)
+file2 #<- sub(".*(_data/.*)", "../\\1", file2)
 }
 
 merge_identical <- sub(".*_data/(.*)_r1.txt", "\\1", file1)==sub(".*_data/(.*)_r2.txt", "\\1",file2)
@@ -21,6 +21,11 @@ merge_identical <- sub(".*_data/(.*)_r1.txt", "\\1", file1)==sub(".*_data/(.*)_r
 if(!sum(merge_identical)==length(merge_identical)){
 warning("There is a problem with the files you want to merge. Not all fastq files have a matchign pair with identical name. Please check. Package stopped.")
 setwd("../")
+stop()
+}
+
+if(length(file1)==0){
+message(paste("No files to merge detected in folder ", folder, " !", sep=""))
 stop()
 }
 
@@ -35,11 +40,13 @@ message(" ")
 
 # new file names
 
-new_names <- sub(".*(_data/.*)", "\\1", file1)
+new_names <- sub(".*(/.*)", "\\1", file1)
 if(fastq){new_names <- sub("r1.txt", "PE.fastq", new_names)} else {new_names <- sub("r1.txt", "PE.fasta", new_names)}
 
+new_names <- paste(folder, "/_data", new_names, sep="")
 
-dir.create("_stats/merge_stats")
+
+dir.create(paste(folder, "/_stats/merge_stats", sep=""))
 log_names <- sub("_data", "_stats/merge_stats", new_names)
 log_names <- sub("_PE.fast[aq]", "_PE_log.txt", log_names)
 
@@ -54,29 +61,28 @@ temp <- readLines(log_names[i])
 merged <- as.numeric(sub(".*merged \\((.*)..", "\\1",temp[6]))
 median_length <- as.numeric(sub("(.*)Median", "\\1",temp[11]))
 temp_count <- Count_sequences(new_names[i], fastq)
-short_name <- sub("_data/(.*)_PE.fast.", "\\1", new_names[i])
+short_name <- sub(".*_data/(.*)_PE.fast.", "\\1", new_names[i])
 tab_exp <- rbind(tab_exp, c(short_name, temp_count, merged, median_length))
 
 meep <- paste(short_name, ": ", merged, "% merged - median length: ", median_length, sep="")
 message(meep)
-cat(file="../log.txt", meep, append=T, sep="\n")
+cat(file="log.txt", meep, append=T, sep="\n")
 }
 
-cat(file="../log.txt", "\n", append=T, sep="\n")
+cat(file="log.txt", "\n", append=T, sep="\n")
 
 
 tab_exp <- data.frame(tab_exp)
 names(tab_exp) <- c("Sample", "Sequ_count", "percent_merged", "median_length")
 
-write.csv(tab_exp, "_stats/sequ_length_abund.csv")
+write.csv(tab_exp, paste(folder, "/_stats/sequ_length_abund.csv", sep=""))
 
 # make some plots?
 
 message(" ")
 message(" Done with PE merging")
 
-cat(file="../log.txt", paste(Sys.time(), "Done with PE merging", "", sep="\n"), append=T, sep="\n")
+cat(file="log.txt", paste(Sys.time(), "Done with PE merging", "", "*** Module completed!\n\n", sep="\n"), append=T, sep="\n")
 
-setwd("../")
 }
 

@@ -2,22 +2,24 @@
 
 U_max_ee <- function(files="latest", max_ee=0.5, fastq=F){
 
-Core(module="U_max_ee")
-cat(file="../log.txt", c("\n","Version v0.1", "\n"), append=T, sep="\n")
+folder <- Core(module="U_max_ee")
+cat(file="log.txt", c("\n","Version v0.2", "\n"), append=T, sep="\n")
 message(" ")
 
 if (files[1]=="latest"){
-source("robots.txt")
-files <- list.files(paste("../", last_data, "/_data", sep=""), full.names=T)
+source(paste(folder, "/robots.txt", sep=""))
+files <- list.files(paste(last_data, "/_data", sep=""), full.names=T)
 }
 
 temp <- paste("Starting to quality filter (max expected errors = " , max_ee, ") in ", length(files), " samples.", sep="")
 message(temp)
 message(" ")
-cat(file="../log.txt", temp, append=T, sep="\n")
+cat(file="log.txt", temp, append=T, sep="\n")
 
 # new file names
 new_names <- sub(".*(_data/.*)", "\\1", files)
+new_names <- paste(folder, "/", new_names, sep="")
+
 
 if(fastq){
 new_names <- sub(".fastq", "_ee.fastq", new_names) # keep fastq
@@ -28,7 +30,7 @@ new_names <- sub("_ee\\.", paste("_ee", max_ee, ".", sep=""), new_names)
 
 
 
-dir.create("_stats/merge_stats")
+dir.create(paste(folder, "/_stats/merge_stats", sep=""))
 log_names <- sub("_data", "_stats/merge_stats", new_names)
 log_names <- sub("_ee.fast.", "_ee.txt", log_names)
 
@@ -56,22 +58,22 @@ tab_exp <- rbind(tab_exp, c(short_name, pass, pct))
 
 meep <- paste(short_name, ": ", pct, "% pass EE ", sep="")
 message(meep)
-cat(file="../log.txt", meep, append=T, sep="\n")
+cat(file="log.txt", meep, append=T, sep="\n")
 }
-cat(file="../log.txt", "\n", append=T, sep="\n")
+cat(file="log.txt", "\n", append=T, sep="\n")
 
 tab_exp <- data.frame(tab_exp)
 names(tab_exp) <- c("Sample", "Sequ_count", "percent_merged")
 
-write.csv(tab_exp, "_stats/max_ee_stats.csv")
+write.csv(tab_exp, paste(folder, "/_stats/max_ee_stats.csv", sep=""))
 
 # make some plots?
 
 message(" ")
 message("Module completed!")
 
-cat(file="../log.txt", paste(Sys.time(), "Module completed!", "", sep="\n"), append=T, sep="\n")
+cat(file="log.txt", paste(Sys.time(), "*** Module completed!", "", sep="\n"), append=T, sep="\n")
 
-setwd("../")
+
 }
 

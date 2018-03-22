@@ -1,9 +1,9 @@
-# Demultiplexing_shifted v0.1
+# Demultiplexing_shifted
 
 Demultiplexing_shifted <- function(file1, file2, tags=NA, combinations=NA, md5=T, OS="autodetect"){
 
-Core(module="Demultiplexing_shifted")
-cat(file="../log.txt", c("\n", "Version v0.1", "\n"), append=T, sep="\n")
+folder <- Core(module="Demultiplexing_shifted")
+cat(file="log.txt", c("\n", "Version v0.2", "\n"), append=T, sep="\n")
 
 
 # get file compression
@@ -21,7 +21,7 @@ combos <- read.csv(combinations, stringsAsFactors=F)
 
 #basic log stats
 temp <- paste(Sys.time(), "Starting demultiplexing using:", paste("Barcode table:", tags, sep=""), paste("Searching for ", nrow(combos), " samples as given in table: ", combinations, sep=""), paste("Raw data format: ", paste(unique(compression), collapse=" "), sep=""), paste("Read 1 RAW data: ", paste(file1, collapse=" "), sep=""), paste("Read 2 RAW data: ", paste(file2, collapse=" "), sep=""), "\n", sep="\n")
-cat(file="../log.txt", temp, append=T, sep="\n")
+cat(file="log.txt", temp, append=T, sep="\n")
 
 
 if(md5){
@@ -47,7 +47,7 @@ A <- NULL
 for (i in 1:length(temp)){
 A[i] <- system2(md5_cmd, paste("\"", temp[i], "\"", sep=""), stdout=T)
 }
-cat(file="../log.txt", A, append=T, sep="\n")
+cat(file="log.txt", A, append=T, sep="\n")
 }
 
 
@@ -66,8 +66,8 @@ readL <- nchar(exp_sequ2[seq(2, length(exp_sequ2), 4)])
 exp_sequ2[seq(2, length(exp_sequ2), 4)] <- substr(exp_sequ2[seq(2, length(exp_sequ2), 4)], rm2, readL)
 exp_sequ2[seq(4, length(exp_sequ2), 4)] <- substr(exp_sequ2[seq(4, length(exp_sequ2), 4)], rm2, readL)
 
-cat(exp_sequ1, file= paste("_data/", file_name1, sep=""), append=T, sep="\n")
-cat(exp_sequ2, file= paste("_data/", file_name2, sep=""), append=T, sep="\n")}
+cat(exp_sequ1, file= paste(folder, "/_data/", file_name1, sep=""), append=T, sep="\n")
+cat(exp_sequ2, file= paste(folder, "/_data/", file_name2, sep=""), append=T, sep="\n")}
 }
 # save function end
 
@@ -88,7 +88,6 @@ con1 <- file(file1[i], "rt")
 con2 <- file(file2[i], "rt")
 } else {
 warning("Raw data has to be compressed in \".gz\" or \".bz2\" or uncompressed in \".fastq\" format! Processing was stopped, please check your raw data format.")
-setwd("../")
 stop()
 }
 
@@ -140,7 +139,7 @@ close(con2)
 }
 
 temp <- paste(Sys.time(), paste("Done in:", message(mytime - Sys.time()), collapse=""), sep="\n")
-cat(file="../log.txt", temp, append=T, sep="\n")
+cat(file="log.txt", temp, append=T, sep="\n")
 
 
 message("done in:")
@@ -148,26 +147,22 @@ message(mytime - Sys.time())
 message(" ")
 
 # count number of reads in each file
-abundance <- Count_sequences(list.files("_data", full.names=T))
-temp <- data.frame("files_demultiplexed"=list.files("_data"), abundance)
+abundance <- Count_sequences(list.files(paste(folder, "/_data", sep=""), full.names=T))
+temp <- data.frame("files_demultiplexed"=list.files(paste(folder, "/_data", sep="")), abundance)
 
-write.csv(temp, "_stats/read_abundance.csv")
+write.csv(temp, paste(folder, "/_stats/read_abundance.csv", sep=""))
 
 temp <- temp[seq(1, length(abundance), 2),]
 
 options("scipen"=100, "digits"=7)
-message(paste("A total of ", sum(temp$abundance), "sequences where demultiplexed"), sep="")
+message(paste("A total of", sum(temp$abundance), "sequences where demultiplexed"), sep="")
 message(paste(round(temp$abundance[temp=="N_debris_r1.txt"]/sum(temp$abundance)*100, digits=2)), "% of sequences could not be matched with any of the tagging combinations (e.g. sequencing errors in the tags or PhiX.)", sep="")
 
-temp <- paste(Sys.time(), paste("Number of reads demultiplexed ", sum(temp$abundance), sep=""), paste("Number of not matching reads (N_debris):", temp$abundance[temp=="N_debris_r1.txt"], sep=""), paste("Relative abundance of not matching reads: ", round(c(temp$abundance[temp=="N_debris_r1.txt"]/sum(temp$abundance)*100), digits=2), "\n", "\n", "Module completed!", "\n", "\n", sep=""), sep="\n")
-cat(file="../log.txt", temp, append=T, sep="\n")
+temp <- paste(Sys.time(), paste("Number of reads demultiplexed ", sum(temp$abundance), sep=""), paste("Number of not matching reads (N_debris):", temp$abundance[temp=="N_debris_r1.txt"], sep=""), paste("Relative abundance of not matching reads: ", round(c(temp$abundance[temp=="N_debris_r1.txt"]/sum(temp$abundance)*100), digits=2), "\n", "\n", sep=""), sep="\n")
+cat(file="log.txt", temp, append=T, sep="\n")
 
+cat(file="log.txt", "*** Module completed!\n\n", append=T, sep="\n")
 
-
-# end count reads
-#options("scipen"=-100, "digits"=7)
-setwd("../") # return to base folder
 }
 
 
-?options

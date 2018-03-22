@@ -6,25 +6,25 @@ FW_only <- F
 if (is.na(reverse)){FW_only <- T}
 
 
-Core(module="Cutadapt")
-cat(file="../log.txt", c("Module Version: v0.1", "\n"), append=T, sep="\n")
+folder <- Core(module="Cutadapt")
+cat(file="log.txt", c("Module Version: v0.2", "\n"), append=T, sep="\n")
 
 # cutadapt version
 temp <- paste("Using Version: ", "Cutadapt v", system2("cutadapt", "--v", stdout=T, stderr=T), sep="")
 message(temp)
-cat(file="../log.txt", temp, append=T, sep="\n")
+cat(file="log.txt", temp, append=T, sep="\n")
 message(" ")
 
 
 if (files[1]=="latest"){
-source("robots.txt")
-files <- list.files(paste("../", last_data, "/_data", sep=""), full.names=T)
+source(paste(folder, "/robots.txt", sep=""))
+files <- list.files(paste(last_data, "/_data", sep=""), full.names=T)
 }
 
 # new file names
 new_names <- sub(".*/(.*)", "\\1", files)
 new_names <- sub(".fast", "_cut.fast", new_names)
-new_names <- paste("_data/", new_names, sep="")
+new_names <- paste(folder, "/_data/", new_names, sep="")
 
 if(!fastq){ #rename to fasta if fastq=F
 new_names <- sub(".fastq", ".fasta", new_names)
@@ -76,19 +76,19 @@ if (FW_only){
 cmd1 <- paste("-g ^", fw, " -o \"", new_names, "\" \"", files, "\"", " -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") # forward adapter
 
 temp <- paste("Starting to remove adapters (primers) on forward direction only ", length(cmd1), " files:", sep="")
-cat(file="../log.txt", temp , append=T, sep="\n")
+cat(file="log.txt", temp , append=T, sep="\n")
 message(temp)
 }else{
-cmd1 <- paste("-g ^", fw, " -o _data/temp.txt \"", files, "\"", " -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") # forward adapter
-cmd2 <- paste("-a ", rw, "$ -o \"", new_names, "\" _data/temp.txt -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") #rverse adapter
+cmd1 <- paste("-g ^", fw, " -o ", folder, "/_data/temp.txt \"", files, "\"", " -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") # forward adapter
+cmd2 <- paste("-a ", rw, "$ -o \"", new_names, "\" ", folder, "/_data/temp.txt -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") #rverse adapter
 
 temp <- paste("Starting to remove adapters (primers) on both ends in ", length(cmd1), " files:", sep="")
-cat(file="../log.txt", temp , append=T, sep="\n")
+cat(file="log.txt", temp , append=T, sep="\n")
 message(temp)
 }
 
 
-dir.create("_stats/_cutadapt_logs")
+dir.create(paste(folder, "/_stats/_cutadapt_logs", sep=""))
 log_names <- sub("_data", "_stats/_cutadapt_logs", new_names)
 log_names <- sub(".fast[aq]", ".txt", log_names)
 
@@ -117,20 +117,20 @@ keep <- round(reads_out/reads_in*100, digits=2)
 exp <- rbind(exp, c(sub(".*_data/(.*)", "\\1", temp[i]), reads_out, keep))
 
 meep <- paste(sub(".*_data/(.*)_PE.*", "\\1", temp[i]), " - ", keep, "% reads passed", sep="")
-cat(file="../log.txt", meep, append=T, sep="\n")
+cat(file="log.txt", meep, append=T, sep="\n")
 message(meep)
 }
 
 exp <- data.frame(exp)
 names(exp) <- c("Sample", "Abundance", "pct_pass")
-write.csv(exp, "_stats/cut_pass.csv")
+write.csv(exp, paste(folder, "/_stats/cut_pass.csv", sep=""))
 
-if(!FW_only){file.remove("_data/temp.txt")} # remove temporary file
+if(!FW_only){file.remove(paste(folder, "/_data/temp.txt", sep=""))} # remove temporary file
 message(" ")
 message(" Module completed!")
 
-cat(file="../log.txt", paste(Sys.time(), "\n", "Module completed!", "", sep="\n"), append=T, sep="\n")
+cat(file="log.txt", paste(Sys.time(), "\n", "*** Module completed!\n\n", sep="\n"), append=T, sep="\n")
 
-setwd("../")
+
 }
 

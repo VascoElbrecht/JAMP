@@ -2,19 +2,19 @@
 
 Minmax <- function(files="latest", min=NA, max=NA, plusminus=c(NA, 10), fastq=T){
 
-Core(module="Minmax")
-cat(file="../log.txt", c("Module Version: v0.1", "\n"), append=T, sep="\n")
+folder <- Core(module="Minmax")
+cat(file="../log.txt", c("Module Version: v0.2", "\n"), append=T, sep="\n")
 
 # cutadapt version
-temp <- paste("Util Version: ", "Cutadapt v", system2("cutadapt", "--v", stdout=T, stderr=T), sep="")
+temp <- paste("Version: ", "Cutadapt v", system2("cutadapt", "--v", stdout=T, stderr=T), sep="")
 message(temp)
-cat(file="../log.txt", temp, append=T, sep="\n")
+cat(file="log.txt", temp, append=T, sep="\n")
 message(" ")
 
 
 if (files[1]=="latest"){
-source("robots.txt")
-files <- list.files(paste("../", last_data, "/_data", sep=""), full.names=T)
+source(paste(folder, "/robots.txt", sep=""))
+files <- list.files(paste(last_data, "/_data", sep=""), full.names=T)
 }
 
 # new file names
@@ -22,7 +22,7 @@ new_names <- sub(".*(_data/.*)", "\\1", files)
 new_names <- sub(".fast", "_minmax.fast", new_names)
 
 #log names
-dir.create("_stats/_cutadapt_logs")
+dir.create(paste(folder, "/_stats/_cutadapt_logs", sep=""))
 log_names <- sub("_data", "_stats/_cutadapt_logs", new_names)
 log_names <- sub(".fast[aq]", ".txt", log_names)
 
@@ -35,11 +35,11 @@ max <- plusminus[1] + plusminus[2]
 
 
 # make cmd
-cmd <- paste("\"", files, "\" -o \"", new_names, "\" -f ", if(fastq){"fastq"}else{"fasta"}, if(!is.na(min)){" -m "}, if(!is.na(min)){min}, if(!is.na(min)){" -M "}, if(!is.na(min)){max}, sep="")
+cmd <- paste("\"", files, "\" -o \"", folder, "/", new_names, "\" -f ", if(fastq){"fastq"}else{"fasta"}, if(!is.na(min)){" -m "}, if(!is.na(min)){min}, if(!is.na(min)){" -M "}, if(!is.na(min)){max}, sep="")
 
 # report
 temp <- paste("Starting to discard reads that don't fit the target length in ", length(cmd), " files:", sep="")
-cat(file="../log.txt", temp , append=T, sep="\n")
+cat(file="log.txt", temp , append=T, sep="\n")
 message(temp)
 
 
@@ -47,10 +47,10 @@ exp <- NULL
 temp <- new_names
 for (i in 1:length(cmd)){
 A <- system2("cutadapt", cmd[i], stdout=T, stderr=T)
-cat(file=log_names[i], A, append=T, sep="\n")
+cat(file=paste(folder, "/", log_names[i], sep=""), A, append=T, sep="\n")
 
 # reporting
-stats <- readLines(log_names[i])
+stats <- readLines(paste(folder, "/", log_names[i], sep=""))
 
 reads_in <- stats[grep("Total reads processed:", stats)[1]]
 reads_in <- sub(".* processed: +", "", reads_in)
@@ -65,19 +65,19 @@ keep <- round(reads_out/reads_in*100, digits=2)
 exp <- rbind(exp, c(sub(".*_data/(.*)", "\\1", temp[i]), reads_out, keep))
 
 meep <- paste(sub(".*_data/(.*)_PE.*", "\\1", temp[i]), " - ", keep, "% reads passed", sep="")
-cat(file="../log.txt", meep, append=T, sep="\n")
+cat(file="log.txt", meep, append=T, sep="\n")
 message(meep)
 }
 
 exp <- data.frame(exp)
 names(exp) <- c("Sample", "Abundance", "pct_pass")
-write.csv(exp, "_stats/minmax_pass.csv")
+write.csv(exp, paste(folder, "/_stats/minmax_pass.csv", sep=""))
 
 message(" ")
 message(" Module completed!")
 
-cat(file="../log.txt", paste(Sys.time(), "\n", "Module completed!", "", sep="\n"), append=T, sep="\n")
+cat(file="log.txt", paste(Sys.time(), "\n", "*** Module completed!", "", sep="\n"), append=T, sep="\n")
 
-setwd("../")
+
 }
 
