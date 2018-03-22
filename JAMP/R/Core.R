@@ -30,12 +30,16 @@ if(temp==1){
 
 message(paste("Deleteing the folder ", log[step[length(step)]+1], "!", sep=""))
 system2("rm", paste("-fr", log[step[length(step)]+1]))
-if(length(step)!=1){cat(file="log.txt", log[1:(step[length(step)]-3)], append=F, sep="\n")} else {remove.files("log.txt")}
+if(length(step)!=1){cat(file="log.txt", log[1:(step[length(step)]-3)], append=F, sep="\n")} else {cat(file="log.txt", sep="")}
 
 } else {"Did not delete anything! but please check your imput and log files as JAMP will likely not run correctly!"}
 }
 }
 
+
+if(!file.exists("log.txt")){
+cat(file="log.txt", sep="")
+}
 
 log <- readLines("log.txt") # reload log
 step <- which(log=="PROCESSING MODULE:") 

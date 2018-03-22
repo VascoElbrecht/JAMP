@@ -34,7 +34,7 @@ Cutadapt(forward="GGWACWGGWTGAACWGTWTAYCCYCC", # mlCOIintF
 reverse="TANACYTCNGGRTGNCCRAARAAYCA") # jgHCO, I (inosin) replaced with N
 
 # trim reads in different orrientation
-PEmerged <- list.files("~/Desktop/JAMP_pipeline copy/B_U_merge_PE/_data", full.names=T)
+PEmerged <- list.files("B_U_merge_PE/_data", full.names=T)
 
 Cutadapt(files= PEmerged, forward="TANACYTCNGGRTGNCCRAARAAYCA", # jgHCO, I (inosin) replaced with N
 reverse="GGWACWGGWTGAACWGTWTAYCCYCC") # mlCOIintF
@@ -56,7 +56,7 @@ for (i in 1:length(FW)){
 system2("cat", paste(FW[i], " ", RC[i], " > F_merge/_data/", sub("E_U_revcomp/_data/(.*_).*", "\\1", RC[i]), "merged.fastq", sep=""))
 }
 
-cat(file="log.txt", append=T, c("\nPROCESSING MODULE:", "F_merge"), sep="\n")
+cat(file="log.txt", append=T, c("\nPROCESSING MODULE:", "F_merge", "*** Module completed!"), sep="\n")
 
 
 # discard with non target length
@@ -76,7 +76,7 @@ U_cluster_otus(filter=0.01)
 file.rename("J_U_cluster_otus", "J_U_cluster_otus - 60k")
 
 #cluster OTUs (without subsetting)
-no_subset <- list.files("~/Desktop/JAMP_pipeline/H_U_max_ee/_data", full.names=T)
+no_subset <- list.files("H_U_max_ee/_data", full.names=T)
 
 U_cluster_otus(files= no_subset, filter=0.01)
 
@@ -89,7 +89,7 @@ Bold_web_hack(file="K_bold_results.txt")
 
 # haplotyping
 # from merged data:
-no_subset <- list.files("~/Desktop/JAMP_pipeline/G_Minmax/_data", full.names=T)
+no_subset <- list.files("G_Minmax/_data", full.names=T)
 
 # Keep only sequences of 313 bp length
 Minmax(file=no_subset, min=313, max=313)
