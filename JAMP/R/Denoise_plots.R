@@ -7,9 +7,12 @@ Denoise_plots <- function(file="E_highlight.csv", out="")
 
 data <- read.csv(file, stringsAsFactors=F)
 head(data)
-data[data=="low_Haplo"] <- 0
 
 
+for (m in 1:ncol(data)){
+data[m][data[m]=="low_Haplo"] <- 0
+}
+#data[data=="low_Haplo"]
 
 pdf(paste(out, "/", "Haplo_per_OTU.pdf",sep=""), height=6, width=7)
 barplot(table(table(data$OTU)), yaxt="n", ylab="Number of OTUs", xlab="Number of haplotypes within respective OTU")
