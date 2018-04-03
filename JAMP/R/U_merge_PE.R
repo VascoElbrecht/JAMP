@@ -7,13 +7,30 @@ folder <- Core(module="U_merge_PE")
 cat(file="log.txt", c("\n","Version v0.2", "\n"), append=T, sep="\n")
 message(" ")
 
+
+#if(length(files)>1){
+#singlefiles <- F
+#}
+
+if(!is.na(file1[1])&!is.na(file2[1])){
+files[1] <- "NOT USED"
+
+temp <- "Custom list of files provided as file1 and file2 will be used\n\n"
+
+message(temp)
+cat(file="log.txt", temp, append=T, sep="\n")
+} else {
+
+
 if (files[1]=="latest"){
 source(paste(folder, "/robots.txt", sep=""))
 file1 <- list.files(paste(last_data, "/_data", sep=""), full.names=T, pattern="_r1.txt")
-file2 <- list.files(paste(last_data, "/_data", sep=""), full.names=T, pattern="_r2.txt")
-} else {
-file1 #<- sub(".*(_data/.*)", "../\\1", file2)
-file2 #<- sub(".*(_data/.*)", "../\\1", file2)
+file2 <- list.files(paste(last_data, "/_data", sep=""), full.names=T, pattern="_r2.txt")} else {
+
+if (length(files)>1 ){
+file1 <- files[grep("r1.txt", files)]
+file2 <- files[grep("r2.txt", files)]
+}
 }
 
 merge_identical <- sub(".*_data/(.*)_r1.txt", "\\1", file1)==sub(".*_data/(.*)_r2.txt", "\\1",file2)
@@ -24,10 +41,12 @@ setwd("../")
 stop()
 }
 
-if(length(file1)==0){
-message(paste("No files to merge detected in folder ", folder, " !", sep=""))
-stop()
 }
+
+
+
+
+
 
 if(length(grep(".*N_debris_r1.txt", file1))==1){message("N_debris are excluded and not merged.")}
 
