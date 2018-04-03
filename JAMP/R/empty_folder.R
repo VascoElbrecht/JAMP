@@ -3,9 +3,9 @@
 Empty_folder <- function(){
 
 folder <- Core(module="Empty_Folder")
-cat(file="log.txt", c("\n","Version v0.1", "\n"), append=T, sep="\n")
+cat(file="log.txt", c("Version v0.1"), append=T, sep="\n")
 
-temp <- paste("Folder \"", folder, "\" generated!\nPlease place files for further processing in \"", folder, "/_data\"", sep="", "\n\nPlease have a look at the JAMP wiki on github for assistance \nhttps://github.com/VascoElbrecht/JAMP/wiki\n")
+temp <- paste("Folder \"", folder, "\" generated!\nPlease place files for further processing in \"", folder, "/_data\"", sep="", "\n\nPlease have a look at the JAMP wiki on github for assistance \nhttps://github.com/VascoElbrecht/JAMP/wiki\n\n")
 
 message(temp)
 

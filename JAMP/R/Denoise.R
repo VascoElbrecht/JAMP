@@ -351,7 +351,7 @@ previous_haplo <- nrow(data)
 data <- data[rowSums(data[4:(ncol(data)-1)])>0,]
 PA_tab <- PA_tab[rowSums(data[4:(ncol(data)-1)])>0,]
 
-report <- paste("\nRemoved ", previous_haplo - nrow(data), " of ", previous_haplo, " haplotypes (", round((previous_haplo - nrow(data))/previous_haplo*100, 2), "%), based on min haplo abundance withing OTU = ", withinOTU, " (withinOTU) and min number of sequences within each OTU in each sample = ", if(is.null(eachsampleOTUmin)){"NULL"}else{eachsampleOTUmin}, " (eachsampleOTUmin).\nnumber of intances where a haplotype in a sample was set to zero: ", count_haplo, "\nNumber of OTUs below ", " in individual samples: ", count_OTU,   sep="")
+report <- paste("\nRemoved ", c(previous_haplo-1) - c(nrow(data)-1), " of ", previous_haplo, " haplotypes (", round((c(previous_haplo-1) - (nrow(data)-1))/c(previous_haplo-1)*100, 2), "%), based on min haplo abundance within OTU = ", withinOTU, " (withinOTU) and min number of sequences within each OTU in each sample = ", if(is.null(eachsampleOTUmin)){"NULL"}else{eachsampleOTUmin}, " (eachsampleOTUmin).\nnumber of intances where a haplotype in a sample was set to zero: ", count_haplo, "\nNumber of OTUs below ", " in individual samples: ", count_OTU,   sep="")
 message(report)
 cat(file="log.txt", report, append=T, sep="\n")
 
