@@ -24,16 +24,16 @@ cat(file="log.txt", temp, append=T, sep="\n")
 
 if (files[1]=="latest"){
 source(paste(folder, "/robots.txt", sep=""))
-file1 <- list.files(paste(last_data, "/_data", sep=""), full.names=T, pattern="_r1.txt")
-file2 <- list.files(paste(last_data, "/_data", sep=""), full.names=T, pattern="_r2.txt")} else {
+file1 <- list.files(paste(last_data, "/_data", sep=""), full.names=T, pattern="_[rR]1")
+file2 <- list.files(paste(last_data, "/_data", sep=""), full.names=T, pattern="_[rR]2")} else {
 
 if (length(files)>1 ){
-file1 <- files[grep("r1.txt", files)]
-file2 <- files[grep("r2.txt", files)]
+file1 <- files[grep("_[rR]1", files)]
+file2 <- files[grep("_[rR]2", files)]
 }
 }
 
-merge_identical <- sub(".*_data/(.*)_r1.txt", "\\1", file1)==sub(".*_data/(.*)_r2.txt", "\\1",file2)
+merge_identical <- sub(".*_data/(.*)_[rR]1.*", "\\1", file1)==sub(".*_data/(.*)_[rR]2.*", "\\1",file2)
 # merging not identical reads
 if(!sum(merge_identical)==length(merge_identical)){
 warning("There is a problem with the files you want to merge. Not all fastq files have a matchign pair with identical name. Please check. Package stopped.")
@@ -48,10 +48,10 @@ stop()
 
 
 
-if(length(grep(".*N_debris_r1.txt", file1))==1){message("N_debris are excluded and not merged.")}
+if(length(grep(".*N_debris_r1..*", file1))==1){message("N_debris are excluded and not merged.")}
 
-file1 <- file1[!grepl(".*N_debris_r1.txt", file1)] # remove debres from list
-file2 <- file2[!grepl(".*N_debris_r2.txt", file2)] # remove debres from list
+file1 <- file1[!grepl(".*N_debris_r1..*", file1)] # remove debres from list
+file2 <- file2[!grepl(".*N_debris_r2..*", file2)] # remove debres from list
 
 
 message(paste("Starting to PE merge ", length(file1), " samples.", sep=""))
@@ -60,7 +60,7 @@ message(" ")
 # new file names
 
 new_names <- sub(".*(/.*)", "\\1", file1)
-if(fastq){new_names <- sub("r1.txt", "PE.fastq", new_names)} else {new_names <- sub("r1.txt", "PE.fasta", new_names)}
+if(fastq){new_names <- sub("r1.*", "PE.fastq", new_names)} else {new_names <- sub("r1.*", "PE.fasta", new_names)}
 
 new_names <- paste(folder, "/_data", new_names, sep="")
 
