@@ -1,6 +1,6 @@
 # Cutadapt v0.1
 
-Cutadapt <- function(files="latest", forward=NA, reverse=NA, fastq=T){
+Cutadapt <- function(files="latest", forward=NA, reverse=NA, bothsides=F, fastq=T){
 
 FW_only <- F
 if (is.na(reverse)){FW_only <- T}
@@ -87,6 +87,12 @@ cat(file="log.txt", temp , append=T, sep="\n")
 message(temp)
 }
 
+if(bothsides){
+temp <- paste("Notice: Option \"bothsides\" enabled, will also trim adapters on reverse complements and orientate all sequences in the same forward direction.", sep="")
+cat(file="log.txt", temp , append=T, sep="\n")
+message(temp)
+}
+
 
 dir.create(paste(folder, "/_stats/_cutadapt_logs", sep=""))
 log_names <- sub("_data", "_stats/_cutadapt_logs", new_names)
@@ -94,19 +100,66 @@ log_names <- sub(".fast[aq]", ".txt", log_names)
 
 exp <- NULL
 temp <- new_names
+
 for (i in 1:length(cmd1)){
 A <- system2("cutadapt", cmd1[i], stdout=T, stderr=T)
 cat(file=log_names[i], A, append=T, sep="\n")
 if(!FW_only){
+if(!bothsides){ # not both sided
 A <- system2("cutadapt", cmd2[i], stdout=T, stderr=T)
 cat(file=log_names[i], A, append=T, sep="\n")
-}# reporting
+} else {
+# trimm FW
+#A <- system2("cutadapt", cmd1[i], stdout=T, stderr=T)
+#cat(file=log_names[i], A, append=T, sep="\n")
+
+# trimm RW
+rev_primer <- paste("-a ", rw[i], "$ -o ", folder, "/_data/temp_A.txt ", folder, "/_data/temp.txt -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") #rverse adapter
+
+A <- system2("cutadapt", rev_primer, stdout=T, stderr=T)
+cat(file=log_names[i], A, append=T, sep="\n")
+
+# build revcomp
+
+revcom_cmd <- paste("-fastx_revcomp ", files[i],  if(fastq){" -fastqout "} else {"-fastaout "}, folder, "/_data/temp2_RC.txt  -label_suffix _RC",  sep="")
+A <- system2("usearch", revcom_cmd, stdout=T, stderr=T)
+
+cat(file=log_names[i], paste("usearch ", revcom_cmd, sep=""), append=T, sep="\n")
+cat(file=log_names[i], A, append=T, sep="\n")
+
+# cut primers again! simmillar commands
+
+fw_primer_cmd <- paste("-g ^", fw[i], " -o ", folder, "/_data/temp.txt ", folder, "/_data/temp2_RC.txt", " -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") # forward adapter
+
+A <- system2("cutadapt", fw_primer_cmd, stdout=T, stderr=T)
+cat(file=log_names[i], A, append=T, sep="\n")
+
+
+rev_primer <- paste("-a ", rw[i], "$ -o ", folder, "/_data/temp_B.txt ", folder, "/_data/temp.txt -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") #rverse adapter
+
+A <- system2("cutadapt", rev_primer, stdout=T, stderr=T)
+cat(file=log_names[i], A, append=T, sep="\n")
+
+# combine files!
+combine_cmd <- paste("", folder, "/_data/temp_A.txt ", folder, "/_data/temp_B.txt > ", new_names[i], sep="")
+
+system2("cat", combine_cmd)
+cat(file=log_names[i], paste("\ncat ", combine_cmd, sep=""), append=T, sep="\n")
+
+# remove temp files
+file.remove(paste(folder, "/_data/temp_A.txt", sep=""))
+file.remove(paste(folder, "/_data/temp_B.txt", sep=""))
+file.remove(paste(folder, "/_data/temp2_RC.txt", sep=""))
+}
+}
+# reporting
 
 stats <- readLines(log_names[i])
-
 reads_in <- stats[grep("Total reads processed:", stats)[1]]
 reads_in <- sub(".* processed: +", "", reads_in)
 reads_in <- as.numeric(gsub(",", "", reads_in))
+
+if(!bothsides){
 
 reads_out <- stats[grep("Reads written \\(passing filters\\):", stats)[if(FW_only){1}else{2}]]
 reads_out <- sub(".* filters.: +", "", reads_out)
@@ -119,6 +172,28 @@ exp <- rbind(exp, c(sub(".*_data/(.*)", "\\1", temp[i]), reads_out, keep))
 meep <- paste(sub(".*_data/(.*)_PE.*", "\\1", temp[i]), " - ", keep, "% reads passed", sep="")
 cat(file="log.txt", meep, append=T, sep="\n")
 message(meep)
+} else { # processing for both sided
+
+reads_outA <- stats[grep("Reads written \\(passing filters\\):", stats)[2]]
+reads_outA <- sub(".* filters.: +", "", reads_outA)
+reads_outA <- sub(" .*", "", reads_outA)
+reads_outA <- as.numeric(gsub(",", "", reads_outA))
+
+reads_outB <- stats[grep("Reads written \\(passing filters\\):", stats)[4]]
+reads_outB <- sub(".* filters.: +", "", reads_outB)
+reads_outB <- sub(" .*", "", reads_outB)
+reads_outB <- as.numeric(gsub(",", "", reads_outB))
+
+reads_out <- reads_outA+ reads_outB
+
+keep <- round(reads_out/reads_in*100, digits=2)
+exp <- rbind(exp, c(sub(".*_data/(.*)", "\\1", temp[i]), reads_out, keep))
+
+meep <- paste(sub(".*_data/(.*)_PE.*", "\\1", temp[i]), " - ", keep, "% reads passed (", round(reads_outA/reads_in*100, digits=2), "% forward + ", round(reads_outB/reads_in*100, digits=2), "% reverse orientation)", sep="")
+cat(file="log.txt", meep, append=T, sep="\n")
+message(meep)
+
+}
 }
 
 exp <- data.frame(exp)
