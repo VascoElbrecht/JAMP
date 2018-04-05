@@ -50,7 +50,10 @@ barplot(cbind(sort(temp, decreasing=T)), col= colors[-1], main = sub("OTU_", "",
 
 }
 
+
+
 # ladder
+if(emptyOTUs){
 sequence <- c(0, seq(100, cols, 100))
 sequence <- sequence/cols*100
 spots <- data.frame("spot"=sequence, "lab"=0:(cols/100))
@@ -69,6 +72,7 @@ spots <- spots[seq(1, nrow(spots), 5),]
 barplot(100, main = "ladder", xlab="", ylab="", yaxt="n", axisnames=F, cex.main=0.7, border=NA, col="white")
 
 axis(4, las=1, at= spots$spot, lab= spots$lab)
+}
 # ladder end
 
 if(!is.na(out)){
