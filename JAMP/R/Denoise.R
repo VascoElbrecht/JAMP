@@ -566,6 +566,8 @@ centroids <- centroids[-length(centroids)]
 write.fasta(as.list(data$sequences[centroids]), data$OTU[centroids], paste(folder, "/_data/4_denoised/E_haplo_OTU_Centroids.txt", sep=""))
 
 
+Denoise_barplot(paste(folder, "/E_haplo_table.csv", sep=""), out=paste(folder, "/_stats/Haplotype_barplot_E.pdf", sep=""), emptyOTUs=T)
+message(paste(sep="Haplotype distribution plot generated:\n", folder, "/_stats/Haplotype_barplot_E.pdf\n\nYou may use the fuction \"Denoise_barplot\"(",folder, "/E_haplo_table.csv) to further customise that plot.\n\n"))
 
 
 temp <- "\nModule completed!"
