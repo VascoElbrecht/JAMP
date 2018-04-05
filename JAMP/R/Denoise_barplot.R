@@ -16,7 +16,7 @@ colors <- c("#ffffff", "#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#
 head(data)
 #  make large plot showing haplotype compossition per sample
 
-OTUs <- unique(data[1])
+OTUs <- unique(data$OTU)
 
 i <- 31
 k <- 4
@@ -27,7 +27,7 @@ pdf(file= out, height, width)
 par(mfrow=c(mfrow[1], mfrow[2]), oma=c(0,0,0,0), mar=c(0,0,1,0), lwd=0.5)
 
 for (i in 1:length(OTUs) ){
-temp <- data[data[1]==OTUs[i], c(2:ncol(data))]
+temp <- data[data$OTU==OTUs[i], c(2:ncol(data))]
 
 for (k in 1:ncol(temp)){ # alculate relative abundance
 temp[k] <- suppressWarnings(as.numeric(unlist(temp[k])))/sum(suppressWarnings(as.numeric(unlist(temp[k]))))*100
