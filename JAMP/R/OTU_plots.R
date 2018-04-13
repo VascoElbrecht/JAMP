@@ -37,7 +37,7 @@ backup <- backup[nrow(data):1,]
 
 
 mycol <- colorRampPalette(c("blue3", "white"))
-ramp <- data.frame("ID"=rev(seq(-3, 2, 0.1)), "col"=mycol(51), stringsAsFactors=F)
+ramp <- data.frame("ID"=rev(seq(-3, 2, 0.1)), "col"=mycol(52)[1:51], stringsAsFactors=F)
 
 
 ##### MAKE PLOT
