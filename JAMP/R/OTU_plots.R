@@ -1,5 +1,5 @@
 # work in progres - not working jet
-OTU_heatmap <- function(file=table, out="", abundance=F, plot0=F, rel=F){
+OTU_heatmap <- function(file=table, out="", abundance=F, plot0=F, rel=F, col=c("blue3", "white")){
 
 
 
@@ -36,7 +36,7 @@ backup <- backup[nrow(data):1,]
 
 
 
-mycol <- colorRampPalette(c("blue3", "white"))
+mycol <- colorRampPalette(col)
 ramp <- data.frame("ID"=rev(seq(-3, 2, 0.1)), "col"=mycol(52)[1:51], stringsAsFactors=F)
 
 
