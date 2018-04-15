@@ -392,7 +392,7 @@ KEEP <- read.csv(paste(folder, "/5_OTU_table_", filter,".csv", sep=""), stringsA
 
 higlight <- rev(!RAW$ID %in% KEEP$ID)
 
-pdf(paste(folder, "/_stats/OTU_plot_3_RAW.pdf", sep=""), height=(nrow(RAW)+20)/10, width=(ncol(RAW)+2)/2)
+pdf(paste(folder, "/_stats/OTU_plot_3_RAW.pdf", sep=""), height=(nrow(RAW)+20)/10, width=(ncol(RAW)1)/2)
 
 OTU_heatmap(paste(folder, "/3_Raw_OTU_table.csv", sep=""), abundance=T)
 
@@ -414,7 +414,6 @@ OTU_heatmap(paste(folder, "/5_OTU_table_", filter,"_ZERO_rel.csv", sep=""), out=
 
 
 
-filter <- 0.01
 temp <- "\nModule completed!"
 message(temp)
 cat(file="log.txt", paste(Sys.time(), "*** Module completed!", "", sep="\n"), append=T, sep="\n")
