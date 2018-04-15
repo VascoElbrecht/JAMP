@@ -4,7 +4,7 @@ U_cluster_otus <- function(files="latest", minuniquesize=2, strand="plus", filte
 #, unoise_min=NA - unoise denoising removed, no longer supported!
 
 folder <- Core(module="U_cluster_otus")
-cat(file="log.txt", c("Version v0.1", "\n"), append=T, sep="\n")
+cat(file="log.txt", c("Version v0.2", "\n"), append=T, sep="\n")
 message(" ")
 
 if (files[1]=="latest"){
@@ -379,16 +379,42 @@ write.csv(file=paste(folder, "/5_OTU_table_", filter,"_ZERO_rel.csv", sep=""), e
 temp <- paste("\n\nSubsetted OTU table generated (", filter, "% abundance in at least ", filterN," sample): ", sub(paste(folder, "/_data/5_subset/", sep=""), "", OTU_sub_filename), sep="")
 message(temp)
 cat(file="log.txt", temp, append=T, sep="\n")
-
-#exp2 <- data.frame("ID"=exp[,1], "Abundance"=colSums(tab[-1]), "pct_pass"=exp[,2], row.names=1:length(exp[,1]))
-#write.csv(exp2, file="_stats/5_pct_subsetted_matched.csv")
-
 #### end subsetted OTU table
 
 } # end subsetting
 
 
 
+# make plots
+
+RAW <- read.csv(paste(folder, "/3_Raw_OTU_table.csv", sep=""), stringsAsFactors=F)
+KEEP <- read.csv(paste(folder, "/5_OTU_table_", filter,".csv", sep=""), stringsAsFactors=F)
+
+higlight <- rev(!RAW$ID %in% KEEP$ID)
+
+pdf(paste(folder, "/_stats/OTU_plot_3_RAW.pdf", sep=""), height=(nrow(RAW)+20)/10, width=(ncol(RAW)+2)/2)
+
+OTU_heatmap(paste(folder, "/3_Raw_OTU_table.csv", sep=""), abundance=T)
+
+
+pos <- ncol(RAW) - 2.5
+for (i in 1:length(higlight)){
+
+if(higlight[i]){
+rect(pos, i-0.5, pos+1, i+0.5, col="Lightgray", border=F)
+text(pos+0.1, i, rev(RAW$ID)[i], adj=0, cex=0.5)
+}
+
+}
+dev.off()
+
+OTU_heatmap(paste(folder, "/5_OTU_table_", filter,".csv", sep=""), out=paste(folder, "/_stats/OTU_plot_5_", filter, ".pdf", sep=""), abundance=T)
+OTU_heatmap(paste(folder, "/5_OTU_table_", filter,"_ZERO.csv", sep=""), out=paste(folder, "/_stats/OTU_plot_5_", filter, "_ZERO.pdf", sep=""), abundance=T)
+OTU_heatmap(paste(folder, "/5_OTU_table_", filter,"_ZERO_rel.csv", sep=""), out=paste(folder, "/_stats/OTU_plot_5_", filter, "_ZERO_rel.pdf", sep=""), abundance=T, rel=T)
+
+
+
+filter <- 0.01
 temp <- "\nModule completed!"
 message(temp)
 cat(file="log.txt", paste(Sys.time(), "*** Module completed!", "", sep="\n"), append=T, sep="\n")
