@@ -392,7 +392,7 @@ KEEP <- read.csv(paste(folder, "/5_OTU_table_", filter,".csv", sep=""), stringsA
 
 higlight <- rev(!RAW$ID %in% KEEP$ID)
 
-pdf(paste(folder, "/_stats/OTU_plot_3_RAW.pdf", sep=""), height=(nrow(RAW)+20)/10, width=(ncol(RAW)1)/2)
+pdf(paste(folder, "/_stats/OTU_plot_3_RAW.pdf", sep=""), height=(nrow(RAW)+20)/10, width=(ncol(RAW)+1)/2)
 
 OTU_heatmap(paste(folder, "/3_Raw_OTU_table.csv", sep=""), abundance=T)
 
