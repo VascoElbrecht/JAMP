@@ -70,7 +70,6 @@ write.csv(temp, paste(folder, "/_stats/subsampling.csv", sep=""))
 
 # make some plots?
 
-
 Sequences_lost(temp$Sequ_count_in, temp$Sequ_count_out, sub("_PE.*", "", temp$Sample), out=paste(folder, "/_stats/Dsicarded_sequences.pdf", sep=""))
 Sequences_lost(temp$Sequ_count_in, temp$Sequ_count_out, sub("_PE.*", "", temp$Sample), rel=T, out=paste(folder, "/_stats/Dsicarded_sequences_rel.pdf", sep=""))
 
