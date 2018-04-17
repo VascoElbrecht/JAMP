@@ -78,10 +78,11 @@ temp <- readLines(log_names[i])
 
 # table export
 merged <- as.numeric(sub(".*merged \\((.*)..", "\\1",temp[6]))
+rawdata_counts <- as.numeric(sub(".* / (.*) pairs merged.*", "\\1", temp[6]))
 median_length <- as.numeric(sub("(.*)Median", "\\1",temp[11]))
 temp_count <- Count_sequences(new_names[i], fastq)
 short_name <- sub(".*_data/(.*)_PE.fast.", "\\1", new_names[i])
-tab_exp <- rbind(tab_exp, c(short_name, temp_count, merged, median_length))
+tab_exp <- rbind(tab_exp, c(short_name, rawdata_counts, temp_count, merged, median_length))
 
 meep <- paste(short_name, ": ", merged, "% merged - median length: ", median_length, sep="")
 message(meep)
@@ -92,14 +93,23 @@ cat(file="log.txt", "\n", append=T, sep="\n")
 
 
 tab_exp <- data.frame(tab_exp)
-names(tab_exp) <- c("Sample", "Sequ_count", "percent_merged", "median_length")
+names(tab_exp) <- c("Sample", "Sequ_count_in", "Sequ_count_out", "percent_merged", "median_length")
 
 write.csv(tab_exp, paste(folder, "/_stats/sequ_length_abund.csv", sep=""))
 
-# make some plots?
 
-message(" ")
-message(" Done with PE merging")
+
+# make some plots
+temp <- read.csv(paste(folder, "/_stats/sequ_length_abund.csv", sep=""), stringsAsFactors=F)
+
+Sequences_lost(temp$Sequ_count_in, temp$Sequ_count_out, temp$Sample, out=paste(folder, "/_stats/Sequences_merged.pdf", sep=""))
+Sequences_lost(temp$Sequ_count_in, temp$Sequ_count_out, temp$Sample, rel=T, out=paste(folder, "/_stats/Sequences_merged_rel.pdf", sep=""))
+
+merged_message <- paste("\nOn average ", round(mean(temp$percent_merged), 2), "% sequences merged (SD = ", round(sd(temp$percent_merged), 2), "%).\n", sep="")
+message(merged_message)
+cat(file="log.txt", merged_message, append=T, sep="\n")
+
+message("Done with PE merging!")
 
 cat(file="log.txt", paste(Sys.time(), "Done with PE merging", "", "*** Module completed!\n\n", sep="\n"), append=T, sep="\n")
 

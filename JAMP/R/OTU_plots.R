@@ -1,4 +1,4 @@
-# work in progres - not working jet
+# beta
 OTU_heatmap <- function(file=table, out="", abundance=F, plot0=F, rel=F, col=c("blue3", "white")){
 
 
