@@ -53,8 +53,8 @@ pass <- as.numeric(pass)
 
 pct <- round(pass/imput*100, digits=2)
 
-short_name <- sub("_data/(.*)_PE.*", "\\1", new_names[i])
-tab_exp <- rbind(tab_exp, c(short_name, pass, pct))
+short_name <- sub(".*_data/(.*)_PE.*", "\\1", new_names[i])
+tab_exp <- rbind(tab_exp, c(short_name, imput, pass, pct))
 
 meep <- paste(short_name, ": ", pct, "% pass EE ", sep="")
 message(meep)
@@ -63,11 +63,27 @@ cat(file="log.txt", meep, append=T, sep="\n")
 cat(file="log.txt", "\n", append=T, sep="\n")
 
 tab_exp <- data.frame(tab_exp)
-names(tab_exp) <- c("Sample", "Sequ_count", "percent_merged")
+names(tab_exp) <- c("Sample", "Sequ_count_in", "Sequ_count_out", "pct_pass")
 
 write.csv(tab_exp, paste(folder, "/_stats/max_ee_stats.csv", sep=""))
 
-# make some plots?
+# make some plots
+
+temp <- read.csv(paste(folder, "/_stats/max_ee_stats.csv", sep=""), stringsAsFactors=F)
+
+Sequences_lost(temp$Sequ_count_in, temp$Sequ_count_out, sub("_PE.*", "", temp$Sample), out=paste(folder, "/_stats/LowQuality_sequences.pdf", sep=""))
+Sequences_lost(temp$Sequ_count_in, temp$Sequ_count_out, sub("_PE.*", "", temp$Sample), rel=T, out=paste(folder, "/_stats/LowQuality_sequences_rel.pdf", sep=""))
+
+merged_message <- paste("\nSequences with sufficient read quality: ", round(mean(temp$pct_pass), 2), "% on average (SD = ", round(sd(temp$pct_pass), 2), "%).\n", sep="")
+message(merged_message)
+cat(file="log.txt", merged_message, append=T, sep="\n")
+
+
+
+
+
+
+
 
 message(" ")
 message("Module completed!")

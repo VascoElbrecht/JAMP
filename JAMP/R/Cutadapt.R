@@ -167,7 +167,7 @@ reads_out <- sub(" .*", "", reads_out)
 reads_out <- as.numeric(gsub(",", "", reads_out))
 
 keep <- round(reads_out/reads_in*100, digits=2)
-exp <- rbind(exp, c(sub(".*_data/(.*)", "\\1", temp[i]), reads_out, keep))
+exp <- rbind(exp, c(sub(".*_data/(.*)", "\\1", temp[i]), reads_in, reads_out, keep))
 
 meep <- paste(sub(".*_data/(.*)_PE.*", "\\1", temp[i]), " - ", keep, "% reads passed", sep="")
 cat(file="log.txt", meep, append=T, sep="\n")
@@ -187,7 +187,7 @@ reads_outB <- as.numeric(gsub(",", "", reads_outB))
 reads_out <- reads_outA+ reads_outB
 
 keep <- round(reads_out/reads_in*100, digits=2)
-exp <- rbind(exp, c(sub(".*_data/(.*)", "\\1", temp[i]), reads_out, keep))
+exp <- rbind(exp, c(sub(".*/(.*)", "\\1", temp[i]), reads_in, reads_out, keep))
 
 meep <- paste(sub(".*_data/(.*)_PE.*", "\\1", temp[i]), " - ", keep, "% reads passed (", round(reads_outA/reads_in*100, digits=2), "% forward + ", round(reads_outB/reads_in*100, digits=2), "% reverse orientation)", sep="")
 cat(file="log.txt", meep, append=T, sep="\n")
@@ -197,10 +197,26 @@ message(meep)
 }
 
 exp <- data.frame(exp)
-names(exp) <- c("Sample", "Abundance", "pct_pass")
+names(exp) <- c("Sample", "Sequ_count_in", "Sequ_count_out", "pct_pass")
 write.csv(exp, paste(folder, "/_stats/cut_pass.csv", sep=""))
 
 if(!FW_only){file.remove(paste(folder, "/_data/temp.txt", sep=""))} # remove temporary file
+
+
+
+
+# make some plots
+temp <- read.csv(paste(folder, "/_stats/cut_pass.csv", sep=""), stringsAsFactors=F)
+
+Sequences_lost(temp$Sequ_count_in, temp$Sequ_count_out, sub("_PE.*", "", temp$Sample), out=paste(folder, "/_stats/Primers_trimmed.pdf", sep=""))
+Sequences_lost(temp$Sequ_count_in, temp$Sequ_count_out, sub("_PE.*", "", temp$Sample), rel=T, out=paste(folder, "/_stats/Primers_trimmed_rel.pdf", sep=""))
+
+merged_message <- paste("\nPrimers were successfully removed from ", round(mean(temp$pct_pass), 2), "% on average (SD = ", round(sd(temp$pct_pass), 2), "%).\n", sep="")
+message(merged_message)
+cat(file="log.txt", merged_message, append=T, sep="\n")
+
+
+
 message(" ")
 message(" Module completed!")
 
