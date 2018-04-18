@@ -11,7 +11,7 @@ source(paste(folder, "/robots.txt", sep=""))
 files <- list.files(paste(last_data, "/_data", sep=""), full.names=T)
 }
 
-temp <- paste("Starting to subsample to " , sample_size, " sequences) in ", length(files), " samples in ", if(fastq_out){"fastq"}else{"fasta"}, " format.\n\nFiles processed:", sep="")
+temp <- paste("Starting to subsample to " , sample_size, " sequences in ", length(files), " samples in ", if(fastq_out){"fastq"}else{"fasta"}, " format.\n\nFiles processed:", sep="")
 message(temp)
 #message(" ")
 cat(file="log.txt", temp, append=T, sep="\n")
