@@ -79,8 +79,8 @@ write.csv(exp, paste(folder, "/_stats/minmax_pass.csv", sep=""))
 # make some plots
 temp <- read.csv(paste(folder, "/_stats/minmax_pass.csv", sep=""), stringsAsFactors=F)
 
-Sequences_lost(temp$Sequ_count_in, temp$Sequ_count_out, sub("_PE.*", "", temp$Sample), out=paste(folder, "/_stats/Sequences_discarded.pdf", sep=""))
-Sequences_lost(temp$Sequ_count_in, temp$Sequ_count_out, sub("_PE.*", "", temp$Sample), rel=T, out=paste(folder, "/_stats/Sequences_discarded_rel.pdf", sep=""))
+Sequences_lost(temp$Sequ_count_in, temp$Sequ_count_out, sub("_PE.*", "", temp$Sample), out=paste(folder, "/_stats/Sequences_discarded.pdf", sep=""),  main=paste(folder, ": Proportion of reads with ", min, "-", max, "bp length", sep=""))
+Sequences_lost(temp$Sequ_count_in, temp$Sequ_count_out, sub("_PE.*", "", temp$Sample), rel=T, out=paste(folder, "/_stats/Sequences_discarded_rel.pdf", sep=""), main=paste(folder, ": Proportion of reads with ", min, "-", max, "bp length", sep=""))
 
 merged_message <- paste("\nProportion of sequences of expected length: ", round(mean(temp$pct_pass), 2), "% on average (SD = ", round(sd(temp$pct_pass), 2), "%).\n", sep="")
 message(merged_message)

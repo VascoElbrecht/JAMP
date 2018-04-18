@@ -1,7 +1,8 @@
 # beta
 OTU_heatmap <- function(file=table, out="", abundance=F, plot0=F, rel=F, col=c("blue3", "white")){
 
-
+ORIGscipen <- getOption("scipen")
+options(scipen=10)
 
 if(is.character(file)){
 data <- read.csv(file, stringsAsFactors=F)
@@ -91,7 +92,7 @@ i <- 1
 if(out!=""){
 dev.off()
 }
-
+options(scipen= ORIGscipen)
 }# heatmap end
 
 

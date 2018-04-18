@@ -71,17 +71,12 @@ write.csv(tab_exp, paste(folder, "/_stats/max_ee_stats.csv", sep=""))
 
 temp <- read.csv(paste(folder, "/_stats/max_ee_stats.csv", sep=""), stringsAsFactors=F)
 
-Sequences_lost(temp$Sequ_count_in, temp$Sequ_count_out, sub("_PE.*", "", temp$Sample), out=paste(folder, "/_stats/LowQuality_sequences.pdf", sep=""))
-Sequences_lost(temp$Sequ_count_in, temp$Sequ_count_out, sub("_PE.*", "", temp$Sample), rel=T, out=paste(folder, "/_stats/LowQuality_sequences_rel.pdf", sep=""))
+Sequences_lost(temp$Sequ_count_in, temp$Sequ_count_out, sub("_PE.*", "", temp$Sample), out=paste(folder, "/_stats/LowQuality_sequences.pdf", sep=""), main=paste(folder, ": max expected errors ", max_ee, sep=""))
+Sequences_lost(temp$Sequ_count_in, temp$Sequ_count_out, sub("_PE.*", "", temp$Sample), rel=T, out=paste(folder, "/_stats/LowQuality_sequences_rel.pdf", sep=""), main=paste(folder, ": max expected errors ", max_ee, sep=""))
 
 merged_message <- paste("\nSequences with sufficient read quality: ", round(mean(temp$pct_pass), 2), "% on average (SD = ", round(sd(temp$pct_pass), 2), "%).\n", sep="")
 message(merged_message)
 cat(file="log.txt", merged_message, append=T, sep="\n")
-
-
-
-
-
 
 
 
