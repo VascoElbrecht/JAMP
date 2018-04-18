@@ -152,13 +152,19 @@ temp <- data.frame("files_demultiplexed"=list.files(paste(folder, "/_data", sep=
 
 write.csv(temp, paste(folder, "/_stats/read_abundance.csv", sep=""))
 
-temp <- temp[seq(1, length(abundance), 2),]
+temp <- read.csv(paste(folder, "/_stats/read_abundance.csv", sep=""))
+temp <- temp[seq(1, nrow(temp), 2), ]
+temp$files_demultiplexed <- sub("(.*)_[rR]1.*", "\\1", temp$files_demultiplexed)
+
+# make plot
+Sequences_lost(NA, temp$abundance, Sample_names=temp$files_demultiplexed, rel=F, main=paste(folder, ": Demultiplexed files", dep=""), out=paste(folder, "/_stats/demultiplexed.pdf", sep=""))
+
 
 options("scipen"=100, "digits"=7)
 message(paste("A total of", sum(temp$abundance), "sequences where demultiplexed"), sep="")
-message(paste(round(temp$abundance[temp=="N_debris_r1.txt"]/sum(temp$abundance)*100, digits=2)), "% of sequences could not be matched with any of the tagging combinations (e.g. sequencing errors in the tags or PhiX.)", sep="")
+message(paste(round(temp$abundance[temp$files_demultiplexed=="N_debris"]/sum(temp$abundance)*100, digits=2)), "% of sequences could not be matched with any of the tagging combinations (e.g. sequencing errors in the tags or PhiX.)", sep="")
 
-temp <- paste(Sys.time(), paste("Number of reads demultiplexed ", sum(temp$abundance), sep=""), paste("Number of not matching reads (N_debris):", temp$abundance[temp=="N_debris_r1.txt"], sep=""), paste("Relative abundance of not matching reads: ", round(c(temp$abundance[temp=="N_debris_r1.txt"]/sum(temp$abundance)*100), digits=2), "\n", "\n", sep=""), sep="\n")
+temp <- paste(Sys.time(), paste("Number of reads demultiplexed ", sum(temp$abundance), sep=""), paste("Number of not matching reads (N_debris):", temp$abundance[temp$files_demultiplexed=="N_debris"], sep=""), paste("Relative abundance of not matching reads: ", round(c(temp$abundance[temp$files_demultiplexed=="N_debris"]/sum(temp$abundance)*100), digits=2), "\n", "\n", sep=""), sep="\n")
 cat(file="log.txt", temp, append=T, sep="\n")
 
 cat(file="log.txt", "*** Module completed!\n\n", append=T, sep="\n")

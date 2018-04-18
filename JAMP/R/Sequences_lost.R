@@ -4,6 +4,8 @@ Sequences_lost <- function(Reads_in=NA, Reads_out, Sample_names, out="", abundan
 ORIGscipen <- getOption("scipen")
 options(scipen=10)
 
+No_reads_in <- !is.na(Reads_in)
+
 if(is.na(Reads_in[1])){
 Reads_in <- Reads_out
 }
@@ -30,7 +32,9 @@ mtext(main, side=3, adj=0, line=0.5, cex=1.2, font=2)
 
 if(abundance==T){
 text(max(data[1,]+data[2,])/100, x, round(data[1,], 2), adj=0, col=col[3])
+if(No_reads_in){
 text(max(data[1,]+data[2,])/100+ c(data[1,]+data[2,]), x, round(data[2,], 2), adj=0, col= col[4])
+}
 }
 
 
