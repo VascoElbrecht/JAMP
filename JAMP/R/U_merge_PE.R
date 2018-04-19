@@ -1,7 +1,7 @@
 # U_merge_PE v0.1
 # maybe add option to split and merge large files automatically?
 
-U_merge_PE <- function(files="latest", file1=NA, file2=NA, fastq_maxdiffs=99, fastq_pctid=75, fastq=T){
+U_merge_PE <- function(files="latest", file1=NA, file2=NA, fastq_maxdiffs=99, fastq_pctid=75, fastq=T, LDist=T){
 
 folder <- Core(module="U_merge_PE")
 cat(file="log.txt", c("\n","Version v0.2", "\n"), append=T, sep="\n")
@@ -108,6 +108,26 @@ Sequences_lost(temp$Sequ_count_in, temp$Sequ_count_out, temp$Sample, rel=T, out=
 merged_message <- paste("\nOn average ", round(mean(temp$percent_merged), 2), "% sequences merged (SD = ", round(sd(temp$percent_merged), 2), "%).\n", sep="")
 message(merged_message)
 cat(file="log.txt", merged_message, append=T, sep="\n")
+
+
+#make length distribution plots
+if(LDist){
+
+dir.create(paste(folder, "_stats/length distribution", sep="/"))
+
+message("Generating length distribution plots. If this takes to long you can turn this option off with setting \"LDist=T\".")
+
+for (i in 1:length(new_names)){
+
+pdfname <- sub("/_data/", "/_stats/length distribution/", new_names[i])
+pdfname <- sub(".fast.", ".pdf", pdfname)
+
+message(paste("Plotting ", sub(".*distribution/(.*)_PE_.pdf","\\1", pdfname), sep=""))
+Length_distribution(new_names[i], pdfname)
+}
+message(" ")
+}# Ldist end
+
 
 message("Done with PE merging!")
 
