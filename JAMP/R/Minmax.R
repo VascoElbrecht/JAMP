@@ -1,6 +1,6 @@
 # Minmax v0.1
 
-Minmax <- function(files="latest", min=NA, max=NA, plusminus=c(NA, 10), fastq=T){
+Minmax <- function(files="latest", min=NA, max=NA, plusminus=c(NA, 10), fastq=T, LDist=F){
 
 folder <- Core(module="Minmax")
 cat(file="../log.txt", c("Module Version: v0.2", "\n"), append=T, sep="\n")
@@ -87,6 +87,23 @@ message(merged_message)
 cat(file="log.txt", merged_message, append=T, sep="\n")
 
 
+#make length distribution plots
+if(LDist){
+
+dir.create(paste(folder, "_stats/length distribution", sep="/"))
+
+message("Generating length distribution plots. If this takes to long you can turn this option off with setting \"LDist=T\".")
+
+for (i in 1:length(new_names)){
+
+pdfname <- sub("_data/", "_stats/length distribution/", new_names[i])
+pdfname <- sub(".fast.", ".pdf", pdfname)
+
+message(paste("Plotting ", sub(".*distribution/(.*)_PE_.*pdf","\\1", pdfname), sep=""))
+Length_distribution(paste(folder, "/", new_names[i], sep=""), paste(folder, "/", pdfname, sep=""), fastq=fastq)
+}
+message(" ")
+}# Ldist end
 
 message(" ")
 message(" Module completed!")

@@ -115,7 +115,7 @@ if(LDist){
 
 dir.create(paste(folder, "_stats/length distribution", sep="/"))
 
-message("Generating length distribution plots. If this takes to long you can turn this option off with setting \"LDist=T\".")
+message("Generating length distribution plots. If this takes to long you can turn this option off with setting \"LDist=F\".")
 
 for (i in 1:length(new_names)){
 

@@ -1,6 +1,6 @@
 # Cutadapt v0.1
 
-Cutadapt <- function(files="latest", forward=NA, reverse=NA, bothsides=F, fastq=T){
+Cutadapt <- function(files="latest", forward=NA, reverse=NA, bothsides=F, fastq=T, LDist=F){
 
 FW_only <- F
 if (is.na(reverse)){FW_only <- T}
@@ -216,6 +216,25 @@ message(merged_message)
 cat(file="log.txt", merged_message, append=T, sep="\n")
 
 
+
+
+#make length distribution plots
+if(LDist){
+
+dir.create(paste(folder, "_stats/length distribution", sep="/"))
+
+message("Generating length distribution plots. If this takes to long you can turn this option off with setting \"LDist=F\".")
+
+for (i in 1:length(new_names)){
+
+pdfname <- sub("/_data/", "/_stats/length distribution/", new_names[i])
+pdfname <- sub(".fast.", ".pdf", pdfname)
+
+message(paste("Plotting ", sub(".*distribution/(.*)_PE_.*pdf","\\1", pdfname), sep=""))
+Length_distribution(new_names[i], pdfname)
+}
+message(" ")
+}# Ldist end
 
 message(" ")
 message(" Module completed!")
