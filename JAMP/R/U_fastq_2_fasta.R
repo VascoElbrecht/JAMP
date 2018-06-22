@@ -7,7 +7,7 @@ cat(file="log.txt", c("\n","Version v0.1", "\n"), append=T, sep="\n")
 message(" ")
 
 if (files[1]=="latest"){
-source(paste(folder, "robots.txt", sep=""))
+source(paste(folder, "/robots.txt", sep=""))
 files <- list.files(paste( last_data, "/_data", sep=""), full.names=T)
 }
 
