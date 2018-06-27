@@ -60,7 +60,7 @@ message(" ")
 # new file names
 
 new_names <- sub(".*(/.*)", "\\1", file1)
-if(fastq){new_names <- sub("r1.*", "PE.fastq", new_names)} else {new_names <- sub("r1.*", "PE.fasta", new_names)}
+if(fastq){new_names <- sub("[rR]1.*", "PE.fastq", new_names)} else {new_names <- sub("[rR]1.*", "PE.fasta", new_names)}
 
 new_names <- paste(folder, "/_data", new_names, sep="")
 
