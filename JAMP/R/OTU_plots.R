@@ -20,15 +20,13 @@ for (k in 1:ncol(data)){
 data[k] <- data[k]/sums[k]*100
 if(rel){ # save as relative abundance
 backup[k] <- round(data[k], 4)
+backup[k][is.na(backup[k])] <- 0
 }
 data[k] <- log10(data[k]) 			# log10
 data[,k][!is.finite(data[,k])] <- NA	# remove inf
 data[,k][data[,k]< -3] <- -3
 }
 
-if(rel){
-
-}
 
 #invert
 data <- data[nrow(data):1,]

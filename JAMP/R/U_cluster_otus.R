@@ -12,17 +12,31 @@ source(paste(folder, "/robots.txt", sep=""))
 files <- list.files(paste(last_data, "/_data", sep=""), full.names=T)
 }
 
+# check for empty files!
+empty <- !file.info(files)$size>0
+
+if(sum(empty)>0){
+temp <- paste("WARNING! ", sum(empty), " file", if(sum(empty>1)){"s do"} else {" does"}, " NOT contain sequences and are not included in clustering:", sep="", "\n", paste(files[empty], collapse="\n"), "\n")
+message(temp)
+cat(file="log.txt", temp , append=T, sep="\n")
+}
+excluded <- NULL
+excluded <- files[empty]
+
 # Dereplicate files using USEARCH
 dir.create(paste(folder, "/_data/1_derep_inc_singletons", sep=""))
 
-new_names <- sub(".*(_data/.*)", "\\1", files)
+new_names <- sub(".*(_data/.*)", "\\1", files[!empty])
 new_names <- sub("_PE.*", "_PE_derep.fasta", new_names)
 new_names <- sub("_data", "_data/1_derep_inc_singletons", new_names)
 new_names <- paste(folder, "/", new_names, sep="")
 
-cmd <- paste("-fastx_uniques \"", files, "\" -fastaout \"", new_names, "\" -sizeout",  sep="")
 
-temp <- paste(length(files), " files are dereplicated (incl. singletons!):", sep="")
+cmd <- paste("-fastx_uniques \"", files[!empty], "\" -fastaout \"", new_names, "\" -sizeout",  sep="")
+
+
+
+temp <- paste(length(cmd), " files are dereplicated (incl. singletons!):", sep="")
 cat(file="log.txt", temp , append=T, sep="\n")
 message(temp)
 
@@ -35,38 +49,6 @@ cat(file="log.txt", meep, append=T, sep="\n")
 cat(file=paste(folder, "/_stats/1_derep_logs.txt", sep=""), meep, A, "\n", append=T, sep="\n")
 message(meep)
 }
-
-# unoise filtering of individual samples
-if (F){
-dir.create(paste(folder, "/_data/1_derep_unoise3", sep=""))
-
-# change names
-denoised_names <- new_names
-denoised_names <- sub("1_derep_inc_singletons", "1_derep_unoise3", denoised_names)
-denoised_names <- sub(".fasta", "_unoise3.fasta", denoised_names)
-
-cmd <- paste("-unoise3 ", new_names, " -zotus ", denoised_names, " -minsize ", unoise_min, sep="")
-
-temp <- paste("\nDenoising ", length(cmd), " files using unoise3 wiht a minimum cluster size of ", unoise_min, ":", sep="")
-message(temp)
-cat(file="log.txt", "\n", temp, append=T, sep="")
-
-
-for(i in 1:length(cmd)){
-A <- system2("usearch", cmd[i], stdout=T, stderr=T)
-
-A <- c(paste("usearch", cmd[i], sep=" "), A, "\n\n\n")
-cat(A, file=paste(folder, "/_stats/1_unoise3_logs.txt", sep=""), sep="\n", append=T)
-
-temp <- paste(sub("_data/1_derep_unoise3/(.*)_PE_derep_unoise3.fasta", "\\1", denoised_names[i]), ": ", sub(".*100.0% (.*) good.*", "\\1 Amplicons keept", A[grep("100.0% .* good", A)]), sep="")
-message(temp)
-cat(file="log.txt", "\n", temp, append=T, sep="")
-
-}
-
-new_names <- denoised_names # use denoised data for OTU clustering
-
-} # end unoise
 
 
 # 2 make OTUs!
@@ -83,7 +65,7 @@ A <- system2("cat", cmd, stdout=T, stderr=T)
 
 # write logs
 
-temp <- paste(length(files), " dereplicated files where merged (inc singleotns) into file:\n\"",folder, "/_data/2_OTU_clustering/A_all_files_united.fasta\"", sep="")
+temp <- paste(length(new_names), " dereplicated files where merged (inc singleotns) into file:\n\"",folder, "/_data/2_OTU_clustering/A_all_files_united.fasta\"", sep="")
 message("\n", temp)
 cat(file="log.txt", "\n", temp, append=T, sep="\n")
 
@@ -157,8 +139,21 @@ message(glumanda)
 }
 
 
+# check for empty files
+empty <- !file.info(blast_names)$size>0
+
+if(sum(empty)>0){
+temp <- paste("\nWARNING! ", sum(empty), " file", if(sum(empty>1)){"s do"} else {" does"}, " not contain any sequences matching the OTU sequences!", sep="", "\n", paste(files[empty], collapse="\n"))
+message(temp)
+cat(file="log.txt", temp , append=T, sep="\n")
+}
+
+excluded2 <- c(excluded, blast_names[empty])
+
+
+
 # Write raw data OTU table! incl OTU sequences
-files <- blast_names
+files <- blast_names[!empty]
 
 tab <- c("NULL")
 tab <- as.data.frame(tab, stringsAsFactors=F)
@@ -189,8 +184,31 @@ mrew <- tab$ID
 mrew <- as.numeric(gsub("OTU_(.*)", "\\1", mrew))
 tab <- tab[order(as.numeric(mrew)),]
 
-# add sequences!
 
+
+if(length(excluded2)>0){
+# add excluded sequences
+excluded2 <- sub(".*/(.*)", "\\1", excluded2)
+excluded2 <- sub("(.*).txt", "\\1", excluded2)
+excluded2 <- sub("(.*)_PE_.*", "\\1", excluded2)
+
+if(length(excluded2)>0){
+zero <- NULL
+for(j in 1:length(excluded2)){
+zero <- cbind(zero, rep(0, nrow(tab)))
+}
+}
+
+# add zero to table
+zero <- data.frame(zero)
+names(zero) <- excluded2
+
+# order table by file names!
+tab2 <- cbind(tab, zero)
+tab <- tab2[,c(1, order(names(tab2)[-1])+1)]
+}
+
+# add sequences!
 sequ <- read.fasta(paste(folder, "/_data/2_OTU_clustering/", OTU_file, sep=""), forceDNAtolower=F, as.string=T)
 
 tab2 <- cbind("sort"=sub("OTU_", "", tab[,1]), tab, "sequ"=unlist(sequ))
@@ -202,7 +220,20 @@ temp <- "\n\nOTU table generated (including OTU sequences): 3_Raw_OTU_table.csv"
 message(temp)
 cat(file="log.txt", temp, append=T, sep="\n")
 
+
+if(length(excluded)>0){
+exp <- rbind(exp, cbind(cbind(excluded), "empty fasta file"))
+exp[,1] <- sub(".*/(.*)", "\\1", exp[,1])
+exp[,1] <- sub("(.*).txt", "\\1", exp[,1])
+exp[,1] <- sub("(.*)_PE_.*", "\\1", exp[,1])
+
+exp <- exp[order(exp[,1]),]
+}
+
 exp2 <- data.frame("ID"=exp[,1], "Abundance"=colSums(tab[-1]), "pct_pass"=exp[,2], row.names=1:length(exp[,1]))
+
+
+
 
 write.csv(exp2, file=paste(folder, "/_stats/3_pct_matched.csv", sep=""))
 
@@ -226,6 +257,8 @@ sampleabundance <- colSums(temp)
 for (i in 1:ncol(temp)){
 temp2[i] <- temp[i]/sampleabundance[i]*100
 }
+
+temp2[is.na(temp2)] <- 0
 
 # subset OTUs
 subset <- rowSums(temp2>=filter)
@@ -265,7 +298,6 @@ write.fasta(as.list(exp$sequ[-nrow(exp)]), exp$ID[-nrow(exp)], file.out=OTU_sub_
 dir.create(paste(folder, "/_data/5_subset/usearch_global", sep=""))
 dir.create(paste(folder, "/_stats/5_subset/", sep=""))
 
-#new_names <- list.files("_data/1_derep_inc_singletons", full.names=T)
 blast_names <- sub("_PE_derep.*.fasta", ".txt", new_names)
 blast_names <- sub("1_derep_inc_singletons", "5_subset/usearch_global", blast_names)
 blast_names <- sub("1_derep_unoise3", "5_subset/usearch_global", blast_names)
@@ -298,7 +330,23 @@ message(glumanda)
 
 # Writing subsetted & remapped OTU table!
 # Write raw data OTU table! incl OTU sequences
-files <- blast_names
+
+
+
+empty <- !file.info(blast_names)$size>0
+
+if(sum(empty)>0){
+temp <- paste("\nWARNING! ", sum(empty), " file", if(sum(empty>1)){"s do"} else {" does"}, " not contain any sequences matching the OTU sequences!", sep="", "\n", paste(blast_names[empty], collapse="\n"))
+message(temp)
+cat(file="log.txt", temp , append=T, sep="\n")
+}
+
+excluded2 <- c(excluded, blast_names[empty])
+
+
+
+
+files <- blast_names[!empty]
 
 tab <- c("NULL")
 tab <- as.data.frame(tab, stringsAsFactors=F)
@@ -329,6 +377,9 @@ mrew <- tab$ID
 mrew <- as.numeric(gsub("OTU_(.*)", "\\1", mrew))
 tab <- tab[order(as.numeric(mrew)),]
 
+
+
+
 # add sequences!
 
 sequ <- read.fasta(OTU_sub_filename, forceDNAtolower=F, as.string=T)
@@ -337,18 +388,46 @@ tab2 <- cbind("sort"=as.numeric(sub("OTU_", "", tab[,1])), tab, "sequ"=unlist(se
 
 names(tab2) <- sub(".*_data/5_subset/usearch_global/(.*).txt", "\\1", names(tab2)) # SUBSET HERE
 
-# add below OTUs
+
+
+# add below treshold OTU counts!
 
 subSums <- read.csv(paste(folder, "/3_Raw_OTU_table.csv", sep=""))
-subSums <- as.vector(c(subSums[nrow(subSums)-1, 1]+1, paste("below_", filter, sep=""), colSums(subSums[,-c(1,2, ncol(subSums))])-colSums(tab2[-c(1,2, ncol(tab2))]), NA))
+sums <- colSums(subSums[,-c(1,2, ncol(subSums))])
+subSums <- as.vector(c(subSums[nrow(subSums)-1, 1]+1, paste("below_", filter, sep=""), sums[sums>0]-colSums(tab2[-c(1,2, ncol(tab2))]), NA))
 
 
 tab3 <- rbind(tab2, subSums)
 
 
+# add samples with no hits!
+# add excluded samples
+if(length(excluded2)>0){
+excluded2 <- sub(".*/(.*)", "\\1", excluded2)
+excluded2 <- sub("(.*).txt", "\\1", excluded2)
+excluded2 <- sub("(.*)_PE_.*", "\\1", excluded2)
+
+if(length(excluded2)>0){
+zero <- NULL
+for(j in 1:length(excluded2)){
+zero <- cbind(zero, rep(0, nrow(tab3)))
+}
+}
+
+# add zero to table
+zero <- data.frame(zero)
+names(zero) <- excluded2
+
+# order table by file names!
+tab4 <- cbind(tab3[,-ncol(tab3)], zero)
+tab4 <- tab4[,c(1, order(names(tab4)[-1])+1)]
+tab4 <- cbind(tab4, tab3[,ncol(tab3)])
+} else {tab4 <- tab3}
+
+#
 # set values 2 zero
 
-expZERO <- tab3
+expZERO <- tab4
 #d <- 8
 for (d in 3:(ncol(expZERO)-1)){
 
@@ -360,6 +439,11 @@ expZERO[nrow(expZERO),d] <- as.numeric(expZERO[nrow(expZERO),d])+ discarded # ad
 
 }
 
+expZERO[,-ncol(expZERO)][is.na(expZERO[,-ncol(expZERO)])] <- 0
+
+
+
+
 #relative abundance table
 expZEROrel <- expZERO
 #d <- 8
@@ -369,10 +453,11 @@ expZEROrel[,d] <- as.numeric(expZERO[,d])/sampleabundance[d-2]*100
 
 
 }
+expZEROrel[,-ncol(expZEROrel)][is.na(expZEROrel[,-ncol(expZEROrel)])] <- 0
 
 
 
-write.csv(file=paste(folder, "/5_OTU_table_", filter,".csv", sep=""), tab3, row.names=F)
+write.csv(file=paste(folder, "/5_OTU_table_", filter,".csv", sep=""), tab4, row.names=F)
 write.csv(file=paste(folder, "/5_OTU_table_", filter,"_ZERO.csv", sep=""), expZERO, row.names=F)
 write.csv(file=paste(folder, "/5_OTU_table_", filter,"_ZERO_rel.csv", sep=""), expZEROrel, row.names=F)
 
@@ -410,7 +495,7 @@ dev.off()
 
 OTU_heatmap(paste(folder, "/5_OTU_table_", filter,".csv", sep=""), out=paste(folder, "/_stats/OTU_plot_5_", filter, ".pdf", sep=""), abundance=T)
 OTU_heatmap(paste(folder, "/5_OTU_table_", filter,"_ZERO.csv", sep=""), out=paste(folder, "/_stats/OTU_plot_5_", filter, "_ZERO.pdf", sep=""), abundance=T)
-OTU_heatmap(paste(folder, "/5_OTU_table_", filter,"_ZERO_rel.csv", sep=""), out=paste(folder, "/_stats/OTU_plot_5_", filter, "_ZERO_rel.pdf", sep=""), abundance=T, rel=T)
+OTU_heatmap(file=paste(folder, "/5_OTU_table_", filter,"_ZERO_rel.csv", sep=""), out=paste(folder, "/_stats/OTU_plot_5_", filter, "_ZERO_rel.pdf", sep=""), abundance=T, rel=T)
 
 
 
