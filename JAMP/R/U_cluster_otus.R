@@ -175,7 +175,7 @@ tab <- merge(tab , temp, by.x="ID", by.y="Group.1", all=T, sort=T)
 names(tab)[i+1] <- sub(".*derep/(.*).txt", "\\1", files[i])
 }
 
-head(tab)
+
 
 tab <- tab[-1,] # remove NULL entry in the beginning
 tab[is.na(tab)] <- 0
@@ -200,21 +200,25 @@ zero <- cbind(zero, rep(0, nrow(tab)))
 }
 
 # add zero to table
-zero <- data.frame(zero)
+zero <- data.frame(zero, stringsAsFactors=F)
 names(zero) <- excluded2
 
 # order table by file names!
-tab2 <- cbind(tab, zero)
+tab2 <- data.frame(tab, zero, stringsAsFactors=F)
 tab <- tab2[,c(1, order(names(tab2)[-1])+1)]
 }
+
+
 
 # add sequences!
 sequ <- read.fasta(paste(folder, "/_data/2_OTU_clustering/", OTU_file, sep=""), forceDNAtolower=F, as.string=T)
 
-tab2 <- cbind("sort"=sub("OTU_", "", tab[,1]), tab, "sequ"=unlist(sequ))
+tab2 <- data.frame("sort"=as.numeric(sub("OTU_", "", tab[,1])), tab, "sequ"=unlist(sequ), stringsAsFactors=F)
 
 
 write.csv(file=paste(folder, "/3_Raw_OTU_table.csv", sep=""), tab2, row.names=F)
+
+
 
 temp <- "\n\nOTU table generated (including OTU sequences): 3_Raw_OTU_table.csv"
 message(temp)
@@ -233,11 +237,17 @@ exp <- exp[order(exp[,1]),]
 exp2 <- data.frame("ID"=exp[,1], "Abundance"=colSums(tab[-1]), "pct_pass"=exp[,2], row.names=1:length(exp[,1]))
 
 
-
-
 write.csv(exp2, file=paste(folder, "/_stats/3_pct_matched.csv", sep=""))
 
 #### end raw data table
+
+
+
+
+
+
+
+
 
 ### make abundance filtering
 if(!is.na(filter)){
@@ -247,6 +257,8 @@ start <- which(names(tab2)=="ID")+1
 stop <- which(names(tab2)=="sequ")-1
 
 temp <- tab2[, start:stop]
+
+
 
 meep <- paste("Discarding OTUs with below ", filter, "% abundance across at least ", filterN, " out of ", ncol(temp), " samples.", sep="")
 message(meep)
@@ -278,9 +290,9 @@ exp <- rbind(exp, NA)
 
 exp[nrow(exp), start:stop] <- colSums(tab2[!subset2, start:stop])
 exp$ID[nrow(exp)] <- paste("below_", filter, sep="")
-exp$sort[nrow(exp)] <- exp$sort[nrow(exp)-1]
+exp$sort[nrow(exp)] <- exp$sort[nrow(exp)-1]+1
 
-tail(exp)
+
 
 
 # make folder 
@@ -365,7 +377,7 @@ head(data)
 
 temp <- aggregate(data$abund, by=list(data$otu_no), FUN="sum")
 tab <- merge(tab , temp, by.x="ID", by.y="Group.1", all=T, sort=T)
-names(tab)[i+1] <- sub(".*/(.*)_PE.*", "\\1", files[i])
+names(tab)[i+1] <- sub(".*usearch_global/(.*).txt", "\\1", files[i])
 }
 
 head(tab)
@@ -379,12 +391,11 @@ tab <- tab[order(as.numeric(mrew)),]
 
 
 
-
 # add sequences!
 
 sequ <- read.fasta(OTU_sub_filename, forceDNAtolower=F, as.string=T)
 
-tab2 <- cbind("sort"=as.numeric(sub("OTU_", "", tab[,1])), tab, "sequ"=unlist(sequ))
+tab2 <- data.frame("sort"=as.numeric(sub("OTU_", "", tab[,1])), tab, "sequ"=unlist(sequ), stringsAsFactors=F)
 
 names(tab2) <- sub(".*_data/5_subset/usearch_global/(.*).txt", "\\1", names(tab2)) # SUBSET HERE
 
@@ -418,20 +429,32 @@ zero <- cbind(zero, rep(0, nrow(tab3)))
 zero <- data.frame(zero)
 names(zero) <- excluded2
 
+
+head(tab4)
 # order table by file names!
 tab4 <- cbind(tab3[,-ncol(tab3)], zero)
-tab4 <- tab4[,c(1, order(names(tab4)[-1])+1)]
-tab4 <- cbind(tab4, tab3[,ncol(tab3)])
+tab4 <- tab4[,c(1, 2, order(names(tab4)[c(-1, -2)])+2)]
+tab4 <- data.frame(tab4, "sequ"=tab3[,ncol(tab3)])
 } else {tab4 <- tab3}
 
-#
+head(tab4)
+
+# recalculate sample abundance after sorting table
+sampleabundance2 <- NULL
+for (f in 3:(ncol(tab4)-1)){
+sampleabundance2[f-2] <- sum(as.numeric(tab4[,f]))
+}
+
+
+
+
 # set values 2 zero
 
 expZERO <- tab4
 #d <- 8
 for (d in 3:(ncol(expZERO)-1)){
 
-ZERO <- as.numeric(expZERO[,d])/sampleabundance[d-2]*100>=filter
+ZERO <- as.numeric(expZERO[,d])/sampleabundance2[d-2]*100>=filter
 discarded <- sum(as.numeric(expZERO[-nrow(expZERO),d][!ZERO[-nrow(expZERO)]]))
 expZERO[-nrow(expZERO),d][!ZERO[-nrow(expZERO)]] <- 0 # set zero
 
@@ -449,7 +472,7 @@ expZEROrel <- expZERO
 #d <- 8
 for (d in 3:(ncol(expZERO)-1)){
 
-expZEROrel[,d] <- as.numeric(expZERO[,d])/sampleabundance[d-2]*100
+expZEROrel[,d] <- as.numeric(expZERO[,d])/sampleabundance2[d-2]*100
 
 
 }
@@ -479,7 +502,7 @@ higlight <- rev(!RAW$ID %in% KEEP$ID)
 
 pdf(paste(folder, "/_stats/OTU_plot_3_RAW.pdf", sep=""), height=(nrow(RAW)+20)/10, width=(ncol(RAW)-1)/2)
 
-OTU_heatmap(paste(folder, "/3_Raw_OTU_table.csv", sep=""), abundance=T)
+OTU_heatmap(paste(folder, "/3_Raw_OTU_table.csv", sep=""), abundance=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
 
 
 pos <- ncol(RAW) - 2.5
@@ -493,9 +516,9 @@ text(pos+0.1, i, rev(RAW$ID)[i], adj=0, cex=0.5)
 }
 dev.off()
 
-OTU_heatmap(paste(folder, "/5_OTU_table_", filter,".csv", sep=""), out=paste(folder, "/_stats/OTU_plot_5_", filter, ".pdf", sep=""), abundance=T)
-OTU_heatmap(paste(folder, "/5_OTU_table_", filter,"_ZERO.csv", sep=""), out=paste(folder, "/_stats/OTU_plot_5_", filter, "_ZERO.pdf", sep=""), abundance=T)
-OTU_heatmap(file=paste(folder, "/5_OTU_table_", filter,"_ZERO_rel.csv", sep=""), out=paste(folder, "/_stats/OTU_plot_5_", filter, "_ZERO_rel.pdf", sep=""), abundance=T, rel=T)
+OTU_heatmap(paste(folder, "/5_OTU_table_", filter,".csv", sep=""), out=paste(folder, "/_stats/OTU_plot_5_", filter, ".pdf", sep=""), abundance=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
+OTU_heatmap(paste(folder, "/5_OTU_table_", filter,"_ZERO.csv", sep=""), out=paste(folder, "/_stats/OTU_plot_5_", filter, "_ZERO.pdf", sep=""), abundance=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
+OTU_heatmap(file=paste(folder, "/5_OTU_table_", filter,"_ZERO_rel.csv", sep=""), out=paste(folder, "/_stats/OTU_plot_5_", filter, "_ZERO_rel.pdf", sep=""), abundance=T, rel=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
 
 
 
