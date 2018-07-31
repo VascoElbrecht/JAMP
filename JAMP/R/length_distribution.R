@@ -4,12 +4,17 @@ Length_distribution <- function(sequFile=NA, out="", fastq=NA, col=c("#ffffb2", 
 ORIGscipen <- getOption("scipen")
 options(scipen=10)
 
+# comand to cound sequence length in each line
 cmd <- paste("'{ print length($0) }' \"", sequFile, "\"", sep="")
-
 
 
 A <- system2("awk", cmd, stdout=T, stderr=T) # count length
 A <- as.numeric(A)
+
+# detect empty file
+if(length(A)==0){
+message(paste("WARNING: The following file is empty and does NOT contain any sequenced. Thus it is not plotted: ", sequFile, sep=""))
+} else {
 
 
 # autodetect fastq
@@ -80,4 +85,6 @@ if(out!=""){
 dev.off()
 }
 options(scipen= ORIGscipen)
+
+}
 }

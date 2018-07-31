@@ -19,7 +19,7 @@ if(!is.null(step)){
 completed <- "*** Module completed!" %in% log[step[length(step)]:length(log)]
 
 if(!completed){
-message(paste("WARNING: It looks like the previously run module did crash! Do you want to delete the prvious folder:\n", getwd(), "/", log[step[length(step)]+1], "\n\n(recommended, but confirm the pasth is correct!)", sep=""))
+message(paste("WARNING: It looks like the previously run module did crash! Do you want to delete the previous folder:\n", getwd(), "/", log[step[length(step)]+1], "\n\n(recommended, but confirm the path is correct!)", sep=""))
 Sys.sleep(0.1)
 }
 if(!completed){
