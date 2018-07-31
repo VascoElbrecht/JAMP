@@ -430,14 +430,14 @@ zero <- data.frame(zero)
 names(zero) <- excluded2
 
 
-head(tab4)
+
 # order table by file names!
 tab4 <- cbind(tab3[,-ncol(tab3)], zero)
 tab4 <- tab4[,c(1, 2, order(names(tab4)[c(-1, -2)])+2)]
 tab4 <- data.frame(tab4, "sequ"=tab3[,ncol(tab3)])
 } else {tab4 <- tab3}
 
-head(tab4)
+#head(tab4)
 
 # recalculate sample abundance after sorting table
 sampleabundance2 <- NULL
@@ -496,9 +496,12 @@ cat(file="log.txt", temp, append=T, sep="\n")
 # make plots
 
 RAW <- read.csv(paste(folder, "/3_Raw_OTU_table.csv", sep=""), stringsAsFactors=F)
+
+if(!is.na(filter)){ # only highlight when subsetting
 KEEP <- read.csv(paste(folder, "/5_OTU_table_", filter,".csv", sep=""), stringsAsFactors=F)
 
 higlight <- rev(!RAW$ID %in% KEEP$ID)
+
 
 pdf(paste(folder, "/_stats/OTU_plot_3_RAW.pdf", sep=""), height=(nrow(RAW)+20)/10, width=(ncol(RAW)-1)/2)
 
@@ -519,7 +522,9 @@ dev.off()
 OTU_heatmap(paste(folder, "/5_OTU_table_", filter,".csv", sep=""), out=paste(folder, "/_stats/OTU_plot_5_", filter, ".pdf", sep=""), abundance=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
 OTU_heatmap(paste(folder, "/5_OTU_table_", filter,"_ZERO.csv", sep=""), out=paste(folder, "/_stats/OTU_plot_5_", filter, "_ZERO.pdf", sep=""), abundance=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
 OTU_heatmap(file=paste(folder, "/5_OTU_table_", filter,"_ZERO_rel.csv", sep=""), out=paste(folder, "/_stats/OTU_plot_5_", filter, "_ZERO_rel.pdf", sep=""), abundance=T, rel=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
-
+} else { # only plot unfiltered data if zero filtering is applied!
+OTU_heatmap(paste(folder, "/3_Raw_OTU_table.csv", sep=""), out=paste(folder, "/_stats/3_Raw_OTU_table.pdf", sep=""), abundance=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
+}
 
 
 temp <- "\nModule completed!"
