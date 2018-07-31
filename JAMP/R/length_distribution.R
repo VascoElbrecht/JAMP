@@ -29,6 +29,7 @@ B <- A[seq(2, length(A), 4)]
 B <- A[seq(2, length(A), 2)]
 }
 
+NumberofReads <- length(B)
 # count length dirstribution
 temptab <- cbind(table(B))
 
@@ -49,7 +50,7 @@ par(mar=c(4,4,2,1))
 plot(NULL, xlim=c(maxL*0.03, maxL*0.97), ylim=c(1, 99), xlab="Sequence length [bp]", ylab="proportions [%]", yaxt="n")
 
 axis(2, las=2)
-mtext(sub(".*/", "", sequFile), side=3, adj=0, line=0.5, cex=1.2, font=2)
+mtext(paste(sub(".*/", "", sequFile), ", Nuber of reads=", NumberofReads, sep=""), side=3, adj=0, line=0.5, cex=1.2, font=2)
 
 step <- 1
 for (i in data$length){
