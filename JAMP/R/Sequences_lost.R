@@ -25,15 +25,17 @@ pdf(out, height=c(length(Reads_in)+3)/4, width=9)
 }
 
 par(mar=c(3,8,2,1))
-x <- barplot(data, col=col, border=0, horiz=T, xlim=c(0,max(data[1,]+data[2,])*1.1), ylim=c(0.042*length(Reads_in), 1.156*length(Reads_in)))
+x <- barplot(data, col=col, border=0, horiz=T, xlim=c(0,max(data[1,]+data[2,], na.rm=T)*1.1), ylim=c(0.042*length(Reads_in), 1.156*length(Reads_in)))
 axis(2, x, labels= Sample_names, las=2, tick=F)
 mtext(main, side=3, adj=0, line=0.5, cex=1.2, font=2)
 #title(main=main, adj=0, line=0, font=2)
 
 if(abundance==T){
-text(max(data[1,]+data[2,])/100, x, round(data[1,], 2), adj=0, col=col[3])
+temp_text <- round(data[1,], 2)
+temp_text[is.na(temp_text)] <- "Empty fasta file!"
+text(max(data[1,]+data[2,], na.rm=T)/100, x, temp_text, adj=0, col=col[3])
 if(AddText){
-text(max(data[1,]+data[2,])/100+ c(data[1,]+data[2,]), x, round(data[2,], 2), adj=0, col= col[4])
+text(max(data[1,]+data[2,], na.rm=T)/100+ c(data[1,]+data[2,]), x, round(data[2,], 2), adj=0, col= col[4])
 }
 }
 

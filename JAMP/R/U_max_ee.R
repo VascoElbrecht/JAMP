@@ -1,6 +1,6 @@
 # U_max_ee v0.1
 
-U_max_ee <- function(files="latest", max_ee=0.5, fastq=F){
+U_max_ee <- function(files="latest", max_ee=1, fastq=F){
 
 folder <- Core(module="U_max_ee")
 cat(file="log.txt", c("\n","Version v0.2", "\n"), append=T, sep="\n")
@@ -37,7 +37,7 @@ log_names <- sub("_ee.fast.", "_ee.txt", log_names)
 # cmd max EE
 cmd <- paste("-fastq_filter \"", files, "\"", if(fastq){" -fastqout "} else {" -fastaout "}, "\"", new_names, "\" -fastq_maxee ", max_ee, " -fastq_qmax 60", sep="")
 
-
+i <- 11
 tab_exp <- NULL
 for (i in 1:length(cmd)){
 A <- system2("usearch", cmd[i], stdout=T, stderr=T)
@@ -53,10 +53,26 @@ pass <- as.numeric(pass)
 
 pct <- round(pass/imput*100, digits=2)
 
+# deal with empty files
+if(length(imput)==0){
+imput <- 0
+pct <- 0
+}
+if(length(pass)==0){ # can still contain files but 0 passed
+pass <- 0
+pct <- 0
+}
+
+
+
 short_name <- sub(".*_data/(.*)_PE.*", "\\1", new_names[i])
 tab_exp <- rbind(tab_exp, c(short_name, imput, pass, pct))
 
-meep <- paste(short_name, ": ", pct, "% pass EE ", sep="")
+if(pass>0){
+meep <- paste(short_name, ": ", pct, "% pass EE ", sep="")} else {
+meep <- paste("WARNING:", short_name, ": ", if(imput>0){"0 sequences passed quality filtering!"} else {"Imput file did not contain sequences!"}, sep="")
+}
+
 message(meep)
 cat(file="log.txt", meep, append=T, sep="\n")
 }
@@ -72,7 +88,7 @@ write.csv(tab_exp, paste(folder, "/_stats/max_ee_stats.csv", sep=""))
 temp <- read.csv(paste(folder, "/_stats/max_ee_stats.csv", sep=""), stringsAsFactors=F)
 
 Sequences_lost(temp$Sequ_count_in, temp$Sequ_count_out, sub("_PE.*", "", temp$Sample), out=paste(folder, "/_stats/LowQuality_sequences.pdf", sep=""), main=paste(folder, ": max expected errors ", max_ee, sep=""))
-Sequences_lost(temp$Sequ_count_in, temp$Sequ_count_out, sub("_PE.*", "", temp$Sample), rel=T, out=paste(folder, "/_stats/LowQuality_sequences_rel.pdf", sep=""), main=paste(folder, ": max expected errors ", max_ee, sep=""))
+Sequences_lost(Reads_in=temp$Sequ_count_in, Reads_out=temp$Sequ_count_out, Sample_names=sub("_PE.*", "", temp$Sample), rel=T, out=paste(folder, "/_stats/LowQuality_sequences_rel.pdf", sep=""), main=paste(folder, ": max expected errors ", max_ee, sep=""))
 
 merged_message <- paste("\nSequences with sufficient read quality: ", round(mean(temp$pct_pass), 2), "% on average (SD = ", round(sd(temp$pct_pass), 2), "%).\n", sep="")
 message(merged_message)
