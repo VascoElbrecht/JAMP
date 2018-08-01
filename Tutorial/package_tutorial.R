@@ -7,7 +7,7 @@
 # https://dx.doi.org/10.6084/m9.figshare.4039860.v1
 # 
 # Installing dependencies needed fro JAMP
-install.packages(c("bold", "XML", "seqinr", "devtools"), dependencies=T)
+install.packages(c("bold", "XML", "seqinr", "devtools", "fastqcr"), dependencies=T)
 # Load devtools and install package directly from GitHub
 library("devtools")
 install_github("VascoElbrecht/JAMP", subdir="JAMP")
