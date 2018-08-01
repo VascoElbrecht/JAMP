@@ -174,7 +174,7 @@ dev.off()
 write.csv(exp, paste(folder, "/FastQC/stats.csv", sep=""))
 
 exp$SequDepth <- as.numeric(exp$SequDepth)
-exp$GC <- as.numeric(data$GC)
+exp$GC <- as.numeric(exp$GC)
 
 space <- 5
 maxdepth <- max(exp$SequDepth)
