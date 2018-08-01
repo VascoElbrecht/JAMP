@@ -95,10 +95,10 @@ lines(1:nrow(A), A$Mean, col="black", lwd=2)
 #qc_plot(QClist[[i]], "Per sequence quality scores")
 
 A <- data.frame(QClist[[i]]$per_sequence_quality_scores)
-B <- data.frame("Quality"=1:40, "Count"=rep(0, 40))
+B <- data.frame("Quality"=1:60, "Count"=rep(0, 60))
 B$Count[match(A$Quality, B$Quality)] <- A$Count
 
-plot(NULL, xlim=c(1,40), ylim=range(B$Count), xlab="Mean Sequence Quality (Phred Score)", ylab="Counts", main="Per base sequence quality")
+plot(NULL, xlim=c(1,41), ylim=range(B$Count), xlab="Mean Sequence Quality (Phred Score)", ylab="Counts", main="Per base sequence quality")
 for(k in 1:nrow(B)){
 if(B$Count[k]>0){
 rect(k-0.5, 0, k+0.5, B$Count[k], border=F, col=if(B$Quality[k]<30){"Red"}else{"Green"})
@@ -112,11 +112,11 @@ exp$Q30[i] <- round(Q30, 2)
 #qc_plot(QClist[[i]], "Sequence length distribution")
 A <- data.frame(QClist[[i]]$sequence_length_distribution)
 if(nrow(A)==1){A <- rbind(c(A$Length-1, 0), A, c(A$Length+1, 0))}
-plot(A, typ="l", main="Sequence length distribution", xlab="Sequence length in bp", ylab="Count")
+plot(1:nrow(A), A$Count, xlim=c(1, nrow(A)), ylim=c(0, max(A$Count)), typ="l", main="Sequence length distribution", xlab="Sequence length in bp", ylab="Count")
 
-exp[i,3] <- QClist[[i]]$basic_statistics[6,2]
+exp[i,3] <- A$Length[A$Count==max(A$Count)]
 
-exp[i,4] <- round(A$Count[A$Length==as.numeric(exp[i,3])]/sum(A$Count)*100, 2) # percent of sequences with length
+exp[i,4] <- round(max(A$Count)/sum(A$Count)*100, 2) # percent of sequences with length
 
 #qc_plot(QClist[[i]], "Per base sequence content")
 A <- data.frame(QClist[[i]]$per_base_sequence_content)
