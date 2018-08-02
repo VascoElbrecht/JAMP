@@ -1,10 +1,11 @@
 # Demultiplexing_shifted
 
-Demultiplexing_index <- function(files="latest", fileR1=NA, fileR2=NA, fileI1=NA, indexTable=NA, software="illumina-utils", revcompI=T md5=T, OS="autodetect"){
+Demultiplexing_index <- function(files="latest", fileR1=NA, fileR2=NA, fileI1=NA, indexTable=NA, software="illumina-utils", revcompI=T, md5=T, OS="autodetect"){
 
 folder <- Core(module="Demultiplexing_index")
 cat(file="log.txt", c("\n", "Version v0.1", "\n"), append=T, sep="\n")
 
+indextab <- read.csv(indexTable, sep="\t", stringsAsFactors=F)
 
 #auto detect files!
 if (is.na(fileR1[1])){
@@ -83,7 +84,7 @@ message(temp)
 cat(file="log.txt", A, append=T, sep="\n")
 
 
-A <- system2("iu-demultiplex", paste("-s ", indexTable, " --r1 ", fileR1, " --r2 ", fileR1, " -i ", fileI1, " -o ", folder, "/_data/", if(revcompI){" -x"}, sep=""), stdout=T)
+system2("iu-demultiplex", paste("-s ", indexTable, " --r1 ", fileR1, " --r2 ", fileR1, " -i ", fileI1, " -o ", folder, "/_data/", if(revcompI){" -x"}, sep=""))
 
 
 # move stats file and make plots of sequencing depth!
@@ -127,7 +128,25 @@ g <- g+1
 
 dev.off()
 
+# report number of sequences in files!
+ReadsIn <- Count_sequences(fileI1)
+temp <- paste("A total of ", ReadsIn, " were processed, of wich ", sum(tab$num_reads_stored), " reads could be assigned to the provided indexes (", round(sum(tab$num_reads_stored)/ReadsIn*100, 2), "%).\nDetected samples: ", nrow(tab), "/", nrow(indextab), " (", round(nrow(tab)/nrow(indextab)*100, 2), "%)", sep="")
+message(temp)
+cat(file="log.txt", temp, append=T, sep="\n")
 
+if(!nrow(tab)/nrow(indextab)*100==100){
+temp <- paste("WARNING: Number of reads in index files does not match the number of samples recovered. Verify that files are correct!")
+message(temp)
+cat(file="log.txt", temp, append=T, sep="\n")
+
+}
+
+
+} # iu-demultiplex
+
+
+
+message("\nModule completed!\n\n")
 
 cat(file="log.txt", "*** Module completed!\n\n", append=T, sep="\n")
 
