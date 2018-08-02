@@ -83,8 +83,49 @@ message(temp)
 cat(file="log.txt", A, append=T, sep="\n")
 
 
-A <- system2("iu-demultiplex", paste("-s ", indexTable, " --r1 ", fileR1, " --r2 ", fileR1, " -i ", fileI1, " -o ", folder, "/_data/", if(revcompI){" -x"}, sep=""))
+A <- system2("iu-demultiplex", paste("-s ", indexTable, " --r1 ", fileR1, " --r2 ", fileR1, " -i ", fileI1, " -o ", folder, "/_data/", if(revcompI){" -x"}, sep=""), stdout=T)
 
+
+# move stats file and make plots of sequencing depth!
+# also add summary stats
+
+file.copy(paste(folder, "/_data/00_DEMULTIPLEXING_REPORT", sep=""), paste(folder, "/_stats/00_DEMULTIPLEXING_REPORT.txt", sep=""))
+file.remove(paste(folder, "/_data/00_DEMULTIPLEXING_REPORT", sep=""))
+
+# make squencing depth plot
+tab <- read.csv(paste(folder, "/_stats/00_DEMULTIPLEXING_REPORT.txt", sep=""), sep="\t", stringsAsFactors=F)
+
+tab <- tab[order(tab$sample), ]
+
+rel <- tab$num_reads_stored/sum(tab$num_reads_stored)*100
+tab <- data.frame(tab, "rel"=rel)
+
+
+write.csv(tab, paste(folder, "/_stats/stats.csv", sep=""))
+
+
+# make differnt pages
+pdf(paste(folder, "/_stats/plot_sequ_depth.pdf", sep=""), width=8, height=12)
+g <- 1
+while(nrow(tab)>(g*50-49)){
+
+data <- tab[(g*50-49):(g*50),]
+data <- data[!is.na(data$sample),]
+
+par(mar=c(0,0,2,0), oma=c(0,0,0,0))
+plot(NULL, xlim=c(-max(rel)*0.48, max(rel)), ylim=c(50, 1), xlab="Number of sequences per sample", ylab="", yaxt="n", xaxt="n", axes=F)
+text(-max(rel)*0.5, 1:nrow(data), data$sample, adj=0) # ID
+axis(3)
+
+for (i in 1:50){
+rect(0, i-0.5, data$rel[i], i+0.5, col="Gray", border=F)
+}
+text(max(rel)*0.01, 1:nrow(data), data$num_reads_stored, adj=0) # ID
+
+g <- g+1
+}
+
+dev.off()
 
 
 
