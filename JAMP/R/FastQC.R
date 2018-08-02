@@ -35,7 +35,7 @@ A <- system2("fastQC", cmd)
 
 # run fastqcr
 #QCpath <- paste(folder, "/FastQC/_raw_reports/", sep="")
-QCfiles <- paste(folder, "/FastQC/_raw_reports/", sep="", gsub(".*/(.*).fastq", "\\1_fastqc.zip", files))
+QCfiles <- paste(folder, "/FastQC/_raw_reports/", sep="", gsub(".*/(.*).fastq.*", "\\1_fastqc.zip", files))
 
 #QCfiles <- list.files(QCpath, full.names=T, pattern="fastqc.zip")
 
@@ -56,7 +56,7 @@ exp <- data.frame("ID"= temp, "SequDepth"= temp, "Length"= temp, "LenghtRel"= te
 #
 for (i in 1:length(QClist)){
 
-temp_file <- paste(folder, "/FastQC/_plots_for_each_sample/", sep="" , sub(".*/(.*).fastq", "\\1.pdf", files[i]))
+temp_file <- paste(folder, "/FastQC/_plots_for_each_sample/", sep="" , sub(".*/(.*)\\.fastq.*", "\\1.pdf", files[i]))
 pdf(temp_file, height=8, width=10, useDingbats=F)
 
 qc_plot(QClist[[i]], "Basic statistics")
@@ -158,7 +158,7 @@ axis(1, labels=A$Base[select], at= select)
 
 lines(1:nrow(A), A[,2], col="Red", lwd=1.5)
 
-exp[i,6] <- max(A$N.Count)
+exp[i,6] <- round(max(A$N.Count), 2)
 
 qc_plot(QClist[[i]], "Per sequence GC content")
 qc_plot(QClist[[i]], "Sequence duplication levels")
