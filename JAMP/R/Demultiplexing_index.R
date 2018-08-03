@@ -84,7 +84,7 @@ message(temp)
 cat(file="log.txt", A, append=T, sep="\n")
 
 
-system2("iu-demultiplex", paste("-s ", indexTable, " --r1 ", fileR1, " --r2 ", fileR1, " -i ", fileI1, " -o ", folder, "/_data/", if(revcompI){" -x"}, sep=""))
+system2("iu-demultiplex", paste("-s ", indexTable, " --r1 ", fileR1, " --r2 ", fileR2, " -i ", fileI1, " -o ", folder, "/_data/", if(revcompI){" -x"}, sep=""))
 
 
 # move stats file and make plots of sequencing depth!
@@ -140,6 +140,9 @@ message(temp)
 cat(file="log.txt", temp, append=T, sep="\n")
 
 }
+
+renamME <- list.files(paste(folder, "/_data/", sep=""), full.names=T)
+file.rename(renamME, gsub("-", "_", renamME))
 
 
 } # iu-demultiplex
