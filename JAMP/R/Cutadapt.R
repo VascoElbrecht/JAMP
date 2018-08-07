@@ -70,6 +70,13 @@ for (i in which(!is.na(rw))){
 rw[i] <- paste(rev(comp(unlist(strsplit(rw[i], "")), forceToLower=F, ambiguous=T)), collapse="")
 }
 
+# replace I (inosine) with N
+fw <- gsub("I", "N", fw)
+rw <- gsub("I", "N", rw)
+
+
+
+
 
 # add: write down used primers in log!
 if (FW_only){
