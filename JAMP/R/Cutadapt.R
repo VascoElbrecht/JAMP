@@ -65,17 +65,15 @@ rw <- primers$Primer_Sequence[match(reverse, primers$Primer_Name)]
 rw[is.na(rw)] <- reverse[is.na(rw)]
 }
 
-#build rev comp of rw, using "seqinr"
-for (i in which(!is.na(rw))){
-rw[i] <- paste(rev(comp(unlist(strsplit(rw[i], "")), forceToLower=F, ambiguous=T)), collapse="")
-}
-
-# replace I (inosine) with N
+#replace I (inosine) with N
 fw <- gsub("I", "N", fw)
 rw <- gsub("I", "N", rw)
 
 
-
+#build rev comp of rw, using "seqinr"
+for (i in which(!is.na(rw))){
+rw[i] <- paste(rev(comp(unlist(strsplit(rw[i], "")), forceToLower=F, ambiguous=T)), collapse="")
+}
 
 
 # add: write down used primers in log!
