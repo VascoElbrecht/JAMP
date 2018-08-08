@@ -1,12 +1,12 @@
 # U_truncate v0.1
 
-U_truncate <- function(files="latest", left=0, right=0, fastq=T){
+U_truncate <- function(files="latest", left=0, right=0, fastq=T, rename=T){
 
 folder <- Core(module="U_truncate")
 cat(file="log.txt", c("\n","Version v0.2", "\n"), append=T, sep="\n")
 message(" ")
 
-if (files=="latest"){
+if (files[1]=="latest"){
 source(paste(folder, "/robots.txt", sep=""))
 files <- list.files(paste(last_data, "/_data", sep=""), full.names=T)
 }
@@ -21,8 +21,13 @@ cat(file="log.txt", temp, append=T, sep="\n")
 # new file names
 
 new_names <- sub(".*(_data/.*)", "\\1", files)
+if(rename){ # rename files to indicate trimming
 new_names <- sub(".fast", "_trunc.fast", new_names)
+}
 new_names <- paste(folder, "/", new_names, sep="")
+
+
+# allow for vector truncation (in case of r1 or r2)
 
 cmd <- paste("-fastx_truncate \"", files,"\"", " -stripleft ", left, " -stripright ", right, if(fastq){" -fastqout "} else {" -fastaout "}, "\"", new_names, "\"", sep="")
 
@@ -41,9 +46,9 @@ medianL <- as.numeric(sub(".*med (.*), hi.*", "\\1", A[grep("Lengths min ", A)])
 cat(file=paste(folder, "/_stats/log_length.txt", sep=""), new_names[i], "\n", A,"\n\n", append=T, sep="\n")
 
 
-tab_exp <- rbind(tab_exp, c(sub("_data/(.*)_PE_.*", "\\1", new_names[i]), new_count, passed, medianL))
+tab_exp <- rbind(tab_exp, c(sub(".*_data/(.*)", "\\1", new_names[i]), new_count, passed, medianL))
 
-meep <- paste(sub("_data/(.*)_PE_.*", "\\1", new_names[i]), ": ", passed, "% passed - medianL: ", medianL, sep="")
+meep <- paste(sub(".*_data/(.*)", "\\1", new_names[i]), ": ", passed, "% passed - medianL: ", medianL, sep="")
 message(meep)
 cat(file="log.txt", meep, append=T, sep="\n")
 }
