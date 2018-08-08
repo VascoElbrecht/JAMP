@@ -1,16 +1,12 @@
 # U_merge_PE v0.1
 # maybe add option to split and merge large files automatically?
 
-U_merge_PE <- function(files="latest", file1=NA, file2=NA, fastq_maxdiffs=99, fastq_pctid=75, fastq=T, LDist=T){
+U_merge_PE <- function(files="latest", file1=NA, file2=NA, fastq_maxdiffs=99, fastq_pctid=75, fastq_minovlen=16, fastq=T, LDist=T){
 
 folder <- Core(module="U_merge_PE")
 cat(file="log.txt", c("\n","Version v0.2", "\n"), append=T, sep="\n")
 message(" ")
 
-
-#if(length(files)>1){
-#singlefiles <- F
-#}
 
 if(!is.na(file1[1])&!is.na(file2[1])){
 files[1] <- "NOT USED"
@@ -69,12 +65,16 @@ dir.create(paste(folder, "/_stats/merge_stats", sep=""))
 log_names <- sub("_data", "_stats/merge_stats", new_names)
 log_names <- sub("_PE.fast[aq]", "_PE_log.txt", log_names)
 
-cmd <- paste(" -fastq_mergepairs \"", file1, "\" -reverse \"", file2,  "\" ", if(fastq){"-fastqout"} else {"-fastaout"}, " \"", new_names, "\"", " -report ", log_names, " -fastq_maxdiffs ", fastq_maxdiffs , " -fastq_pctid ", fastq_pctid ," -fastq_trunctail 0", sep="")
+cmd <- paste(" -fastq_mergepairs \"", file1, "\" -reverse \"", file2,  "\" ", if(fastq){"-fastqout"} else {"-fastaout"}, " \"", new_names, "\"", " -report ", log_names, " -fastq_maxdiffs ", fastq_maxdiffs , " -fastq_pctid ", fastq_pctid, " -fastq_trunctail 0 -fastq_minovlen ", fastq_minovlen, sep="")
 
 tab_exp <- NULL
 for (i in 1:length(cmd)){
 system2("usearch", cmd[i], stdout=F, stderr=F)
 temp <- readLines(log_names[i])
+
+# save cmd in log name!
+cat(file=log_names[i], c(paste("usearch", cmd[i]), temp), sep="\n")
+
 
 # table export
 merged <- as.numeric(sub(".*merged \\((.*)..", "\\1",temp[6]))
