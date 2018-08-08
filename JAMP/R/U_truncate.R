@@ -1,6 +1,6 @@
 # U_truncate v0.1
 
-U_truncate <- function(files="latest", left=0, right=0, fastq=T, rename=T){
+U_truncate <- function(files="latest", left=0, right=0, trunclen=NA, fastq=T, rename=T){
 
 folder <- Core(module="U_truncate")
 cat(file="log.txt", c("\n","Version v0.2", "\n"), append=T, sep="\n")
@@ -29,7 +29,7 @@ new_names <- paste(folder, "/", new_names, sep="")
 
 # allow for vector truncation (in case of r1 or r2)
 
-cmd <- paste("-fastx_truncate \"", files,"\"", " -stripleft ", left, " -stripright ", right, if(fastq){" -fastqout "} else {" -fastaout "}, "\"", new_names, "\"", sep="")
+cmd <- paste("-fastx_truncate \"", files,"\"", " -stripleft ", left, " -stripright ", right, if(!is.na(trunclen)){paste(" -trunclen ", trunclen, sep="")}, if(fastq){" -fastqout "} else {" -fastaout "}, "\"", new_names, "\"", sep="")
 
 
 tab_exp <- NULL
