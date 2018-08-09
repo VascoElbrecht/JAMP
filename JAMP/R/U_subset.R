@@ -1,6 +1,6 @@
 # U_subset v0.1
 
-U_subset <- function(files="latest", sample_size=100000, fastq_out=F, ranseed=NA){
+U_subset <- function(files="latest", sample_size=100000, fastq_out=F, ranseed=NA, exe="usearch"){
 
 folder <- Core(module="U_subset")
 cat(file="log.txt", c("\n","Version v0.1", "\n"), append=T, sep="\n")
@@ -52,8 +52,8 @@ sequcounts <- Count_sequences(files, fastq=F)
 
 tab_exp <- NULL
 for (i in 1:length(cmd)){
-A <- system2("usearch", cmd[i], stdout=T, stderr=T)
-cat(paste("usearch", cmd[i], "\n"), file=log_names[i], sep="\n", append=F)
+A <- system2(exe, cmd[i], stdout=T, stderr=T)
+cat(paste(exe, cmd[i], "\n"), file=log_names[i], sep="\n", append=F)
 cat(A, file=log_names[i], sep="\n", append=T)
 
 

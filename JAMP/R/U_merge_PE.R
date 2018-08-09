@@ -1,7 +1,7 @@
 # U_merge_PE v0.1
 # maybe add option to split and merge large files automatically?
 
-U_merge_PE <- function(files="latest", file1=NA, file2=NA, fastq_maxdiffs=99, fastq_pctid=75, fastq_minovlen=16, fastq=T, LDist=T){
+U_merge_PE <- function(files="latest", file1=NA, file2=NA, fastq_maxdiffs=99, fastq_pctid=75, fastq_minovlen=16, fastq=T, LDist=T, exe="usearch"){
 
 folder <- Core(module="U_merge_PE")
 cat(file="log.txt", c("\n","Version v0.2", "\n"), append=T, sep="\n")
@@ -69,7 +69,7 @@ cmd <- paste(" -fastq_mergepairs \"", file1, "\" -reverse \"", file2,  "\" ", if
 
 tab_exp <- NULL
 for (i in 1:length(cmd)){
-system2("usearch", cmd[i], stdout=F, stderr=F)
+system2(exe, cmd[i], stdout=F, stderr=F)
 temp <- readLines(log_names[i])
 
 # save cmd in log name!

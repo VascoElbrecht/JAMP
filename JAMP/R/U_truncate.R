@@ -1,6 +1,6 @@
 # U_truncate v0.1
 
-U_truncate <- function(files="latest", left=0, right=0, trunclen=NA, fastq=T, rename=T){
+U_truncate <- function(files="latest", left=0, right=0, trunclen=NA, fastq=T, rename=T, exe="usearch"){
 
 folder <- Core(module="U_truncate")
 cat(file="log.txt", c("\n","Version v0.2", "\n"), append=T, sep="\n")
@@ -34,13 +34,13 @@ cmd <- paste("-fastx_truncate \"", files,"\"", " -stripleft ", left, " -striprig
 
 tab_exp <- NULL
 for (i in 1:length(cmd)){
-system2("usearch", cmd[i], stdout=T, stderr=T)
+system2(exe, cmd[i], stdout=T, stderr=T)
 
 new_count <- Count_sequences(new_names[i], fastq= fastq)
 old_count <- Count_sequences(files[i], fastq= fastq)
 passed <- round(new_count/old_count*100, digits=2)
 
-A <- system2("usearch", paste("-fastx_info \"", new_names[i], "\" -secs 5", sep=""), stdout=T, stderr=T)
+A <- system2(exe, paste("-fastx_info \"", new_names[i], "\" -secs 5", sep=""), stdout=T, stderr=T)
 medianL <- as.numeric(sub(".*med (.*), hi.*", "\\1", A[grep("Lengths min ", A)]))
 
 cat(file=paste(folder, "/_stats/log_length.txt", sep=""), new_names[i], "\n", A,"\n\n", append=T, sep="\n")

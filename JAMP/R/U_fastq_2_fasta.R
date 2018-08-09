@@ -1,6 +1,6 @@
 # U_max_ee v0.1
 
-U_fastq_2_fasta <- function(files="latest"){
+U_fastq_2_fasta <- function(files="latest", exe="usearch"){
 
 folder <- Core(module="U_fastq_2_fasta")
 cat(file="log.txt", c("\n","Version v0.1", "\n"), append=T, sep="\n")
@@ -32,7 +32,7 @@ cmd <- paste("-fastq_filter \"", files, "\" -fastaout \"", new_names, "\"", sep=
 tab_exp <- NULL
 
 for (i in 1:length(cmd)){
-A <- system2("usearch", cmd[i], stdout=T, stderr=T)
+A <- system2(exe, cmd[i], stdout=T, stderr=T)
 cat(A, file=log_names[i], sep="\n")
 
 

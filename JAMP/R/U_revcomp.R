@@ -1,7 +1,7 @@
 # U_merge_PE v0.1
 # maybe add option to split and merge large files automatically?
 
-U_revcomp <- function(files="latest", RC=c(T,F), fastq=T, copy_unchanged=T){
+U_revcomp <- function(files="latest", RC=c(T,F), fastq=T, copy_unchanged=T, exe="usearch"){
 
 folder <- Core(module="U_revcomp")
 cat(file="log.txt", c("Version v0.2", "\n"), append=T, sep="\n")
@@ -41,7 +41,7 @@ message(temp)
 
 temp <- new_names[RC]
 for (i in 1:length(cmd)){
-system2("usearch", cmd[i], stdout=T, stderr=T)
+system2(exe, cmd[i], stdout=T, stderr=T)
 meep <- sub(".*_data/(.*)", "\\1", temp[i])
 cat(file="log.txt", meep, append=T, sep="\n")
 message(meep)

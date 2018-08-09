@@ -1,11 +1,25 @@
 # U_cluster_otus v0.1
 
-U_cluster_otus <- function(files="latest", minuniquesize=2, strand="plus", filter=0.01, filterN=1){
+U_cluster_otus <- function(files="latest", minuniquesize=2, strand="plus", filter=0.01, filterN=1, exe="usearch", otu_radius_pct=3){
 #, unoise_min=NA - unoise denoising removed, no longer supported!
 
 folder <- Core(module="U_cluster_otus")
 cat(file="log.txt", c("Version v0.2", "\n"), append=T, sep="\n")
 message(" ")
+
+
+if(otu_radius_pct!=3){
+A <- system2(exe, stdout=T)
+version <- as.numeric(sub("usearch v(.+)\\.+.*\\..*_.*", "\\1", A[1]))
+if(version > 8){
+temp <-  paste("WARNING: You did set a custom clustering treshold of ", otu_radius_pct, " but are using Usearch version ", version, "! The custom treshold was removed with version 9 (nothing I can do about this), thus please provide a path in exe to Usearch8, to make this work. You can download the older versionf rom the Usearch website. The script will stop now.", sep="")
+message(temp)
+cat(file="log.txt", temp, append=T, sep="\n")
+stop("Script stopped!")
+}
+}
+
+
 
 if (files[1]=="latest"){
 source(paste(folder, "/robots.txt", sep=""))
@@ -32,18 +46,18 @@ new_names <- sub("_data", "_data/1_derep_inc_singletons", new_names)
 new_names <- paste(folder, "/", new_names, sep="")
 
 
-cmd <- paste("-fastx_uniques \"", files[!empty], "\" -fastaout \"", new_names, "\" -sizeout",  sep="")
+cmd <- paste("-derep_fulllength \"", files[!empty], "\" -output \"", new_names, "\" -sizeout",  sep="")
 
 
 
-temp <- paste(length(cmd), " files are dereplicated (incl. singletons!):", sep="")
+temp <- paste(length(cmd), " files are dereplicated (incl. singletons! Using Vsearch):", sep="")
 cat(file="log.txt", temp , append=T, sep="\n")
 message(temp)
 
 
 temp <- new_names
 for (i in 1:length(cmd)){
-A <- system2("usearch", cmd[i], stdout=T, stderr=T)
+A <- system2("vsearch", cmd[i], stdout=T, stderr=T)
 meep <- sub(".*_data/(.*)", "\\1", temp[i])
 cat(file="log.txt", meep, append=T, sep="\n")
 cat(file=paste(folder, "/_stats/1_derep_logs.txt", sep=""), meep, A, "\n", append=T, sep="\n")
@@ -94,9 +108,12 @@ cat(file=paste(folder, "/_stats/2_OTU_clustering_log.txt", sep=""), "\n", A, "",
 OTU_file <- sub(".fasta", "_OTUs.fasta", filename_all_unique)
 OTU_file <- sub("B_", "C_", filename_all_unique)
 
-cmd <- paste(" -cluster_otus ", folder, "/_data/2_OTU_clustering/", filename_all_unique, " -otus ", folder, "/_data/2_OTU_clustering/", OTU_file, " -uparseout ", folder, "/_data/2_OTU_clustering/", sub(".fasta", "_OTUtab.txt", OTU_file), " -relabel OTU_ -strand ", strand, sep="")
+# add option to cluster OTUs at other tahn 3% (only wrks with usearch8 or lower)
 
-A <- system2("usearch", cmd, stdout=T, stderr=T) # cluster OTUs!
+
+cmd <- paste(" -cluster_otus ", folder, "/_data/2_OTU_clustering/", filename_all_unique, " -otus ", folder, "/_data/2_OTU_clustering/", OTU_file, " -uparseout ", folder, "/_data/2_OTU_clustering/", sub(".fasta", "_OTUtab.txt", OTU_file), " -relabel OTU_ -strand ", strand, if(otu_radius_pct!=3){paste(" -otu_radius_pct ", otu_radius_pct, sep="")}, sep="")
+
+A <- system2(exe, cmd, stdout=T, stderr=T) # cluster OTUs!
 
 chimeras <- sub(".*OTUs, (.*) chimeras\r", "\\1", A[grep("chimeras\r", A)])
 OTUs <- sub(".*100.0% (.*) OTUs, .* chimeras\r", "\\1", A[grep("chimeras\r", A)])
@@ -117,17 +134,17 @@ blast_names <- sub("_PE_derep.*.fasta", ".txt", blast_names)
 log_names <- sub("_data", "_stats", blast_names)
 
 
-cmd <- paste("-usearch_global ", new_names, " -db ", "\"", folder, "/_data/2_OTU_clustering/", OTU_file, "\"", " -strand plus -id 0.97 -blast6out \"", blast_names, "\" -maxhits 1", sep="")
+cmd <- paste("-usearch_global ", new_names, " -db ", "\"", folder, "/_data/2_OTU_clustering/", OTU_file, "\"", " -strand plus -id ", (100-otu_radius_pct)/100, " -blast6out \"", blast_names, "\" -maxhits 1", sep="")
 
 
-temp <- paste("Comparing ", length(cmd)," files with dereplicated reads (incl. singletons) against OTUs \"", folder, "/", OTU_file, "\" using \"usearch_global\".\n", sep="")
+temp <- paste("Comparing ", length(cmd)," files with dereplicated reads (incl. singletons) against OTUs \"", folder, "/", OTU_file, "\" using \"usearch_global\" with id=", (100-otu_radius_pct)/100,".\n", sep="")
 message(temp)
 cat(file="log.txt", temp, append=T, sep="\n")
 
 exp <- NULL
 temp <- new_names
 for (i in 1:length(cmd)){
-A <- system2("usearch", cmd[i], stdout=T, stderr=T)
+A <- system2(exe, cmd[i], stdout=T, stderr=T)
 cat(file= log_names[i], paste("usearch ", cmd[i], sep=""), "\n", A, append=F, sep="\n")
 
 meep <- sub("_data/.*/(.*)", "\\1", temp[i])
@@ -213,7 +230,17 @@ tab <- tab2[,c(1, order(names(tab2)[-1])+1)]
 # add sequences!
 sequ <- read.fasta(paste(folder, "/_data/2_OTU_clustering/", OTU_file, sep=""), forceDNAtolower=F, as.string=T)
 
-tab2 <- data.frame("sort"=as.numeric(sub("OTU_", "", tab[,1])), tab, "sequ"=unlist(sequ), stringsAsFactors=F)
+# check for different numbers
+temp <- sort(table(unlist(c(names(sequ), tab$ID))), decreasing=T)
+temp <- temp[temp==1]
+if(length(temp)>0){
+report <- paste("\n\nWARNING: The following OTU", if(length(temp)>1){"s"}, " did not get any sequences assigned in read mapping. This might happen if they are very low abundant and closely related OTUs are near by. Still maybe take a look.\nAffected sequences: ", paste(names(temp), collapse=" "), sep="")
+message(report)
+cat(file="log.txt", report, append=T, sep="\n")
+}
+
+
+tab2 <- data.frame("sort"=as.numeric(sub("OTU_", "", tab[,1])), tab, "sequ"=unlist(sequ[match(tab$ID, names(sequ))]), stringsAsFactors=F)
 
 
 write.csv(file=paste(folder, "/3_Raw_OTU_table.csv", sep=""), tab2, row.names=F)
@@ -317,18 +344,18 @@ log_names <- sub("_data/", "_stats/", blast_names)
 log_names <- sub("/usearch_global", "", log_names)
 
 
-cmd <- paste("-usearch_global ", new_names, " -db ", OTU_sub_filename, " -strand plus -id 0.97 -blast6out ", blast_names, " -maxhits 1", sep="")
+cmd <- paste("-usearch_global ", new_names, " -db ", OTU_sub_filename, " -strand plus -id ", (100-otu_radius_pct)/100, " -blast6out ", blast_names, " -maxhits 1", sep="")
 
 
-temp <- paste("\n\nRemapping ", length(cmd)," files (incl. singletons) against subsetted OTUs \"", OTU_sub_filename, "\" using \"usearch_global\".\n", sep="")
+temp <- paste("\n\nRemapping ", length(cmd)," files (incl. singletons) against subsetted OTUs \"", OTU_sub_filename, "\" using \"usearch_global\" using id=",(100-otu_radius_pct)/100,".\n", sep="")
 message(temp)
 cat(file="log.txt", temp, append=T, sep="\n")
 
 exp <- NULL
 temp <- new_names
 for (i in 1:length(cmd)){
-A <- system2("usearch", cmd[i], stdout=T, stderr=T)
-cat(file= log_names[i], paste("usearch ", cmd[i], sep=""), "\n", A, append=F, sep="\n")
+A <- system2(exe, cmd[i], stdout=T, stderr=T)
+cat(file= log_names[i], paste(exe, " ", cmd[i], sep=""), "\n", A, append=F, sep="\n")
 
 meep <- sub(".*singletons/(.*)", "\\1", temp[i])
 pass <- sub(".*, (.*)% matched\r", "\\1", A[grep("matched\r", A)])
