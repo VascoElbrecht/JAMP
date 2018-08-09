@@ -22,7 +22,7 @@ if(rel){ # save as relative abundance
 backup[k] <- round(data[k], 4)
 backup[k][is.na(backup[k])] <- 0
 }
-data[k] <- log10(data[k]) 			# log10
+data[k] <- suppressWarnings(log10(data[k])) 			# log10
 data[,k][!is.finite(data[,k])] <- NA	# remove inf
 data[,k][data[,k]< -3] <- -3
 }
