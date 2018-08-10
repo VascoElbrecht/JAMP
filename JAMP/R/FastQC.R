@@ -1,6 +1,6 @@
 # FastQC
 
-FastQC <- function(files="latest", space=10 ){
+FastQC <- function(files="latest", space=10, exe="FastQC" ){
 
 # get folder path!
 if(file.exists("log.txt")){
@@ -28,7 +28,7 @@ dir.create(paste(folder, "/FastQC/_raw_reports/", sep=""), showWarnings=F, recur
 # run fastQC module
 cmd <- paste("-o ", folder, "/FastQC/_raw_reports/ ", sep="", paste("\"", files, "\" ", collapse="", sep="") )
 
-A <- system2("fastQC", cmd)
+A <- system2(exe, cmd)
 
 #system2("vsearch", paste("--fastq_eestats ", files[1], sep="", " --output test.txt"))
 

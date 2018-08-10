@@ -1,6 +1,6 @@
 # U_cluster_otus v0.1
 
-U_cluster_otus <- function(files="latest", minuniquesize=2, strand="plus", filter=0.01, filterN=1, exe="usearch", otu_radius_pct=3){
+U_cluster_otus <- function(files="latest", minuniquesize=2, strand="plus", filter=0.01, filterN=1, exe="usearch", exeV="vsearch", otu_radius_pct=3){
 #, unoise_min=NA - unoise denoising removed, no longer supported!
 
 folder <- Core(module="U_cluster_otus")
@@ -57,7 +57,7 @@ message(temp)
 
 temp <- new_names
 for (i in 1:length(cmd)){
-A <- system2("vsearch", cmd[i], stdout=T, stderr=T)
+A <- system2(exeV, cmd[i], stdout=T, stderr=T)
 meep <- sub(".*_data/(.*)", "\\1", temp[i])
 cat(file="log.txt", meep, append=T, sep="\n")
 cat(file=paste(folder, "/_stats/1_derep_logs.txt", sep=""), meep, A, "\n", append=T, sep="\n")
@@ -91,7 +91,7 @@ cmd <- paste("-derep_fulllength ", folder, "/_data/2_OTU_clustering/A_all_files_
 
 filename_all_unique <- paste("B_all_derep_min", minuniquesize, ".fasta", sep="")
 
-A <- system2("vsearch", cmd, stdout=T, stderr=T)
+A <- system2(exeV, cmd, stdout=T, stderr=T)
 
 temp <- paste("Total number of sequences (not dereplicated): ", sub(".*nt in (.*) seqs.*", "\\1", A[grep("seqs, min", A)]), "\n", sep="")
 message(temp)
