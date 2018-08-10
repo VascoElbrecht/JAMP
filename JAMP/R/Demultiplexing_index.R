@@ -1,6 +1,6 @@
 # Demultiplexing_shifted
 
-Demultiplexing_index <- function(files="latest", fileR1=NA, fileR2=NA, fileI1=NA, indexTable=NA, software="illumina-utils", revcompI=T, md5=T, OS="autodetect"){
+Demultiplexing_index <- function(files="latest", fileR1=NA, fileR2=NA, fileI1=NA, indexTable=NA, software="illumina-utils", exe="iu-demultiplex", revcompI=T, md5=T, OS="autodetect"){
 
 folder <- Core(module="Demultiplexing_index")
 cat(file="log.txt", c("\n", "Version v0.1", "\n"), append=T, sep="\n")
@@ -84,7 +84,7 @@ message(temp)
 cat(file="log.txt", A, append=T, sep="\n")
 
 
-system2("iu-demultiplex", paste("-s ", indexTable, " --r1 ", fileR1, " --r2 ", fileR2, " -i ", fileI1, " -o ", folder, "/_data/", if(revcompI){" -x"}, sep=""))
+system2(exe, paste("-s ", indexTable, " --r1 ", fileR1, " --r2 ", fileR2, " -i ", fileI1, " -o ", folder, "/_data/", if(revcompI){" -x"}, sep=""))
 
 
 # move stats file and make plots of sequencing depth!
