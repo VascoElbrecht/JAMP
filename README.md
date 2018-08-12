@@ -14,7 +14,7 @@ Please keep in mind that JAMP needs [Usearch](https://www.drive5.com/usearch/man
 ### To install JAMP locally
 ```# Recommended method
 # Installing dependencies needed fro JAMP
-install.packages(c("bold", "XML", "seqinr", "devtools", "fastqcr"), dependencies=T)
+install.packages(c("bold", "XML", "seqinr", "devtools", "fastqcr", "PrimerMiner"), dependencies=T)
 # Load devtools and install package directly from GitHub
 library("devtools")
 install_github("VascoElbrecht/JAMP", subdir="JAMP")
@@ -23,9 +23,9 @@ You can also download the [latest release of JAMP](https://github.com/VascoElbre
 
 ### Example of a system wide installation on a ubuntu|debian server:
 ```bash
-wget https://github.com/VascoElbrecht/JAMP/archive/v0.35.tar.gz
-tar -xzf v0.35.tar.gz
-cd JAMP-0.35
+wget https://github.com/VascoElbrecht/JAMP/archive/v0.53.tar.gz
+tar -xzf v0.53.tar.gz
+cd JAMP-0.53
 sudo R CMD INSTALL JAMP
 ```
 
