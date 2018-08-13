@@ -1,10 +1,12 @@
 # U_max_ee v0.1
 
-U_max_ee <- function(files="latest", max_ee=1, fastq=F, exe="usearch"){
+U_max_ee <- function(files="latest", max_ee=1, fastq=F, exe="usearch", delete_data=T){
 
-folder <- Core(module="U_max_ee")
+folder <- Core(module="U_max_ee", delete_data=delete_data)
 cat(file="log.txt", c("\n","Version v0.2", "\n"), append=T, sep="\n")
 message(" ")
+
+files_to_delete <- NULL
 
 if (files[1]=="latest"){
 source(paste(folder, "/robots.txt", sep=""))
@@ -36,6 +38,8 @@ log_names <- sub("_ee.fast.", "_ee.txt", log_names)
 
 # cmd max EE
 cmd <- paste("-fastq_filter \"", files, "\"", if(fastq){" -fastqout "} else {" -fastaout "}, "\"", new_names, "\" -fastq_maxee ", max_ee, " -fastq_qmax 60", sep="")
+
+files_to_delete <- c(files_to_delete, new_names)
 
 i <- 11
 tab_exp <- NULL
@@ -119,8 +123,8 @@ message(" ")
 message(" ")
 message("Module completed!")
 
+cat(file=paste(folder, "/robots.txt", sep=""), "\n# DELETE_START", files_to_delete, "# DELETE_END", append=T, sep="\n")
+
 cat(file="log.txt", paste(Sys.time(), "*** Module completed!", "", sep="\n"), append=T, sep="\n")
-
-
 }
 

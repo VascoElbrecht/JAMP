@@ -1,11 +1,13 @@
 # U_cluster_otus v0.1
 
-Map2ref <- function(files="latest", refDB=NULL, id=0.97, strand="plus", onlykeephits=F, filter=0.01){
+Map2ref <- function(files="latest", refDB=NULL, id=0.97, strand="plus", onlykeephits=F, filter=0.01, delete_data=T){
 
 
-folder <- Core(module="Map2ref")
+folder <- Core(module="Map2ref", delete_data=delete_data)
 cat(file="log.txt", c("Version v0.1", "\n"), append=T, sep="\n")
 message(" ")
+
+files_to_delete <- NULL
 
 if (files[1]=="latest"){
 source(paste(folder, "/robots.txt", sep=""))
@@ -25,6 +27,8 @@ new_names <- sub("_data", "_data/1_derep", new_names)
 new_names <- paste(folder, "/", new_names, sep="")
 
 cmd <- paste("-fastx_uniques \"", files, "\" -fastaout \"", new_names, "\" -sizeout",  sep="")
+
+files_to_delete <- c(files_to_delete, new_names)
 
 temp <- paste(length(files), " files are dereplicated (incl. singletons):", sep="")
 cat(file="log.txt", temp , append=T, sep="\n")
@@ -61,6 +65,7 @@ log_names <- sub("_data/2_mapping/", "_stats/map_logs/", blast_names)
 
 cmd <- paste("-usearch_global ", new_names, " -db \"", refDB, "\" -strand ", strand, " -id 0.97 -blast6out \"", blast_names, "\" -maxhits 1", " -notmatched \"", nohit, "\"", sep="")
 
+files_to_delete <- c(files_to_delete, blast_names)
 
 temp <- paste("Comparing ", length(cmd)," files with dereplicated reads (incl. singletons) against refDB: \"", sub(".*/(.*)", "\\1", refDB), "\" using \"usearch_global\" and Usearch. Minimum identity (id) is ", id, ".\n", sep="")
 message(temp)
@@ -171,6 +176,7 @@ dev.off()
 
 
 
+cat(file=paste(folder, "/robots.txt", sep=""), "\n# DELETE_START", files_to_delete, "# DELETE_END", append=T, sep="\n")
 
 temp <- "\nModule completed!"
 message(temp)

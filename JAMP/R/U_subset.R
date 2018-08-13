@@ -1,10 +1,12 @@
 # U_subset v0.1
 
-U_subset <- function(files="latest", sample_size=100000, fastq_out=F, ranseed=NA, exe="usearch"){
+U_subset <- function(files="latest", sample_size=100000, fastq_out=F, ranseed=NA, exe="usearch", delete_data=T){
 
-folder <- Core(module="U_subset")
+folder <- Core(module="U_subset", delete_data=delete_data)
 cat(file="log.txt", c("\n","Version v0.1", "\n"), append=T, sep="\n")
 message(" ")
+
+files_to_delete <- NULL
 
 if (files[1]=="latest"){
 source(paste(folder, "/robots.txt", sep=""))
@@ -45,6 +47,7 @@ log_names <- sub("\\.fast.$", ".txt", log_names)
 # cmd max EE
 cmd <- paste("-fastx_subsample \"", files, "\"", if(fastq_out){" -fastqout "} else {" -fastaout "}, "\"", new_names, "\" -sample_size ", sample_size, " -sizein -sizeout", if(!is.na(ranseed)){paste(" ranseed ", ranseed)}, sep="")
 
+files_to_delete <- c(files_to_delete, new_names)
 
 # count sequences
 sequcounts <- Count_sequences(files, fastq=F)
@@ -82,6 +85,8 @@ cat(file="log.txt", merged_message, append=T, sep="\n")
 
 message(" ")
 message("Module completed!")
+
+cat(file=paste(folder, "/robots.txt", sep=""), "\n# DELETE_START", files_to_delete, "# DELETE_END", append=T, sep="\n")
 
 cat(file="log.txt", paste(Sys.time(), "*** Module completed!", "", sep="\n"), append=T, sep="\n")
 

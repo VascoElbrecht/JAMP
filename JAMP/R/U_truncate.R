@@ -1,10 +1,12 @@
 # U_truncate v0.1
 
-U_truncate <- function(files="latest", left=0, right=0, trunclen=NA, fastq=T, rename=T, exe="usearch"){
+U_truncate <- function(files="latest", left=0, right=0, trunclen=NA, fastq=T, rename=T, exe="usearch", delete_data=T){
 
-folder <- Core(module="U_truncate")
+folder <- Core(module="U_truncate", delete_data=delete_data)
 cat(file="log.txt", c("\n","Version v0.2", "\n"), append=T, sep="\n")
 message(" ")
+
+files_to_delete <- NULL
 
 if (files[1]=="latest"){
 source(paste(folder, "/robots.txt", sep=""))
@@ -31,6 +33,7 @@ new_names <- paste(folder, "/", new_names, sep="")
 
 cmd <- paste("-fastx_truncate \"", files,"\"", " -stripleft ", left, " -stripright ", right, if(!is.na(trunclen)){paste(" -trunclen ", trunclen, sep="")}, if(fastq){" -fastqout "} else {" -fastaout "}, "\"", new_names, "\"", sep="")
 
+files_to_delete <- c(files_to_delete, new_names)
 
 tab_exp <- NULL
 for (i in 1:length(cmd)){
@@ -63,8 +66,8 @@ write.csv(tab_exp, paste(folder, "/_stats/truncate_pass.csv", sep=""))
 message(" ")
 message("Module completed!")
 
+cat(file=paste(folder, "/robots.txt", sep=""), "\n# DELETE_START", files_to_delete, "# DELETE_END", append=T, sep="\n")
+
 cat(file="log.txt", paste(Sys.time(), "*** Module completed!", "", sep="\n"), append=T, sep="\n")
-
-
 }
 

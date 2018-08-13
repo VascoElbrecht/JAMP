@@ -1,11 +1,13 @@
 # U_merge_PE v0.1
 # maybe add option to split and merge large files automatically?
 
-U_revcomp <- function(files="latest", RC=c(T,F), fastq=T, copy_unchanged=T, exe="usearch"){
+U_revcomp <- function(files="latest", RC=c(T,F), fastq=T, copy_unchanged=T, exe="usearch", delete_data=T){
 
-folder <- Core(module="U_revcomp")
+folder <- Core(module="U_revcomp", delete_data= delete_data)
 cat(file="log.txt", c("Version v0.2", "\n"), append=T, sep="\n")
 message(" ")
+
+files_to_delete <- NULL
 
 if (files=="latest"){
 source(paste(folder, "/robots.txt", sep=""))
@@ -34,6 +36,8 @@ message(" ")
 
 cmd <- paste("-fastx_revcomp \"", files[RC], if(fastq){"\" -fastqout \""} else {" -fastaout \""}, new_names[RC], "\" -label_suffix _RC",  sep="")
 
+files_to_delete <- c(files_to_delete, new_names)
+
 temp <- paste("RevComp is generated for the following ", length(files[RC]), " files:", sep="")
 cat(file="log.txt", temp , append=T, sep="\n")
 message(temp)
@@ -52,6 +56,8 @@ message(meep)
 
 message(" ")
 message(" Module completed!")
+
+cat(file=paste(folder, "/robots.txt", sep=""), "\n# DELETE_START", files_to_delete, "# DELETE_END", append=T, sep="\n")
 
 cat(file="log.txt", paste(Sys.time(), "\n", "*** Module completed!", "", sep="\n"), append=T, sep="\n")
 

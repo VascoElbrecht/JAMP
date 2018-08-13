@@ -1,9 +1,11 @@
-# Minmax v0.1
+# Minmax v0.2
 
-Minmax <- function(files="latest", min=NA, max=NA, plusminus=c(NA, 10), fastq=T, LDist=F){
+Minmax <- function(files="latest", min=NA, max=NA, plusminus=c(NA, 10), fastq=T, LDist=F, delete_data=T){
 
-folder <- Core(module="Minmax")
+folder <- Core(module="Minmax", delete_data=delete_data)
 cat(file="../log.txt", c("Module Version: v0.2", "\n"), append=T, sep="\n")
+
+files_to_delete <- NULL
 
 # cutadapt version
 temp <- paste("Version: ", "Cutadapt v", system2("cutadapt", "--v", stdout=T, stderr=T), sep="")
@@ -36,6 +38,8 @@ max <- plusminus[1] + plusminus[2]
 
 # make cmd
 cmd <- paste("\"", files, "\" -o \"", folder, "/", new_names, "\" -f ", if(fastq){"fastq"}else{"fasta"}, if(!is.na(min)){" -m "}, if(!is.na(min)){min}, if(!is.na(min)){" -M "}, if(!is.na(min)){max}, sep="")
+
+files_to_delete <- c(files_to_delete, paste(folder, "/", new_names, sep=""))
 
 # report
 temp <- paste("Starting to discard reads that don't fit the target length in ", length(cmd), " files:", sep="")
@@ -108,8 +112,8 @@ message(" ")
 message(" ")
 message(" Module completed!")
 
+cat(file=paste(folder, "/robots.txt", sep=""), "\n# DELETE_START", files_to_delete, "# DELETE_END", append=T, sep="\n")
+
 cat(file="log.txt", paste(Sys.time(), "\n", "*** Module completed!", "", sep="\n"), append=T, sep="\n")
-
-
 }
 

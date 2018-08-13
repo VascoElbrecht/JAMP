@@ -1,11 +1,13 @@
 # U_merge_PE v0.1
 # maybe add option to split and merge large files automatically?
 
-U_merge_PE <- function(files="latest", file1=NA, file2=NA, fastq_maxdiffs=99, fastq_pctid=75, fastq_minovlen=16, fastq=T, LDist=T, exe="usearch"){
+U_merge_PE <- function(files="latest", file1=NA, file2=NA, fastq_maxdiffs=99, fastq_pctid=75, fastq_minovlen=16, fastq=T, LDist=T, exe="usearch", delete_data=T){
 
-folder <- Core(module="U_merge_PE")
+folder <- Core(module="U_merge_PE", delete_data= delete_data)
 cat(file="log.txt", c("\n","Version v0.2", "\n"), append=T, sep="\n")
 message(" ")
+
+files_to_delete <- NULL
 
 
 if(!is.na(file1[1])&!is.na(file2[1])){
@@ -66,6 +68,10 @@ log_names <- sub("_data", "_stats/merge_stats", new_names)
 log_names <- sub("_PE.fast[aq]", "_PE_log.txt", log_names)
 
 cmd <- paste(" -fastq_mergepairs \"", file1, "\" -reverse \"", file2,  "\" ", if(fastq){"-fastqout"} else {"-fastaout"}, " \"", new_names, "\"", " -report ", log_names, " -fastq_maxdiffs ", fastq_maxdiffs , " -fastq_pctid ", fastq_pctid, " -fastq_trunctail 0 -fastq_minovlen ", fastq_minovlen, sep="")
+
+files_to_delete <- c(files_to_delete, new_names)
+
+
 
 tab_exp <- NULL
 for (i in 1:length(cmd)){
@@ -130,6 +136,8 @@ message(" ")
 
 
 message("Done with PE merging!")
+
+cat(file=paste(folder, "/robots.txt", sep=""), "\n# DELETE_START", files_to_delete, "# DELETE_END", append=T, sep="\n")
 
 cat(file="log.txt", paste(Sys.time(), "Done with PE merging", "", "*** Module completed!\n\n", sep="\n"), append=T, sep="\n")
 

@@ -1,13 +1,14 @@
 # Cutadapt v0.1
 
-Cutadapt <- function(files="latest", forward=NA, reverse=NA, bothsides=F, anchoring=T, fastq=T, LDist=F){
+Cutadapt <- function(files="latest", forward=NA, reverse=NA, bothsides=F, anchoring=T, fastq=T, LDist=F, delete_data=T){
 
 FW_only <- F
 if (is.na(reverse)){FW_only <- T}
 
-
-folder <- Core(module="Cutadapt")
+folder <- Core(module="Cutadapt", delete_data=delete_data)
 cat(file="log.txt", c("Module Version: v0.2", "\n"), append=T, sep="\n")
+
+files_to_delete <- NULL
 
 # cutadapt version
 temp <- paste("Using Version: ", "Cutadapt v", system2("cutadapt", "--v", stdout=T, stderr=T), sep="")
@@ -79,6 +80,7 @@ rw[i] <- paste(rev(comp(unlist(strsplit(rw[i], "")), forceToLower=F, ambiguous=T
 # add: write down used primers in log!
 if (FW_only){
 cmd1 <- paste("-g ", if(anchoring){"^"}, fw, " -o \"", new_names, "\" \"", files, "\"", " -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") # forward adapter
+files_to_delete <- c(files_to_delete, new_names)
 
 temp <- paste("Starting to remove adapters (primers) on forward direction only ", length(cmd1), " files:", sep="")
 cat(file="log.txt", temp , append=T, sep="\n")
@@ -86,6 +88,7 @@ message(temp)
 }else{
 cmd1 <- paste("-g ", if(anchoring){"^"}, fw, " -o ", folder, "/_data/temp.txt \"", files, "\"", " -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") # forward adapter
 cmd2 <- paste("-a ", rw, if(anchoring){"$"}," -o \"", new_names, "\" ", folder, "/_data/temp.txt -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") #rverse adapter
+files_to_delete <- c(files_to_delete, new_names)
 
 temp <- paste("Starting to remove adapters (primers) on both ends in ", length(cmd1), " files:", sep="")
 cat(file="log.txt", temp , append=T, sep="\n")
@@ -243,6 +246,8 @@ message(" ")
 
 message(" ")
 message(" Module completed!")
+
+cat(file=paste(folder, "/robots.txt", sep=""), "\n# DELETE_START", files_to_delete, "# DELETE_END", append=T, sep="\n")
 
 cat(file="log.txt", paste(Sys.time(), "\n", "*** Module completed!\n\n", sep="\n"), append=T, sep="\n")
 

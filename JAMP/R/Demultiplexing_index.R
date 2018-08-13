@@ -1,10 +1,12 @@
 # Demultiplexing_indexed
 # v0.1
 
-Demultiplexing_index <- function(files="latest", fileR1=NA, fileR2=NA, fileI1=NA, indexTable=NA, software="illumina-utils", exe="iu-demultiplex", revcompI=T, md5=T, OS="autodetect"){
+Demultiplexing_index <- function(files="latest", fileR1=NA, fileR2=NA, fileI1=NA, indexTable=NA, software="illumina-utils", exe="iu-demultiplex", revcompI=T, md5=T, OS="autodetect", delete_data=T){
 
-folder <- Core(module="Demultiplexing_index")
+folder <- Core(module="Demultiplexing_index", delete_data=delete_data)
 cat(file="log.txt", c("\n", "Version v0.1", "\n"), append=T, sep="\n")
+
+files_to_delete <- NULL
 
 indextab <- read.csv(indexTable, sep="\t", stringsAsFactors=F)
 
@@ -64,14 +66,17 @@ if(software=="illumina-utils"){
 if(sum(grep("\\.gz$", fileR1))>0){ # R1
 system2("gunzip", paste(" -k", fileR1[grep("\\.gz$", fileR1)], sep=" "))
 fileR1 <- sub("\\.gz$", "", fileR1)
+files_to_delete <- c(files_to_delete, fileR1)
 }
 if(sum(grep("\\.gz$", fileR2))>0){ # R2
 system2("gunzip", paste(" -k", fileR2[grep("\\.gz$", fileR2)], sep=" "))
 fileR2 <- sub("\\.gz$", "", fileR2)
+files_to_delete <- c(files_to_delete, fileR2)
 }
 if(sum(grep("\\.gz$", fileI1))>0){ # R2
 system2("gunzip", paste(" -k", fileI1[grep("\\.gz$", fileI1)], sep=" "))
 fileI1 <- sub("\\.gz$", "", fileI1)
+files_to_delete <- c(files_to_delete, fileI1)
 }
 }
 
@@ -145,10 +150,11 @@ cat(file="log.txt", temp, append=T, sep="\n")
 renamME <- list.files(paste(folder, "/_data/", sep=""), full.names=T)
 file.rename(renamME, gsub("-", "_", renamME))
 
+files_to_delete <- c(files_to_delete, gsub("-", "_", renamME))
 
 } # iu-demultiplex
 
-
+cat(file=paste(folder, "/robots.txt", sep=""), "\n# DELETE_START", files_to_delete, "# DELETE_END", append=T, sep="\n")
 
 message("\nModule completed!\n\n")
 

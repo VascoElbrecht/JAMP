@@ -1,12 +1,13 @@
 # U_cluster_otus v0.1
 
-U_cluster_otus <- function(files="latest", minuniquesize=2, strand="plus", filter=0.01, filterN=1, exe="usearch", exeV="vsearch", otu_radius_pct=3){
+U_cluster_otus <- function(files="latest", minuniquesize=2, strand="plus", filter=0.01, filterN=1, exe="usearch", exeV="vsearch", otu_radius_pct=3,  delete_data=T){
 #, unoise_min=NA - unoise denoising removed, no longer supported!
 
-folder <- Core(module="U_cluster_otus")
+folder <- Core(module="U_cluster_otus", delete_data=delete_data)
 cat(file="log.txt", c("Version v0.2", "\n"), append=T, sep="\n")
 message(" ")
 
+files_to_delete <- NULL
 
 if(otu_radius_pct!=3){
 A <- system2(exe, stdout=T)
@@ -48,7 +49,7 @@ new_names <- paste(folder, "/", new_names, sep="")
 
 cmd <- paste("-derep_fulllength \"", files[!empty], "\" -output \"", new_names, "\" -sizeout",  sep="")
 
-
+files_to_delete <- c(files_to_delete, new_names)
 
 temp <- paste(length(cmd), " files are dereplicated (incl. singletons! Using Vsearch):", sep="")
 cat(file="log.txt", temp , append=T, sep="\n")
@@ -73,6 +74,8 @@ dir.create(paste(folder, "/_data/2_OTU_clustering", sep=""))
 cmd <- paste(paste(new_names, collapse=" "), " > ", folder, "/_data/2_OTU_clustering/A_all_files_united.fasta", collapse="", sep="")
 A <- system2("cat", cmd, stdout=T, stderr=T)
 
+files_to_delete <- c(files_to_delete, paste(folder, "/_data/2_OTU_clustering/A_all_files_united.fasta", sep=""))
+
 #check <- readLines("_data/2_OTU_clustering/A_all_files_united.fasta")
 #count <- as.numeric(sub(".*size=(.*);", "\\1", check))
 #sum(count, na.rm=T)
@@ -90,6 +93,9 @@ cat(file=paste(folder, "/_stats/2_OTU_clustering_log.txt", sep=""), temp, "", pa
 cmd <- paste("-derep_fulllength ", folder, "/_data/2_OTU_clustering/A_all_files_united.fasta -output ", folder, "/_data/2_OTU_clustering/B_all_derep_min", minuniquesize, ".fasta -sizein -sizeout -minuniquesize ", minuniquesize, sep="")
 
 filename_all_unique <- paste("B_all_derep_min", minuniquesize, ".fasta", sep="")
+
+files_to_delete <- c(files_to_delete, paste(folder, "/_data/2_OTU_clustering/B_all_derep_min2.fasta", sep=""))
+
 
 A <- system2(exeV, cmd, stdout=T, stderr=T)
 
@@ -115,6 +121,11 @@ cmd <- paste(" -cluster_otus ", folder, "/_data/2_OTU_clustering/", filename_all
 
 A <- system2(exe, cmd, stdout=T, stderr=T) # cluster OTUs!
 
+files_to_delete <- c(files_to_delete, paste(folder, "/_data/2_OTU_clustering/", OTU_file, sep=""))
+files_to_delete <- c(files_to_delete, paste(folder, "/_data/2_OTU_clustering/", sub(".fasta", "_OTUtab.txt", OTU_file), sep=""))
+
+
+
 chimeras <- sub(".*OTUs, (.*) chimeras\r", "\\1", A[grep("chimeras\r", A)])
 OTUs <- sub(".*100.0% (.*) OTUs, .* chimeras\r", "\\1", A[grep("chimeras\r", A)])
 
@@ -136,6 +147,7 @@ log_names <- sub("_data", "_stats", blast_names)
 
 cmd <- paste("-usearch_global ", new_names, " -db ", "\"", folder, "/_data/2_OTU_clustering/", OTU_file, "\"", " -strand plus -id ", (100-otu_radius_pct)/100, " -blast6out \"", blast_names, "\" -maxhits 1", sep="")
 
+files_to_delete <- c(files_to_delete, blast_names)
 
 temp <- paste("Comparing ", length(cmd)," files with dereplicated reads (incl. singletons) against OTUs \"", folder, "/", OTU_file, "\" using \"usearch_global\" with id=", (100-otu_radius_pct)/100,".\n", sep="")
 message(temp)
@@ -346,6 +358,7 @@ log_names <- sub("/usearch_global", "", log_names)
 
 cmd <- paste("-usearch_global ", new_names, " -db ", OTU_sub_filename, " -strand plus -id ", (100-otu_radius_pct)/100, " -blast6out ", blast_names, " -maxhits 1", sep="")
 
+files_to_delete <- c(files_to_delete, blast_names)
 
 temp <- paste("\n\nRemapping ", length(cmd)," files (incl. singletons) against subsetted OTUs \"", OTU_sub_filename, "\" using \"usearch_global\" using id=",(100-otu_radius_pct)/100,".\n", sep="")
 message(temp)
@@ -554,10 +567,9 @@ OTU_heatmap(paste(folder, "/3_Raw_OTU_table.csv", sep=""), out=paste(folder, "/_
 }
 
 
+cat(file=paste(folder, "/robots.txt", sep=""), "\n# DELETE_START", files_to_delete, "# DELETE_END", append=T, sep="\n")
+
 temp <- "\nModule completed!"
 message(temp)
 cat(file="log.txt", paste(Sys.time(), "*** Module completed!", "", sep="\n"), append=T, sep="\n")
-
-
 }
-
