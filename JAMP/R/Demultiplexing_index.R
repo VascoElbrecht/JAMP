@@ -1,4 +1,5 @@
-# Demultiplexing_shifted
+# Demultiplexing_indexed
+# v0.1
 
 Demultiplexing_index <- function(files="latest", fileR1=NA, fileR2=NA, fileI1=NA, indexTable=NA, software="illumina-utils", exe="iu-demultiplex", revcompI=T, md5=T, OS="autodetect"){
 

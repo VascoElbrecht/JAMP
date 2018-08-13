@@ -17,10 +17,64 @@ barcodes <- read.csv(paste(system.file(package="JAMP"), "/BF_BR.csv", sep=""), s
 
 tagL <- nchar(barcodes[1,1])
 
+# save original imput file tags
+write.csv(file=paste(folder, "/tags.csv", sep=""), barcodes, quote=F)
+
+
+# auto convert abigious bases in barcodes!
+nucleotides <- unlist(strsplit(barcodes$barcode, ""))
+
+if(sum(c("R", "Y", "S", "W", "K", "M", "B", "D", "H", "V", "N", "I")%in% nucleotides)>0){
+
+if(ncol(barcodes)==3){
+barcodes <- data.frame(barcodes, comment=NA, stringsAsFactors=F)
+}
+
+barcodes2 <- barcodes[0,]
+
+for (i in 1:nrow(barcodes)){
+temp <- suppressMessages(primerversions(barcodes$barcode[i]))
+temp2 <- data.frame("barcode"=temp, "rm"=barcodes$rm[i], "ID"=barcodes$ID[i], "comment"=barcodes$barcode[i], stringsAsFactors=F)
+barcodes2 <- rbind(barcodes2, temp2)
+}
+
+barcodes <- barcodes2
+
+temp <- paste("Degenerated bases where converted automatically into indicidual inline barcodes. Check the table used for demultiplexing in \"", folder, "/tags_auto_edited.csv\"", sep="", "\n")
+message(temp)
+cat(file="log.txt", temp, append=T, sep="\n")
+
+tags <- paste(folder, "/tags_auto_edited.csv", sep="")
+write.csv(file=tags, barcodes, quote=F)
+
+}
+
+
 combos <- read.csv(combinations, stringsAsFactors=F)
+
+
+write.csv(file= paste(folder, "/combinations.csv", sep=""), combos)
+
+# auto convert file if FileName is uesed (add R1 / R2)
+if(names(combos)[2]=="FileName"){
+
+combos2 <- data.frame("ID"=combos$ID, "File1"=paste(combos$FileName, "R1.fastq"), "File2"=paste(combos$FileName, "R2.fastq"))
+
+combinations <- paste(folder, "/combinations_auto_edited.csv", sep="")
+write.csv(combos2, file= combinations)
+
+combos <- combos2
+
+temp <- paste("FileName detected! \"R1.txt\" and \"R2.txt\" added automatically to filenames. Please check the table used for primer combinations / filenames in \"", folder, "/combinations_auto_edited.csv\" for details.", sep="", "\n")
+message(temp)
+cat(file="log.txt", temp, append=T, sep="\n")
+
+}
+
 
 #basic log stats
 temp <- paste(Sys.time(), "Starting demultiplexing using:", paste("Barcode table:", tags, sep=""), paste("Searching for ", nrow(combos), " samples as given in table: ", combinations, sep=""), paste("Raw data format: ", paste(unique(compression), collapse=" "), sep=""), paste("Read 1 RAW data: ", paste(file1, collapse=" "), sep=""), paste("Read 2 RAW data: ", paste(file2, collapse=" "), sep=""), "\n", sep="\n")
+message(temp)
 cat(file="log.txt", temp, append=T, sep="\n")
 
 
