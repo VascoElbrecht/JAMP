@@ -44,7 +44,7 @@ old_count <- Count_sequences(files[i], fastq= fastq)
 passed <- round(new_count/old_count*100, digits=2)
 
 A <- system2(exe, paste("-fastx_info \"", new_names[i], "\" -secs 5", sep=""), stdout=T, stderr=T)
-medianL <- as.numeric(sub(".*med (.*), hi.*", "\\1", A[grep("Lengths min ", A)]))
+medianL <- as.numeric(sub(".*median (.*), hi.*", "\\1", A[grep("Lengths min ", A)]))
 
 cat(file=paste(folder, "/_stats/log_length.txt", sep=""), new_names[i], "\n", A,"\n\n", append=T, sep="\n")
 
