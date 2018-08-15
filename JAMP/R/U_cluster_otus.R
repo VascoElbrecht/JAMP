@@ -9,9 +9,10 @@ message(" ")
 
 files_to_delete <- NULL
 
-if(otu_radius_pct!=3){
 A <- system2(exe, stdout=T)
 version <- as.numeric(sub("usearch v(.+)\\.+.*\\..*_.*", "\\1", A[1]))
+
+if(otu_radius_pct!=3){
 if(version > 8){
 temp <-  paste("WARNING: You did set a custom clustering treshold of ", otu_radius_pct, " but are using Usearch version ", version, "! The custom treshold was removed with version 9 (nothing I can do about this), thus please provide a path in exe to Usearch8, to make this work. You can download the older versionf rom the Usearch website. The script will stop now.", sep="")
 message(temp)
