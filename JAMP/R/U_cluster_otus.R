@@ -125,9 +125,13 @@ files_to_delete <- c(files_to_delete, paste(folder, "/_data/2_OTU_clustering/", 
 files_to_delete <- c(files_to_delete, paste(folder, "/_data/2_OTU_clustering/", sub(".fasta", "_OTUtab.txt", OTU_file), sep=""))
 
 
-
+if(version!=8){
 chimeras <- sub(".*OTUs, (.*) chimeras\r", "\\1", A[grep("chimeras\r", A)])
 OTUs <- sub(".*100.0% (.*) OTUs, .* chimeras\r", "\\1", A[grep("chimeras\r", A)])
+} else {
+chimeras <- sub(".*OTUs, (.*) chimeras.*", "\\1", A[grep("chimeras.*", A)])
+OTUs <- sub(".*100.0% (.*) OTUs, .* chimeras.*", "\\1", A[grep("chimeras.*", A)])
+}
 
 temp <- paste("\n", "Clustering reads from \"", filename_all_unique, "\nminuniquesize = ", minuniquesize, "\nstrand = ", strand, "\nChimeras discarded: ", chimeras, "\nOTUs written: ", OTUs, " -> file \"", OTU_file, "\"\n", sep="")
 message(temp)
