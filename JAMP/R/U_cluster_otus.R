@@ -122,7 +122,7 @@ cmd <- paste(" -cluster_otus ", folder, "/_data/2_OTU_clustering/", filename_all
 
 A <- system2(exe, cmd, stdout=T, stderr=T) # cluster OTUs!
 
-files_to_delete <- c(files_to_delete, paste(folder, "/_data/2_OTU_clustering/", OTU_file, sep=""))
+#files_to_delete <- c(files_to_delete, paste(folder, "/_data/2_OTU_clustering/", OTU_file, sep=""))
 files_to_delete <- c(files_to_delete, paste(folder, "/_data/2_OTU_clustering/", sub(".fasta", "_OTUtab.txt", OTU_file), sep=""))
 
 
