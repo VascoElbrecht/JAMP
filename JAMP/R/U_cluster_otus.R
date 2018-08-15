@@ -77,7 +77,7 @@ A <- system2("cat", cmd, stdout=T, stderr=T)
 files_to_delete <- c(files_to_delete, paste(folder, "/_data/2_OTU_clustering/A_all_files_united.fasta", sep=""))
 
 #check <- readLines("_data/2_OTU_clustering/A_all_files_united.fasta")
-#count <- as.numeric(sub(".*size=(.*);", "\\1", check))
+#count <- as.numeric(sub(".*size=(.*)", "\\1", check))
 #sum(count, na.rm=T)
 
 # write logs
@@ -195,7 +195,7 @@ names(data) <- c("query", "otu", "ident", "length", "mism", "gap", "qstart", "qe
 
 data <- data[,c(-11,-12)]
 
-data <- cbind(data, "abund"=as.numeric(sub(".*size=(.*);", "\\1", data$query)), "otu_no"=sub("(.*);size.*", "\\1", data$otu), stringsAsFactors=F)
+data <- cbind(data, "abund"=as.numeric(sub(".*size=(.*)", "\\1", data$query)), "otu_no"=sub("(.*)size.*", "\\1", data$otu), stringsAsFactors=F)
 
 head(data)
 
@@ -411,7 +411,7 @@ names(data) <- c("query", "otu", "ident", "length", "mism", "gap", "qstart", "qe
 
 data <- data[,c(-11,-12)]
 
-data <- cbind(data, "abund"=as.numeric(sub(".*size=(.*);", "\\1", data$query)), "otu_no"=sub("(.*);size.*", "\\1", data$otu), stringsAsFactors=F)
+data <- cbind(data, "abund"=as.numeric(sub(".*size=(.*)", "\\1", data$query)), "otu_no"=sub("(.*)size.*", "\\1", data$otu), stringsAsFactors=F)
 
 head(data)
 
