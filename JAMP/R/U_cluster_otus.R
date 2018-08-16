@@ -1,6 +1,6 @@
 # U_cluster_otus v0.1
 
-U_cluster_otus <- function(files="latest", minuniquesize=2, strand="plus", filter=0.01, filterN=1, exe="usearch", exeV="vsearch", otu_radius_pct=3, maxaccepts=1, maxrejects=32,  delete_data=T){
+U_cluster_otus <- function(files="latest", minuniquesize=2, strand="plus", filter=0.01, filterN=1, exe="usearch", exeV="vsearch", otu_radius_pct=3, mapp_singletons=T, maxaccepts=1, maxrejects=32,  delete_data=T){
 #, unoise_min=NA - unoise denoising removed, no longer supported!
 
 folder <- Core(module="U_cluster_otus", delete_data=delete_data)
@@ -48,7 +48,7 @@ new_names <- sub("_data", "_data/1_derep_inc_singletons", new_names)
 new_names <- paste(folder, "/", new_names, sep="")
 
 
-cmd <- paste("-derep_fulllength \"", files[!empty], "\" -output \"", new_names, "\" -sizeout",  sep="")
+cmd <- paste("-derep_fulllength \"", files[!empty], "\" -output \"", new_names, "\" -sizeout", if(! mapp_singletons){paste(" -minuniquesize ", minuniquesize, sep="")}, sep="")
 
 files_to_delete <- c(files_to_delete, new_names)
 
