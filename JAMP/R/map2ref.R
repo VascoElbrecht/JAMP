@@ -1,6 +1,6 @@
 # U_cluster_otus v0.1
 
-Map2ref <- function(files="latest", refDB=NULL, id=0.97, strand="plus", onlykeephits=F, filter=0.01, delete_data=T){
+Map2ref <- function(files="latest", refDB=NULL, id=0.97, strand="plus", onlykeephits=F, filter=0.01, maxaccepts=1, maxrejects=32, exe="usearch", delete_data=T){
 
 
 folder <- Core(module="Map2ref", delete_data=delete_data)
@@ -37,7 +37,7 @@ message(temp)
 
 temp <- new_names
 for (i in 1:length(cmd)){
-A <- system2("usearch", cmd[i], stdout=T, stderr=T)
+A <- system2(exe, cmd[i], stdout=T, stderr=T)
 meep <- sub(".*_data/(.*)", "\\1", temp[i])
 cat(file="log.txt", meep, append=T, sep="\n")
 cat(file=paste(folder, "/_stats/1_derep_logs.txt", sep=""), meep, A, "\n", append=T, sep="\n")
@@ -63,7 +63,7 @@ nohit <- sub("1_derep", "3_nohit_fasta", new_names)
 log_names <- sub("_data/2_mapping/", "_stats/map_logs/", blast_names)
 
 
-cmd <- paste("-usearch_global ", new_names, " -db \"", refDB, "\" -strand ", strand, " -id 0.97 -blast6out \"", blast_names, "\" -maxhits 1", " -notmatched \"", nohit, "\"", sep="")
+cmd <- paste("-usearch_global ", new_names, " -db \"", refDB, "\" -strand ", strand, " -id 0.97 -blast6out \"", blast_names, "\" -maxhits 1", " -notmatched \"", nohit, "\" -maxaccepts ", maxaccepts, " -maxrejects ", maxrejects, sep="")
 
 files_to_delete <- c(files_to_delete, blast_names)
 
@@ -74,7 +74,7 @@ cat(file="log.txt", temp, append=T, sep="\n")
 exp <- NULL
 temp <- new_names
 for (i in 1:length(cmd)){
-A <- system2("usearch", cmd[i], stdout=T, stderr=T)
+A <- system2(exe, cmd[i], stdout=T, stderr=T)
 cat(file= log_names[i], paste("usearch ", cmd[i], sep=""), "\n", A, append=F, sep="\n")
 
 meep <- sub("_data/.*/(.*)", "\\1", temp[i])

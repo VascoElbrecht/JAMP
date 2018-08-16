@@ -1,6 +1,6 @@
 # U_cluster_otus v0.1
 
-U_cluster_otus <- function(files="latest", minuniquesize=2, strand="plus", filter=0.01, filterN=1, exe="usearch", exeV="vsearch", otu_radius_pct=3,  delete_data=T){
+U_cluster_otus <- function(files="latest", minuniquesize=2, strand="plus", filter=0.01, filterN=1, exe="usearch", exeV="vsearch", otu_radius_pct=3, maxaccepts=1, maxrejects=32,  delete_data=T){
 #, unoise_min=NA - unoise denoising removed, no longer supported!
 
 folder <- Core(module="U_cluster_otus", delete_data=delete_data)
@@ -150,7 +150,7 @@ blast_names <- sub("_PE_derep.*.fasta", ".txt", blast_names)
 log_names <- sub("_data", "_stats", blast_names)
 
 
-cmd <- paste("-usearch_global ", new_names, " -db ", "\"", folder, "/_data/2_OTU_clustering/", OTU_file, "\"", " -strand plus -id ", (100-otu_radius_pct)/100, " -blast6out \"", blast_names, "\" -maxhits 1", sep="")
+cmd <- paste("-usearch_global ", new_names, " -db ", "\"", folder, "/_data/2_OTU_clustering/", OTU_file, "\"", " -strand plus -id ", (100-otu_radius_pct)/100, " -blast6out \"", blast_names, "\" -maxhits 1 -maxaccepts ", maxaccepts, " -maxrejects ", maxrejects, sep="")
 
 files_to_delete <- c(files_to_delete, blast_names)
 
@@ -361,7 +361,7 @@ log_names <- sub("_data/", "_stats/", blast_names)
 log_names <- sub("/usearch_global", "", log_names)
 
 
-cmd <- paste("-usearch_global ", new_names, " -db ", OTU_sub_filename, " -strand plus -id ", (100-otu_radius_pct)/100, " -blast6out ", blast_names, " -maxhits 1", sep="")
+cmd <- paste("-usearch_global ", new_names, " -db ", OTU_sub_filename, " -strand plus -id ", (100-otu_radius_pct)/100, " -blast6out ", blast_names, " -maxhits 1 -maxaccepts ", maxaccepts, " -maxrejects ", maxrejects, sep="")
 
 files_to_delete <- c(files_to_delete, blast_names)
 
