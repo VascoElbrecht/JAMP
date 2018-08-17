@@ -58,7 +58,7 @@ write.csv(file= paste(folder, "/combinations.csv", sep=""), combos, row.names=F)
 # auto convert file if FileName is uesed (add R1 / R2)
 if(names(combos)[2]=="FileName"){
 
-combos2 <- data.frame("ID"=combos$ID, "File1"=paste(combos$FileName, "R1.fastq"), "File2"=paste(combos$FileName, "R2.fastq"))
+combos2 <- data.frame("ID"=combos$ID, "File1"=paste(combos$FileName, "_R1.fastq", sep=""), "File2"=paste(combos$FileName, "_R2.fastq", sep=""))
 
 combinations <- paste(folder, "/combinations_auto_edited.csv", sep="")
 write.csv(combos2, file= combinations, row.names=F)
