@@ -37,12 +37,15 @@ A <- system2(exe, cmd)
 #QCpath <- paste(folder, "/FastQC/_raw_reports/", sep="")
 QCfiles <- paste(folder, "/FastQC/_raw_reports/", sep="", gsub(".*/(.*).fastq.*", "\\1_fastqc.zip", files))
 
+QCfiles[grep(".txt", QCfiles)] <- paste(folder, "/FastQC/_raw_reports/", sep="", gsub(".*/(.*).txt.*", "\\1_fastqc.zip", QCfiles[grep(".txt", QCfiles)]))
+
 #QCfiles <- list.files(QCpath, full.names=T, pattern="fastqc.zip")
 
 QClist <- list()
 for(i in 1:length(QCfiles)){
 QClist[[i]] <- qc_read(QCfiles[i])
 }
+
 
 
 # plot for each sample
@@ -53,10 +56,13 @@ temp <- rep(NA, length(QClist))
 exp <- data.frame("ID"= temp, "SequDepth"= temp, "Length"= temp, "LenghtRel"= temp, "MaxAdapters"= temp, "MaxNRel"= temp, "Diversity"= temp, "GC"=temp, "Q30"=temp, "duplicated"=temp)
 
 # PLOTTING
-#
+# 
 for (i in 1:length(QClist)){
 
 temp_file <- paste(folder, "/FastQC/_plots_for_each_sample/", sep="" , sub(".*/(.*)\\.fastq.*", "\\1.pdf", files[i]))
+if(length(grep(".txt", temp_file))==1){temp_file <- paste(folder, "/FastQC/_plots_for_each_sample/", sep="" , sub(".*/(.*)\\.txt.*", "\\1.pdf", temp_file))
+}
+
 pdf(temp_file, height=8, width=10, useDingbats=F)
 
 qc_plot(QClist[[i]], "Basic statistics")

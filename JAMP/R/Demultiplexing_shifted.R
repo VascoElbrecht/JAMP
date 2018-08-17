@@ -105,7 +105,7 @@ cat(file="log.txt", A, append=T, sep="\n")
 }
 
 
-savesequ <- function(file_name1="N_debres_r1.txt", file_name2="N_debres_r2.txt", rm1=0, rm2=0){
+savesequ <- function(file_name1="N_debres_R1.fastq", file_name2="N_debres_R2.fastq", rm1=0, rm2=0){
 if(length(A)>0){
 
 rm1 <- rm1+1 # remove nucleotides
