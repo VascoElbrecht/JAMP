@@ -39,12 +39,20 @@ cat(file="log.txt", temp , append=T, sep="\n")
 excluded <- NULL
 excluded <- files[empty]
 
-# Dereplicate files using USEARCH
+# Dereplicate files using Vsearch
+if(mapp_singletons){
 dir.create(paste(folder, "/_data/1_derep_inc_singletons", sep=""))
+} else {
+dir.create(paste(folder, "/_data/1_derep_minsize_", minuniquesize, sep=""))
+}
 
 new_names <- sub(".*(_data/.*)", "\\1", files[!empty])
 new_names <- sub("_PE.*", "_PE_derep.fasta", new_names)
+if(mapp_singletons){
 new_names <- sub("_data", "_data/1_derep_inc_singletons", new_names)
+}else{
+new_names <- sub("_data", paste("_data/1_derep_minsize_", minuniquesize, sep=""), new_names)
+}
 new_names <- paste(folder, "/", new_names, sep="")
 
 
@@ -52,7 +60,10 @@ cmd <- paste("-derep_fulllength \"", files[!empty], "\" -output \"", new_names, 
 
 files_to_delete <- c(files_to_delete, new_names)
 
-temp <- paste(length(cmd), " files are dereplicated (incl. singletons! Using Vsearch):", sep="")
+if(mapp_singletons){
+temp <- paste(length(cmd), " files are dereplicated using Vsearch, but since mapp_singletons = T, sequences below minuniquesize =", minuniquesize, "are discarded in each sample;", sep="")
+} else {
+temp <- paste(length(cmd), " files are dereplicated (incl. singletons! Using Vsearch):", sep="")}
 cat(file="log.txt", temp , append=T, sep="\n")
 message(temp)
 
@@ -148,6 +159,13 @@ dir.create(paste(folder, "/_data/3_Compare_OTU_derep/", sep=""))
 dir.create(paste(folder, "/_stats/3_Compare_OTU_derep/", sep=""))
 
 blast_names <- sub("1_derep_inc_singletons", "3_Compare_OTU_derep", new_names)
+
+if(mapp_singletons){
+blast_names <- sub("1_derep_inc_singletons", "3_Compare_OTU_derep", new_names)
+}else{
+blast_names <- sub(paste("1_derep_minsize_", minuniquesize, sep=""), "3_Compare_OTU_derep", new_names)
+}
+
 blast_names <- sub("1_derep_unoise3", "3_Compare_OTU_derep", blast_names)
 blast_names <- sub("_PE_derep.*.fasta", ".txt", blast_names)
 log_names <- sub("_data", "_stats", blast_names)
@@ -358,7 +376,13 @@ dir.create(paste(folder, "/_data/5_subset/usearch_global", sep=""))
 dir.create(paste(folder, "/_stats/5_subset/", sep=""))
 
 blast_names <- sub("_PE_derep.*.fasta", ".txt", new_names)
+
+if(mapp_singletons){
 blast_names <- sub("1_derep_inc_singletons", "5_subset/usearch_global", blast_names)
+}else{
+blast_names <- sub(paste("1_derep_minsize_", minuniquesize, sep=""), "5_subset/usearch_global", blast_names)
+}
+
 blast_names <- sub("1_derep_unoise3", "5_subset/usearch_global", blast_names)
 log_names <- sub("_data/", "_stats/", blast_names)
 log_names <- sub("/usearch_global", "", log_names)
