@@ -109,11 +109,11 @@ message(temp)
 cat(file="log.txt", temp, append=T, sep="\n")
 
 # derep log
-cat(file=paste(folder, "/_stats/2_OTU_clustering_log.txt", sep=""), "\n", A, "", paste("cat", cmd), append=T, sep="\n")
+cat(file=paste(folder, "/_stats/2_OTU_clustering_log.txt", sep=""), "\n", paste("cat", cmd), "\n", A, "", append=T, sep="\n")
 
 # Actual clustering of dereplicated file 
 OTU_file <- sub(".fasta", "_OTUs.fasta", filename_all_unique)
-OTU_file <- sub("B_", "C_", filename_all_unique)
+OTU_file <- sub("B_", "C_", OTU_file)
 
 # add option to cluster OTUs at other tahn 3% (only wrks with usearch8 or lower)
 
@@ -121,6 +121,9 @@ OTU_file <- sub("B_", "C_", filename_all_unique)
 cmd <- paste(" -cluster_otus ", folder, "/_data/2_OTU_clustering/", filename_all_unique, " -otus ", folder, "/_data/2_OTU_clustering/", OTU_file, " -uparseout ", folder, "/_data/2_OTU_clustering/", sub(".fasta", "_OTUtab.txt", OTU_file), " -relabel OTU_ -strand ", strand, if(otu_radius_pct!=3){paste(" -otu_radius_pct ", otu_radius_pct, sep="")}, sep="")
 
 A <- system2(exe, cmd, stdout=T, stderr=T) # cluster OTUs!
+
+cat(file=paste(folder, "/_stats/2_OTU_clustering_log.txt", sep=""), "\n", paste("usearch", cmd), "\n", A, "", append=T, sep="\n")
+
 
 #files_to_delete <- c(files_to_delete, paste(folder, "/_data/2_OTU_clustering/", OTU_file, sep=""))
 files_to_delete <- c(files_to_delete, paste(folder, "/_data/2_OTU_clustering/", sub(".fasta", "_OTUtab.txt", OTU_file), sep=""))
