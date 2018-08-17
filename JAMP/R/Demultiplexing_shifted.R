@@ -18,7 +18,7 @@ barcodes <- read.csv(paste(system.file(package="JAMP"), "/BF_BR.csv", sep=""), s
 tagL <- nchar(barcodes[1,1])
 
 # save original imput file tags
-write.csv(file=paste(folder, "/tags.csv", sep=""), barcodes, quote=F)
+write.csv(file=paste(folder, "/tags.csv", sep=""), barcodes, quote=F, row.names=F)
 
 
 # auto convert abigious bases in barcodes!
@@ -45,7 +45,7 @@ message(temp)
 cat(file="log.txt", temp, append=T, sep="\n")
 
 tags <- paste(folder, "/tags_auto_edited.csv", sep="")
-write.csv(file=tags, barcodes, quote=F)
+write.csv(file=tags, barcodes, quote=F, row.names=F)
 
 }
 
@@ -53,7 +53,7 @@ write.csv(file=tags, barcodes, quote=F)
 combos <- read.csv(combinations, stringsAsFactors=F)
 
 
-write.csv(file= paste(folder, "/combinations.csv", sep=""), combos)
+write.csv(file= paste(folder, "/combinations.csv", sep=""), combos, row.names=F)
 
 # auto convert file if FileName is uesed (add R1 / R2)
 if(names(combos)[2]=="FileName"){
@@ -61,7 +61,7 @@ if(names(combos)[2]=="FileName"){
 combos2 <- data.frame("ID"=combos$ID, "File1"=paste(combos$FileName, "R1.fastq"), "File2"=paste(combos$FileName, "R2.fastq"))
 
 combinations <- paste(folder, "/combinations_auto_edited.csv", sep="")
-write.csv(combos2, file= combinations)
+write.csv(combos2, file= combinations, row.names=F)
 
 combos <- combos2
 
