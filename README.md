@@ -14,9 +14,10 @@ Please keep in mind that JAMP needs [Usearch](https://www.drive5.com/usearch/man
 ### To install JAMP locally
 ```# Recommended method
 # Installing dependencies needed fro JAMP
-install.packages(c("bold", "XML", "seqinr", "devtools", "fastqcr", "PrimerMiner"), dependencies=T)
+install.packages(c("bold", "XML", "seqinr", "devtools", "fastqcr"), dependencies=T)
 # Load devtools and install package directly from GitHub
 library("devtools")
+install_github("VascoElbrecht/PrimerMiner", subdir="PrimerMiner")
 install_github("VascoElbrecht/JAMP", subdir="JAMP")
 ```
 You can also download the [latest release of JAMP](https://github.com/VascoElbrecht/JAMP/releases), extract and intal within R using `install.packages("JAMP", repos = NULL, type="source")`
