@@ -23,3 +23,779 @@ comd
 cmd
 md5_cmd <- "md5"
 md5_cmd
+data <- read.csv("~/Desktop/Tutorial/H_U_cluster_otus/5_OTU_table_0.01_ZERO.csv", stringsAsFactors=F)
+temp <- data.matrix(data)
+head(data)
+temp <- data.matrix(data[-c(1,2, ncol(data))])
+head(data)
+temp <- data.matrix(data[-c(1,2, ncol(data)),])
+temp <- data.matrix(data[,-c(1,2, ncol(data))])
+head(data)
+head(temp)
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = cm.colors(256), scale="column", margins=c(5,10))
+temp
+nba_heatmap <- heatmap(log10(temp), Rowv=NA, Colv=NA, col = cm.colors(256), scale="column", margins=c(5,10))
+nba_heatmap <- heatmap(log(temp), Rowv=NA, Colv=NA, col = cm.colors(256), scale="column", margins=c(5,10))
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = cm.colors(256), scale="column", margins=c(5,10))
+cm.colors(256)
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = cm.colors(10), scale="column", margins=c(5,10))
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = cm.colors(3), scale="column", margins=c(5,10))
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = cm.colors(10000), scale="column", margins=c(5,10))
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = heat.colors(256), scale="column", margins=c(5,10))
+row.names(temp)
+row.names(data)
+row.names(data) <- data[2,]
+row.names(data) <- data[2]
+data[2]
+data <- read.csv("~/Desktop/Tutorial/H_U_cluster_otus/5_OTU_table_0.01_ZERO.csv", stringsAsFactors=F)#
+row.names(data) <- data[2]
+row.names(data) <- data[2,]
+row.names(data) <- data[,2]
+data <- read.csv("~/Desktop/Tutorial/H_U_cluster_otus/5_OTU_table_0.01_ZERO.csv", stringsAsFactors=F)#
+row.names(data) <- data[,2]#
+#
+temp <- data.matrix(data[,-c(1,2, ncol(data))])#
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = heat.colors(256), scale="column", margins=c(5,10))
+log(data[,-c(1,2, ncol(data))])
+log10(data[,-c(1,2, ncol(data))])
+temp <- log10(data[,-c(1,2, ncol(data))])
+is.inf(temp)
+temp[temp<0]
+temp <- log10(data[,-c(1,2, ncol(data))])#
+temp[temp<0] <-0
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = heat.colors(256), scale="column", margins=c(5,10))
+data <- read.csv("~/Desktop/Tutorial/H_U_cluster_otus/5_OTU_table_0.01_ZERO.csv", stringsAsFactors=F)#
+row.names(data) <- data[,2]#
+temp <- log10(data[,-c(1,2, ncol(data))])#
+temp[temp<0] <-0
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = heat.colors(256), scale="column", margins=c(5,10))
+temp
+temp <- data.matrix(temp)
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = heat.colors(256), scale="column", margins=c(5,10))
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = rev(heat.colors(256)), scale="column", margins=c(5,10))
+B <- "~/Desktop/Untitled 1.csv"
+data <- read.csv(B, stringsAsFactors=F)
+row.names(data) <- data[,1]
+temp <- log10(temp)
+temp[temp<0] <-0
+temp <- data
+temp <- log10(temp)
+temp <- data[,-1]
+temp <- log10(temp)
+temp[temp<0] <-0
+temp <- data.matrix(temp)
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = rev(heat.colors(256)), scale="column", margins=c(5,10))
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = rev(heat.colors(256)), scale="column", margins=c(5,20))
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = rev(heat.colors(256)), scale="column", margins=c(5,10))
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = rev(heat.colors(256)), scale="column", margins=c(5,100))
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = rev(heat.colors(256)), scale="column", margins=c(5,40))
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = rev(heat.colors(256)), scale="column", margins=c(5,20))
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = rev(heat.colors(256)), scale="column", margins=c(5,10))
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = rev(heat.colors(256)), scale="column", margins=c(5,100))
+data <- read.csv(A, stringsAsFactors=F)
+A <- "~/Desktop/Tutorial/H_U_cluster_otus/5_OTU_table_0.01_ZERO.csv"
+data <- read.csv(A, stringsAsFactors=F)
+temp <- data[,-c(1,2, ncol(data))]
+temp <- log10(temp)
+temp[temp<0] <-0
+temp <- data.matrix(temp)
+temp <- data.matrix(data[,-c(1,2, ncol(data))])
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = rev(heat.colors(256)), scale="column", margins=c(5,100))
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = rev(heat.colors(256)), scale="column", margins=c(5,10))
+A <- "~/Desktop/Tutorial/H_U_cluster_otus/5_OTU_table_0.01_ZERO.csv"
+temp <- data[,-c(1,2, ncol(data))]
+temp <- data[,-1]
+temp <- log10(temp)
+temp[temp<0] <-0
+temp <- data.matrix(data[,-c(1,2, ncol(data))])
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = rev(heat.colors(256)), scale="column", margins=c(5,10))
+nba_heatmap
+A <- "~/Desktop/Tutorial/H_U_cluster_otus/5_OTU_table_0.01_ZERO.csv"#
+data <- read.csv(A, stringsAsFactors=F)
+temp <- data[,-c(1,2, ncol(data))]
+temp
+temp <- log10(temp)
+temp
+temp[temp<0] <-0
+temp
+temp <- data.matrix(temp)
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = rev(heat.colors(256)), scale="column", margins=c(5,10))
+B <- "~/Desktop/Untitled 1.csv"#
+A <- "~/Desktop/Tutorial/H_U_cluster_otus/5_OTU_table_0.01_ZERO.csv"#
+data <- read.csv(A, stringsAsFactors=F)#
+row.names(data) <- data[,2]#
+temp <- data[,-c(1,2, ncol(data))]#
+temp <- data[,-1]#
+temp <- log10(temp)#
+temp[temp<0] <-0#
+temp <- data.matrix(temp)
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = rev(heat.colors(256)), scale="column", margins=c(5,10))
+B <- "~/Desktop/Untitled 1.csv"#
+A <- "~/Desktop/Tutorial/H_U_cluster_otus/5_OTU_table_0.01_ZERO.csv"#
+data <- read.csv(A, stringsAsFactors=F)#
+row.names(data) <- data[,2]#
+temp <- data[,-c(1,2, ncol(data))]#
+#temp <- data[,-1]#
+temp <- log10(temp)#
+temp[temp<0] <-0#
+temp <- data.matrix(temp)#
+#temp <- data.matrix(data[,-c(1,2, ncol(data))])#
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = rev(heat.colors(256)), scale="column", margins=c(5,10))
+?
+? heatmap
+# work in progres - not working jet#
+OTU_plots <- function(file=table, out=""){#
+B <- "~/Desktop/Untitled 1.csv"#
+A <- "~/Desktop/Tutorial/H_U_cluster_otus/5_OTU_table_0.01_ZERO.csv"#
+data <- read.csv(A, stringsAsFactors=F)#
+row.names(data) <- data[,2]#
+temp <- data[,-c(1,2, ncol(data))]#
+#temp <- data[,-1]#
+temp <- log10(temp)#
+temp[temp<0] <-0#
+temp <- data.matrix(temp)#
+#temp <- data.matrix(data[,-c(1,2, ncol(data))])#
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = rev(heat.colors(256)), scale="column", margins=c(5,10))#
+subsample <- function(sequences, N){#
+exp <- NULL#
+#
+#sampling of OTU table by sequences depth defined below#
+for (i in 1:N){#
+temp <- sample(data$BIN.URI, sequences, prob=data$Sequences, replace=T)#
+exp[i] <- length(sort(table(temp)))#
+}#
+return(exp)#
+}#
+#
+#number of subreads sampled cannot exceed the number of availble reads#
+steps <- 10^c(seq(0,7, 0.1))#
+steps[steps<sum(data$Sequences)]#
+#
+#table will contain number of sequences samples, mean bin count with st dev for all replicates#
+tab <- data.frame("seqNumber"=1, "meanBIN"=1, "SDbin"=1)#
+tab <- tab[-1,]#
+#k is variable for sequences called by the function above#
+for (k in steps[steps<sum(data$Sequences)]){#
+#N=number of desierd replicates#
+subset <- subsample(k, N=50)#
+tab <- rbind(tab, cbind(k, mean(subset), sd(subset)))#
+}#
+#
+write.csv(tab, file=paste(g,"_",sub("/Users/tbraukma/Desktop/mBRAVE_test/","",files[g]),sep=""))#
+#
+}
+A <- "~/Desktop/Tutorial/H_U_cluster_otus/5_OTU_table_0.01_ZERO.csv"
+data <- read.csv(A, stringsAsFactors=F)
+row.names(data) <- data[,2]#
+temp <- data[,-c(1,2, ncol(data))]#
+#temp <- data[,-1]#
+temp <- log10(temp)#
+temp[temp<0] <-0#
+temp <- data.matrix(temp)#
+#temp <- data.matrix(data[,-c(1,2, ncol(data))])#
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = rev(heat.colors(256)), scale="column", margins=c(5,10))#
+subsample <- function(sequences, N){#
+exp <- NULL#
+#
+#sampling of OTU table by sequences depth defined below#
+for (i in 1:N){#
+temp <- sample(data$BIN.URI, sequences, prob=data$Sequences, replace=T)#
+exp[i] <- length(sort(table(temp)))#
+}#
+return(exp)#
+}#
+#
+#number of subreads sampled cannot exceed the number of availble reads#
+steps <- 10^c(seq(0,7, 0.1))#
+steps[steps<sum(data$Sequences)]#
+#
+#table will contain number of sequences samples, mean bin count with st dev for all replicates#
+tab <- data.frame("seqNumber"=1, "meanBIN"=1, "SDbin"=1)#
+tab <- tab[-1,]#
+#k is variable for sequences called by the function above#
+for (k in steps[steps<sum(data$Sequences)]){#
+#N=number of desierd replicates#
+subset <- subsample(k, N=50)#
+tab <- rbind(tab, cbind(k, mean(subset), sd(subset)))#
+}
+data <- read.csv(A, Names, stringsAsFactors=F)
+Names=NA
+data <- read.csv(A, Names=NA, stringsAsFactors=F)
+data <- read.csv(A, stringsAsFactors=F)
+head(data)
+data[1]
+data[,1]
+data <- read.csv(A, stringsAsFactors=F)
+temp <- data[,-c(1,2, ncol(data))]
+temp
+data[,1]
+data <- read.csv(A, stringsAsFactors=F)
+data[,1]
+data[1,]
+if(is.na(Names)){#
+row.names(data) <- data[,2]#
+} else {row.names(data) <- Names}#
+#
+temp <- data[,-c(1,2, ncol(data))]#
+# make relatuve abundance
+colSums(temp)
+sums <- colSums(temp)
+temp[1]
+temp[1]/sums[1]
+temp[k] <- temp[k]/sums[k]*100
+temp[k]/sums[k]*100
+temp[k]
+temp
+temp[k]
+A <- "~/Desktop/Tutorial/H_U_cluster_otus/5_OTU_table_0.01_ZERO.csv"#
+data <- read.csv(A, stringsAsFactors=F)#
+if(is.na(Names)){#
+row.names(data) <- data[,2]#
+} else {row.names(data) <- Names}#
+#
+temp <- data[,-c(1,2, ncol(data))]
+# make relatuve abundance#
+sums <- colSums(temp)
+sums
+temp[k]/sums[k]*100
+k <- 1
+temp[k]/sums[k]*100
+for (k in 1:ncol(temp)){#
+temp[k] <- temp[k]/sums[k]*100#
+}
+temp
+temp[nrow(temp):1]
+temp[nrow(temp):1,]
+temp <- temp[nrow(temp):1,]
+temp <- log10(temp)
+temp
+is.finite(temp)
+temp
+is.finite(temp)]
+is.finite(temp)
+temp[is.finite(temp[1])] <-0
+is.finite(temp[1]
+)
+is.finite(temp[1,])
+?
+? log10
+is.finite(c(1,2,2,2))
+temp[1,]
+temp[is.finite(temp[,1])]
+is.finite(temp[,1])
+temp[,1][is.finite(temp[,1])]
+data <- read.csv(A, stringsAsFactors=F)#
+if(is.na(Names)){#
+row.names(data) <- data[,2]#
+} else {row.names(data) <- Names}#
+#
+temp <- data[,-c(1,2, ncol(data))]#
+# make relatuve abundance#
+sums <- colSums(temp)#
+#
+for (k in 1:ncol(temp)){#
+temp[k] <- temp[k]/sums[k]*100#
+temp[k] <- log10(temp[k]) 			# log10#
+temp[,k][!is.finite(temp[,k])] <-0	# remove inf#
+}#
+#
+#invert#
+temp <- temp[nrow(temp):1,]#
+temp <- data.matrix(temp)
+temp
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = rev(heat.colors(256)), scale="column", margins=c(5,10))
+log10(0.001)
+log10(0.0001)
+data <- read.csv(A, stringsAsFactors=F)#
+if(is.na(Names)){#
+row.names(data) <- data[,2]#
+} else {row.names(data) <- Names}#
+#
+temp <- data[,-c(1,2, ncol(data))]#
+# make relatuve abundance#
+sums <- colSums(temp)#
+#
+for (k in 1:ncol(temp)){#
+temp[k] <- temp[k]/sums[k]*100#
+temp[k] <- log10(temp[k]) 			# log10#
+temp[,k][temp[,k]<-4] <- -4	# remove inf#
+}#
+#
+#invert#
+temp <- temp[nrow(temp):1,]#
+temp <- data.matrix(temp)#
+#
+log10(0.0001)#
+#temp <- data.matrix(data[,-c(1,2, ncol(data))])#
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = rev(heat.colors(256)), scale="column", margins=c(5,10))
+B <- "~/Desktop/Untitled 1.csv"#
+A <- "~/Desktop/Tutorial/H_U_cluster_otus/5_OTU_table_0.01_ZERO.csv"#
+data <- read.csv(A, stringsAsFactors=F)#
+if(is.na(Names)){#
+row.names(data) <- data[,2]#
+} else {row.names(data) <- Names}#
+#
+temp <- data[,-c(1,2, ncol(data))]#
+# make relatuve abundance#
+sums <- colSums(temp)#
+#
+for (k in 1:ncol(temp)){#
+temp[k] <- temp[k]/sums[k]*100#
+temp[k] <- log10(temp[k]) 			# log10#
+temp[,k][!is.finite(temp[,k])] <- -4	# remove inf#
+temp[,k][temp[,k]<-4] <- -4#
+}#
+#
+#invert#
+temp <- temp[nrow(temp):1,]#
+temp <- data.matrix(temp)#
+#
+log10(0.01)#
+#temp <- data.matrix(data[,-c(1,2, ncol(data))])#
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = rev(heat.colors(256)), scale="column", margins=c(5,10))
+temp
+k <- 4
+B <- "~/Desktop/Untitled 1.csv"#
+A <- "~/Desktop/Tutorial/H_U_cluster_otus/5_OTU_table_0.01_ZERO.csv"#
+data <- read.csv(A, stringsAsFactors=F)#
+if(is.na(Names)){#
+row.names(data) <- data[,2]#
+} else {row.names(data) <- Names}#
+#
+temp <- data[,-c(1,2, ncol(data))]#
+# make relatuve abundance#
+sums <- colSums(temp)
+temp[k]/sums[k]*100
+temp[k] <- log10(temp[k]) 			# log10
+temp[k]
+temp[,k][!is.finite(temp[,k])]
+# make relatuve abundance#
+sums <- colSums(temp)#
+#
+for (k in 1:ncol(temp)){#
+temp[k] <- temp[k]/sums[k]*100#
+temp[k] <- log10(temp[k]) 			# log10#
+temp[,k][!is.finite(temp[,k])] <- NA	# remove inf#
+#temp[,k][temp[,k]<-4] <- -4#
+}
+B <- "~/Desktop/Untitled 1.csv"#
+A <- "~/Desktop/Tutorial/H_U_cluster_otus/5_OTU_table_0.01_ZERO.csv"#
+data <- read.csv(A, stringsAsFactors=F)#
+if(is.na(Names)){#
+row.names(data) <- data[,2]#
+} else {row.names(data) <- Names}#
+#
+temp <- data[,-c(1,2, ncol(data))]#
+# make relatuve abundance#
+sums <- colSums(temp)#
+#
+for (k in 1:ncol(temp)){#
+temp[k] <- temp[k]/sums[k]*100#
+temp[k] <- log10(temp[k]) 			# log10#
+temp[,k][!is.finite(temp[,k])] <- NA	# remove inf#
+#temp[,k][temp[,k]<-4] <- -4#
+}#
+#
+#invert#
+temp <- temp[nrow(temp):1,]#
+temp <- data.matrix(temp)#
+#
+log10(0.01)#
+#temp <- data.matrix(data[,-c(1,2, ncol(data))])#
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = rev(heat.colors(256)), scale="column", margins=c(5,10))
+nba_heatmap <- heatmap.2(temp, Rowv=NA, Colv=NA, col = rev(heat.colors(256)), scale="column", margins=c(5,10))
+library("gplots")
+install.packages("gplots")
+library("gplots")
+heatmap.2(temp)
+heatmap.2(temp, col=rev(heat.colors(256)))
+temp
+data <- read.csv(A, stringsAsFactors=F)#
+if(is.na(Names)){#
+row.names(data) <- data[,2]#
+} else {row.names(data) <- Names}#
+#
+temp <- data[,-c(1,2, ncol(data))]#
+# make relatuve abundance#
+sums <- colSums(temp)#
+#
+for (k in 1:ncol(temp)){#
+temp[k] <- temp[k]/sums[k]*100#
+temp[k] <- log10(temp[k]) 			# log10#
+temp[,k][!is.finite(temp[,k])] <- NA	# remove inf#
+temp[,k][temp[,k]<-4] <- -4#
+}#
+#
+#invert#
+temp <- temp[nrow(temp):1,]#
+temp <- data.matrix(temp)#
+#
+log10(0.01)#
+#temp <- data.matrix(data[,-c(1,2, ncol(data))])#
+nba_heatmap <- heatmap.2(temp, Rowv=NA, Colv=NA, col = rev(heat.colors(256)), scale="column", margins=c(5,10))
+? heatmap.2
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = rev(heat.colors(256)), scale="column", margins=c(5,10))
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = rev(heat.colors(256)[-c(200: 256)]), scale="column", margins=c(5,10))
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = rev(heat.colors(256)[-c(100: 256)]), scale="column", margins=c(5,10))
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = rev(heat.colors(256)[-c(240: 256)]), scale="column", margins=c(5,10))
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = rev(heat.colors(1000)), scale="column", margins=c(5,10))
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = rev(heat.colors(10000)), scale="column", margins=c(5,10))
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = rev(heat.colors(1000)), scale="column", margins=c(5,10))
+colorRampPalette("white", "blue", 100)
+colorRampPalette("white", "blue")
+colorRampPalette(c("white", "blue"), 100)
+colorRampPalette(c("white", "blue"), 10)
+colorRampPalette(c("white", "blue"))
+mycol <- colorRampPalette(c("white", "blue"))
+mycol(10)
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = rev(mycol(10)), scale="column", margins=c(5,10))
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = rev(mycol(100)), scale="column", margins=c(5,10))
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = mycol(100), scale="column", margins=c(5,10))
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = mycol(100), scale="column", margins=c(5,10), xlim=c(100, 0.01))
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = mycol(100), scale="column", margins=c(5,10), lim=c(100, 0.01))
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = mycol(100), scale="column", margins=c(5,10), ylim=c(100, 0.01))
+mycol <- colorRampPalette(c("white", "blue"))#
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = mycol(100), scale="column", margins=c(5,10))
+heatmap.2(temp, col=mycol(100))
+mycol
+temp
+B <- "~/Desktop/Untitled 1.csv"#
+A <- "~/Desktop/Tutorial/H_U_cluster_otus/5_OTU_table_0.01_ZERO.csv"#
+data <- read.csv(A, stringsAsFactors=F)#
+if(is.na(Names)){#
+row.names(data) <- data[,2]#
+} else {row.names(data) <- Names}#
+#
+temp <- data[,-c(1,2, ncol(data))]#
+# make relatuve abundance#
+sums <- colSums(temp)#
+#
+for (k in 1:ncol(temp)){#
+temp[k] <- temp[k]/sums[k]*100#
+temp[k] <- log10(temp[k]) 			# log10#
+temp[,k][!is.finite(temp[,k])] <- NA	# remove inf#
+temp[,k][temp[,k]<4] <- -4#
+}#
+#
+#invert#
+temp <- temp[nrow(temp):1,]#
+temp <- data.matrix(temp)#
+#
+log10(0.01)#
+#temp <- data.matrix(data[,-c(1,2, ncol(data))])#
+#
+mycol <- colorRampPalette(c("white", "blue"))#
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = mycol(100), scale="column", margins=c(5,10))
+temp
+if(is.na(Names)){#
+row.names(data) <- data[,2]#
+} else {row.names(data) <- Names}#
+#
+temp <- data[,-c(1,2, ncol(data))]#
+# make relatuve abundance#
+sums <- colSums(temp)#
+#
+for (k in 1:ncol(temp)){#
+temp[k] <- temp[k]/sums[k]*100#
+temp[k] <- log10(temp[k]) 			# log10#
+temp[,k][!is.finite(temp[,k])] <- NA	# remove inf#
+temp[,k][temp[,k]< -4] <- -4#
+}#
+#
+#invert#
+temp <- temp[nrow(temp):1,]#
+temp <- data.matrix(temp)#
+#
+log10(0.01)#
+#temp <- data.matrix(data[,-c(1,2, ncol(data))])#
+#
+mycol <- colorRampPalette(c("white", "blue"))#
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = mycol(100), scale="column", margins=c(5,10))
+mycol <- colorRampPalette(c("white", "blue3"))#
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = mycol(100), scale="column", margins=c(5,10))
+mycol <- colorRampPalette(c("white", "blue5"))#
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = mycol(100), scale="column", margins=c(5,10))
+mycol <- colorRampPalette(c("white", "blue3"))#
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = mycol(100), scale="column", margins=c(5,10))
+points(2,2)
+points(0,0)
+points(0,1)
+points(0,0.5)
+points(0.5,0.5)
+points(20,0.5)
+points(50,0.5)
+points(30,0.5)
+points(40,0.5)
+points(50,0.5)
+nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = mycol(100), scale="column", margins=c(5,10))
+library("JAMP") # v0.44
+# U_cluster_otus v0.1#
+#
+Map2ref <- function(files="latest", refDB=NULL, id=0.97, strand="plus", onlykeephits=F, filter=0.01){#
+folder <- Core(module="Map2ref")#
+cat(file="log.txt", c("Version v0.1", "\n"), append=T, sep="\n")#
+message(" ")#
+#
+if (files[1]=="latest"){#
+source(paste(folder, "/robots.txt", sep=""))#
+files <- list.files(paste(last_data, "/_data", sep=""), full.names=T)#
+}#
+# Dereplicate files using USEARCH#
+dir.create(paste(folder, "/_data/1_derep", sep=""))#
+#
+new_names <- sub(".*(_data/.*)", "\\1", files)#
+new_names <- sub("_PE.*", "_PE_derep.fasta", new_names)#
+new_names <- sub("_data", "_data/1_derep", new_names)#
+new_names <- paste(folder, "/", new_names, sep="")#
+#
+cmd <- paste("-fastx_uniques \"", files, "\" -fastaout \"", new_names, "\" -sizeout",  sep="")#
+#
+temp <- paste(length(files), " files are dereplicated (incl. singletons):", sep="")#
+cat(file="log.txt", temp , append=T, sep="\n")#
+message(temp)#
+temp <- new_names#
+for (i in 1:length(cmd)){#
+A <- system2("usearch", cmd[i], stdout=T, stderr=T)#
+meep <- sub(".*_data/(.*)", "\\1", temp[i])#
+cat(file="log.txt", meep, append=T, sep="\n")#
+cat(file=paste(folder, "/_stats/1_derep_logs.txt", sep=""), meep, A, "\n", append=T, sep="\n")#
+message(meep)#
+}#
+#
+# add saving unused sequences as extra files!!!#
+# Mapp to refDB#
+dir.create(paste(folder, "/_data/2_mapping", sep=""))#
+dir.create(paste(folder, "/_stats/map_logs", sep=""))#
+dir.create(paste(folder, "/_data/3_nohit_fasta", sep=""))#
+blast_names <- sub("1_derep", "2_mapping", new_names)#
+blast_names <- sub("_derep.fasta", ".txt", blast_names)#
+#
+nohit <- sub("1_derep", "3_nohit_fasta", new_names)#
+log_names <- sub("_data/2_mapping/", "_stats/map_logs/", blast_names)#
+cmd <- paste("-usearch_global ", new_names, " -db \"", refDB, "\" -strand ", strand, " -id 0.97 -blast6out \"", blast_names, "\" -maxhits 1", " -notmatched \"", nohit, "\"", sep="")#
+temp <- paste("Comparing ", length(cmd)," files with dereplicated reads (incl. singletons) against refDB: \"", sub(".*/(.*)", "\\1", refDB), "\" using \"usearch_global\" and Usearch.\n", sep="")#
+message(temp)#
+cat(file="log.txt", temp, append=T, sep="\n")#
+#
+exp <- NULL#
+temp <- new_names#
+for (i in 1:length(cmd)){#
+A <- system2("usearch", cmd[i], stdout=T, stderr=T)#
+cat(file= log_names[i], paste("usearch ", cmd[i], sep=""), "\n", A, append=F, sep="\n")#
+#
+meep <- sub("_data/.*/(.*)", "\\1", temp[i])#
+pass <- sub(".*, (.*)% matched\r", "\\1", A[grep("matched\r", A)])#
+exp <- rbind(exp, c(meep, pass))#
+glumanda <- paste(meep," - ", pass, "% reads matched", sep="")#
+cat(file="log.txt", glumanda, append=T, sep="\n")#
+message(glumanda)#
+}#
+# condensing hit tables!#
+files <- blast_names#
+#
+tab <- c("NULL")#
+tab <- as.data.frame(tab, stringsAsFactors=F)#
+names(tab) <- "ID"#
+#
+for (i in 1:length(files)){#
+data <- read.csv(files[i], sep="\t", header=F, stringsAsFactors=F)#
+#
+names(data) <- c("query", "ref", "ident", "length", "mism", "gap", "qstart", "qend", "target_s", "target_e", "e.value", "bitscore")#
+#
+data <- data[,c(-11,-12)]#
+#
+data <- cbind(data, "abund"=as.numeric(sub(".*size=(.*);", "\\1", data$query)), stringsAsFactors=F)#
+#
+#head(data)#
+#
+temp <- aggregate(data$abund, by=list(data$ref), FUN="sum")#
+tab <- merge(tab , temp, by.x="ID", by.y="Group.1", all=T, sort=T)#
+names(tab)[i+1] <- sub(".*2_mapping/(.*).txt", "\\1", files[i])#
+}#
+#
+tab <- tab[-1,] # remove NULL entry in the beginning#
+tab[is.na(tab)] <- 0#
+sequ <- read.fasta(refDB, forceDNAtolower=F, as.string=T)#
+#
+# KEEP ONLY HITS OR KEEP ALL IN DB#
+if(onlykeephits){#
+temp2 <- match(attr(sequ, "name"), tab$ID)#
+tab2 <- cbind(tab, "sequ"=as.vector(unlist(sequ[temp2])))#
+#
+} else {#
+temp2 <- data.frame("ID"=attr(sequ, "name"))#
+#
+tab2 <- merge(tab, temp2, "ID", all=T)#
+tab2[is.na(tab2)] <- 0#
+#
+#add sequences#
+temp2 <- match(attr(sequ, "name"), tab2$ID)#
+tab2 <- cbind(tab2, "sequ"=as.vector(unlist(sequ[temp2])))#
+#
+}#
+# filter to relative abundance#
+rel_abund <- tab2#
+#
+sampleabundance <- colSums(rel_abund[,2:(ncol(rel_abund)-1)])#
+for (i in 2:(ncol(rel_abund)-1)){#
+rel_abund[i] <- rel_abund[i]/sampleabundance[i-1]*100#
+rel_abund[i][rel_abund[i]<filter] <- 0#
+}#
+# write rel abundance tab#
+rel_abund <- rel_abund[order(rowSums(rel_abund[-c(1, ncol(rel_abund))]), decreasing=T),] # sort table by row sums#
+write.csv(file=paste(folder, "/3_rel_abundnace_ZEROs.csv", sep=""), rel_abund, row.names=F)#
+# write RAW table#
+tab2 <- tab2[order(rowSums(tab2[-c(1, ncol(tab2))]), decreasing=T),] # sort table by row sums#
+#
+write.csv(file=paste(folder, "/3_Raw_hit_table.csv", sep=""), tab2, row.names=F)#
+# make plots!#
+#
+pdf(paste(folder, "/rel_zero2.pdf", sep=""), height=(nrow(rel_abund)+20)/10, width=(ncol(rel_abund)-1)/2)#
+#
+temp_heat <- rel_abund[,2:(ncol(rel_abund)-1)]#
+row.names(temp_heat) <- rel_abund[,1]#
+#
+OTU_heatmap(temp_heat, abundance=F, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))#
+dev.off()#
+temp <- "\nModule completed!"#
+message(temp)#
+cat(file="log.txt", paste(Sys.time(), "*** Module completed!", "", sep="\n"), append=T, sep="\n")#
+}
+install_github("VascoElbrecht/JAMP", subdir="JAMP")
+library("devtools")#
+install_github("VascoElbrecht/JAMP", subdir="JAMP")
+library("JAMP") # v0.44
+# U_cluster_otus v0.1#
+#
+Map2ref <- function(files="latest", refDB=NULL, id=0.97, strand="plus", onlykeephits=F, filter=0.01){#
+folder <- Core(module="Map2ref")#
+cat(file="log.txt", c("Version v0.1", "\n"), append=T, sep="\n")#
+message(" ")#
+#
+if (files[1]=="latest"){#
+source(paste(folder, "/robots.txt", sep=""))#
+files <- list.files(paste(last_data, "/_data", sep=""), full.names=T)#
+}#
+# Dereplicate files using USEARCH#
+dir.create(paste(folder, "/_data/1_derep", sep=""))#
+#
+new_names <- sub(".*(_data/.*)", "\\1", files)#
+new_names <- sub("_PE.*", "_PE_derep.fasta", new_names)#
+new_names <- sub("_data", "_data/1_derep", new_names)#
+new_names <- paste(folder, "/", new_names, sep="")#
+#
+cmd <- paste("-fastx_uniques \"", files, "\" -fastaout \"", new_names, "\" -sizeout",  sep="")#
+#
+temp <- paste(length(files), " files are dereplicated (incl. singletons):", sep="")#
+cat(file="log.txt", temp , append=T, sep="\n")#
+message(temp)#
+temp <- new_names#
+for (i in 1:length(cmd)){#
+A <- system2("usearch", cmd[i], stdout=T, stderr=T)#
+meep <- sub(".*_data/(.*)", "\\1", temp[i])#
+cat(file="log.txt", meep, append=T, sep="\n")#
+cat(file=paste(folder, "/_stats/1_derep_logs.txt", sep=""), meep, A, "\n", append=T, sep="\n")#
+message(meep)#
+}#
+#
+# add saving unused sequences as extra files!!!#
+# Mapp to refDB#
+dir.create(paste(folder, "/_data/2_mapping", sep=""))#
+dir.create(paste(folder, "/_stats/map_logs", sep=""))#
+dir.create(paste(folder, "/_data/3_nohit_fasta", sep=""))#
+blast_names <- sub("1_derep", "2_mapping", new_names)#
+blast_names <- sub("_derep.fasta", ".txt", blast_names)#
+#
+nohit <- sub("1_derep", "3_nohit_fasta", new_names)#
+log_names <- sub("_data/2_mapping/", "_stats/map_logs/", blast_names)#
+cmd <- paste("-usearch_global ", new_names, " -db \"", refDB, "\" -strand ", strand, " -id 0.97 -blast6out \"", blast_names, "\" -maxhits 1", " -notmatched \"", nohit, "\"", sep="")#
+temp <- paste("Comparing ", length(cmd)," files with dereplicated reads (incl. singletons) against refDB: \"", sub(".*/(.*)", "\\1", refDB), "\" using \"usearch_global\" and Usearch.\n", sep="")#
+message(temp)#
+cat(file="log.txt", temp, append=T, sep="\n")#
+#
+exp <- NULL#
+temp <- new_names#
+for (i in 1:length(cmd)){#
+A <- system2("usearch", cmd[i], stdout=T, stderr=T)#
+cat(file= log_names[i], paste("usearch ", cmd[i], sep=""), "\n", A, append=F, sep="\n")#
+#
+meep <- sub("_data/.*/(.*)", "\\1", temp[i])#
+pass <- sub(".*, (.*)% matched\r", "\\1", A[grep("matched\r", A)])#
+exp <- rbind(exp, c(meep, pass))#
+glumanda <- paste(meep," - ", pass, "% reads matched", sep="")#
+cat(file="log.txt", glumanda, append=T, sep="\n")#
+message(glumanda)#
+}#
+# condensing hit tables!#
+files <- blast_names#
+#
+tab <- c("NULL")#
+tab <- as.data.frame(tab, stringsAsFactors=F)#
+names(tab) <- "ID"#
+#
+for (i in 1:length(files)){#
+data <- read.csv(files[i], sep="\t", header=F, stringsAsFactors=F)#
+#
+names(data) <- c("query", "ref", "ident", "length", "mism", "gap", "qstart", "qend", "target_s", "target_e", "e.value", "bitscore")#
+#
+data <- data[,c(-11,-12)]#
+#
+data <- cbind(data, "abund"=as.numeric(sub(".*size=(.*);", "\\1", data$query)), stringsAsFactors=F)#
+#
+#head(data)#
+#
+temp <- aggregate(data$abund, by=list(data$ref), FUN="sum")#
+tab <- merge(tab , temp, by.x="ID", by.y="Group.1", all=T, sort=T)#
+names(tab)[i+1] <- sub(".*2_mapping/(.*).txt", "\\1", files[i])#
+}#
+#
+tab <- tab[-1,] # remove NULL entry in the beginning#
+tab[is.na(tab)] <- 0#
+sequ <- read.fasta(refDB, forceDNAtolower=F, as.string=T)#
+#
+# KEEP ONLY HITS OR KEEP ALL IN DB#
+if(onlykeephits){#
+temp2 <- match(attr(sequ, "name"), tab$ID)#
+tab2 <- cbind(tab, "sequ"=as.vector(unlist(sequ[temp2])))#
+#
+} else {#
+temp2 <- data.frame("ID"=attr(sequ, "name"))#
+#
+tab2 <- merge(tab, temp2, "ID", all=T)#
+tab2[is.na(tab2)] <- 0#
+#
+#add sequences#
+temp2 <- match(attr(sequ, "name"), tab2$ID)#
+tab2 <- cbind(tab2, "sequ"=as.vector(unlist(sequ[temp2])))#
+#
+}#
+# filter to relative abundance#
+rel_abund <- tab2#
+#
+sampleabundance <- colSums(rel_abund[,2:(ncol(rel_abund)-1)])#
+for (i in 2:(ncol(rel_abund)-1)){#
+rel_abund[i] <- rel_abund[i]/sampleabundance[i-1]*100#
+rel_abund[i][rel_abund[i]<filter] <- 0#
+}#
+# write rel abundance tab#
+rel_abund <- rel_abund[order(rowSums(rel_abund[-c(1, ncol(rel_abund))]), decreasing=T),] # sort table by row sums#
+write.csv(file=paste(folder, "/3_rel_abundnace_ZEROs.csv", sep=""), rel_abund, row.names=F)#
+# write RAW table#
+tab2 <- tab2[order(rowSums(tab2[-c(1, ncol(tab2))]), decreasing=T),] # sort table by row sums#
+#
+write.csv(file=paste(folder, "/3_Raw_hit_table.csv", sep=""), tab2, row.names=F)#
+# make plots!#
+#
+pdf(paste(folder, "/rel_zero2.pdf", sep=""), height=(nrow(rel_abund)+20)/10, width=(ncol(rel_abund)-1)/2)#
+#
+temp_heat <- rel_abund[,2:(ncol(rel_abund)-1)]#
+row.names(temp_heat) <- rel_abund[,1]#
+#
+OTU_heatmap(temp_heat, abundance=F, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))#
+dev.off()#
+temp <- "\nModule completed!"#
+message(temp)#
+cat(file="log.txt", paste(Sys.time(), "*** Module completed!", "", sep="\n"), append=T, sep="\n")#
+}
+Remove_last_folder()
+gsub("I", "N", c("AAIAAA", "NAAINII"))

@@ -1,6 +1,6 @@
 # U_cluster_otus v0.1
 
-U_cluster_otus <- function(files="latest", minuniquesize=2, strand="plus", filter=0.01, filterN=1, exe="usearch", exeV="vsearch", otu_radius_pct=3, mapp_singletons=T, maxaccepts=1, maxrejects=32,  delete_data=T){
+U_cluster_otus <- function(files="latest", minuniquesize=2, strand="plus", filter=0.01, filterN=1, exe="usearch", exeV="vsearch", otu_radius_pct=3, mapp_singletons=T, maxaccepts=1, maxrejects=32,  delete_data=T, heatmap=T){
 #, unoise_min=NA - unoise denoising removed, no longer supported!
 
 folder <- Core(module="U_cluster_otus", delete_data=delete_data)
@@ -574,7 +574,7 @@ KEEP <- read.csv(paste(folder, "/5_OTU_table_", filter,".csv", sep=""), stringsA
 
 higlight <- rev(!RAW$ID %in% KEEP$ID)
 
-
+if(heatmap){
 pdf(paste(folder, "/_stats/OTU_plot_3_RAW.pdf", sep=""), height=(nrow(RAW)+20)/10, width=(ncol(RAW)-1)/2)
 
 OTU_heatmap(paste(folder, "/3_Raw_OTU_table.csv", sep=""), abundance=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
@@ -590,14 +590,16 @@ text(pos+0.1, i, rev(RAW$ID)[i], adj=0, cex=0.5)
 
 }
 dev.off()
+}
 
+if(heatmap){
 OTU_heatmap(paste(folder, "/5_OTU_table_", filter,".csv", sep=""), out=paste(folder, "/_stats/OTU_plot_5_", filter, ".pdf", sep=""), abundance=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
 OTU_heatmap(paste(folder, "/5_OTU_table_", filter,"_ZERO.csv", sep=""), out=paste(folder, "/_stats/OTU_plot_5_", filter, "_ZERO.pdf", sep=""), abundance=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
 OTU_heatmap(file=paste(folder, "/5_OTU_table_", filter,"_ZERO_rel.csv", sep=""), out=paste(folder, "/_stats/OTU_plot_5_", filter, "_ZERO_rel.pdf", sep=""), abundance=T, rel=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
 } else { # only plot unfiltered data if zero filtering is applied!
 OTU_heatmap(paste(folder, "/3_Raw_OTU_table.csv", sep=""), out=paste(folder, "/_stats/3_Raw_OTU_table.pdf", sep=""), abundance=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
 }
-
+} else {message("Heatmap generation skipped!")}
 
 cat(file=paste(folder, "/robots.txt", sep=""), "\n# DELETE_START", files_to_delete, "# DELETE_END", append=T, sep="\n")
 
