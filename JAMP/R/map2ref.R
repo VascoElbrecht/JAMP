@@ -3,6 +3,11 @@
 Map2ref <- function(files="latest", refDB=NULL, id=0.97, strand="plus", onlykeephits=F, filter=0.01, maxaccepts=1, maxrejects=32, exe="usearch", delete_data=T){
 
 
+
+A <- system2(exe, stdout=T)
+version <- as.numeric(sub("usearch v(.+)\\.+.*\\..*_.*", "\\1", A[1]))
+
+
 folder <- Core(module="Map2ref", delete_data=delete_data)
 cat(file="log.txt", c("Version v0.1", "\n"), append=T, sep="\n")
 message(" ")
@@ -26,7 +31,7 @@ new_names <- sub("_PE.*", "_PE_derep.fasta", new_names)
 new_names <- sub("_data", "_data/1_derep", new_names)
 new_names <- paste(folder, "/", new_names, sep="")
 
-cmd <- paste("-fastx_uniques \"", files, "\" -fastaout \"", new_names, "\" -sizeout",  sep="")
+cmd <- paste(if(version<9){"-derep_fulllength"}else{"-fastx_uniques"}, " \"", files, "\" -fastaout \"", new_names, "\" -sizeout",  sep="")
 
 files_to_delete <- c(files_to_delete, new_names)
 
