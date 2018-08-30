@@ -68,7 +68,7 @@ nohit <- sub("1_derep", "3_nohit_fasta", new_names)
 log_names <- sub("_data/2_mapping/", "_stats/map_logs/", blast_names)
 
 
-cmd <- paste("-usearch_global ", new_names, " -db \"", refDB, "\" -strand ", strand, " -id 0.97 -blast6out \"", blast_names, "\" -maxhits 1", " -notmatched \"", nohit, "\" -maxaccepts ", maxaccepts, " -maxrejects ", maxrejects, sep="")
+cmd <- paste("-usearch_global ", new_names, " -db \"", refDB, "\" -strand ", strand, " -id ", id, " -blast6out \"", blast_names, "\" -maxhits 1", " -notmatched \"", nohit, "\" -maxaccepts ", maxaccepts, " -maxrejects ", maxrejects, sep="")
 
 files_to_delete <- c(files_to_delete, blast_names)
 
