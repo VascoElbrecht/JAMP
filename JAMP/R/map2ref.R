@@ -1,6 +1,6 @@
 # U_cluster_otus v0.1
 
-Map2ref <- function(files="latest", refDB=NULL, id=0.97, strand="plus", onlykeephits=F, filter=0.01, maxaccepts=1, maxrejects=32, exe="usearch", delete_data=T){
+Map2ref <- function(files="latest", refDB=NULL, id=0.97, strand="plus", onlykeephits=F, filter=0.01, maxaccepts=1, maxrejects=32, exe="usearch", heatmap=T, delete_data=T){
 
 
 
@@ -168,7 +168,7 @@ write.csv(file=paste(folder, "/3_Raw_hit_table.csv", sep=""), tab2, row.names=F)
 
 
 # make plots!
-
+if(heatmap){
 pdf(paste(folder, "/rel_zero2.pdf", sep=""), height=(nrow(rel_abund)+20)/10, width=(ncol(rel_abund)-1)/2)
 
 temp_heat <- rel_abund[,2:(ncol(rel_abund)-1)]
@@ -176,7 +176,7 @@ row.names(temp_heat) <- rel_abund[,1]
 
 OTU_heatmap(temp_heat, abundance=F, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
 dev.off()
-
+}
 
 
 
