@@ -21,21 +21,33 @@ files <- list.files(paste(last_data, "/_data", sep=""), full.names=T)
 
 
 
+# check for empty files!
+empty <- !file.info(files)$size>0
+
+if(sum(empty)>0){
+temp <- paste("WARNING! ", sum(empty), " file", if(sum(empty>1)){"s do"} else {" does"}, " NOT contain sequences and are not included in clustering:", sep="", "\n", paste(files[empty], collapse="\n"), "\n")
+message(temp)
+cat(file="log.txt", temp , append=T, sep="\n")
+}
+excluded <- NULL
+excluded <- files[empty]
+
+
 
 
 # Dereplicate files using USEARCH
 dir.create(paste(folder, "/_data/1_derep", sep=""))
 
-new_names <- sub(".*(_data/.*)", "\\1", files)
+new_names <- sub(".*(_data/.*)", "\\1", files[!empty])
 new_names <- sub("_PE.*", "_PE_derep.fasta", new_names)
 new_names <- sub("_data", "_data/1_derep", new_names)
 new_names <- paste(folder, "/", new_names, sep="")
 
-cmd <- paste(if(version<9){"-derep_fulllength"}else{"-fastx_uniques"}, " \"", files, "\" -fastaout \"", new_names, "\" -sizeout",  sep="")
+cmd <- paste(if(version<9){"-derep_fulllength"}else{"-fastx_uniques"}, " \"", files[!empty], "\" -fastaout \"", new_names, "\" -sizeout",  sep="")
 
 files_to_delete <- c(files_to_delete, new_names)
 
-temp <- paste(length(files), " files are dereplicated (incl. singletons):", sep="")
+temp <- paste(length(cmd), " files are dereplicated (incl. singletons):", sep="")
 cat(file="log.txt", temp , append=T, sep="\n")
 message(temp)
 
@@ -94,10 +106,23 @@ message(glumanda)
 
 
 
+# checking for empty files
+
+# check for empty files
+empty <- !file.info(blast_names)$size>0
+
+if(sum(empty)>0){
+temp <- paste("\nWARNING! ", sum(empty), " file", if(sum(empty>1)){"s do"} else {" does"}, " not contain any reads matching the reference sequences!", sep="", "\n", paste(files[empty], collapse="\n"))
+message(temp)
+cat(file="log.txt", temp , append=T, sep="\n")
+}
+
+excluded2 <- c(excluded, blast_names[empty])
+
 
 
 # condensing hit tables!
-files <- blast_names
+files <- blast_names[!empty]
 
 tab <- c("NULL")
 tab <- as.data.frame(tab, stringsAsFactors=F)
@@ -138,6 +163,32 @@ names(tab)[i+1] <- sub(".*2_mapping/(.*).txt", "\\1", files[i])
 tab <- tab[-1,] # remove NULL entry in the beginning
 tab[is.na(tab)] <- 0
 
+# re add empty files
+
+if(length(excluded2)>0){
+# add excluded sequences
+excluded2 <- sub(".*/(.*)", "\\1", excluded2)
+excluded2 <- sub("(.*).txt", "\\1", excluded2)
+excluded2 <- sub("(.*)_PE_.*", "\\1", excluded2)
+
+if(length(excluded2)>0){
+zero <- NULL
+for(j in 1:length(excluded2)){
+zero <- cbind(zero, rep(0, nrow(tab)))
+}
+}
+
+# add zero to table
+zero <- data.frame(zero, stringsAsFactors=F)
+names(zero) <- excluded2
+
+# order table by file names!
+tab2 <- data.frame(tab, zero, stringsAsFactors=F)
+tab <- tab2[,c(1, order(names(tab2)[-1])+1)]
+}
+# end readd
+
+
 
 
 sequ <- read.fasta(refDB, forceDNAtolower=F, as.string=T)
@@ -169,10 +220,10 @@ for (i in 2:(ncol(rel_abund)-1)){
 rel_abund[i] <- rel_abund[i]/sampleabundance[i-1]*100
 rel_abund[i][rel_abund[i]<filter] <- 0
 }
+rel_abund[is.na(rel_abund)] <- 0 # empty cols
 # write rel abundance tab
 rel_abund <- rel_abund[order(rowSums(rel_abund[-c(1, ncol(rel_abund))]), decreasing=T),] # sort table by row sums
 write.csv(file=paste(folder, "/3_rel_abundnace_ZEROs.csv", sep=""), rel_abund, row.names=F)
-
 
 
 
