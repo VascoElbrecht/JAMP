@@ -53,17 +53,30 @@ message(temp)
 
 
 temp <- new_names
+sequ_in <- NULL
 for (i in 1:length(cmd)){
 A <- system2(exe, cmd[i], stdout=T, stderr=T)
 meep <- sub(".*_data/(.*)", "\\1", temp[i])
 cat(file="log.txt", meep, append=T, sep="\n")
 cat(file=paste(folder, "/_stats/1_derep_logs.txt", sep=""), meep, A, "\n", append=T, sep="\n")
 message(meep)
+
+sequ_in[i] <- as.numeric(sub(".* (.*) seqs.*", "\\1", A[grep("seqs", A)]))
 }
 
+temp <- sub(".*/(.*)", "\\1", files)
+expTab <- data.frame("ID"=sub("(.*)_PE.*", "\\1", temp), stringsAsFactors=F, "sequ_in"=0)
+expTab$sequ_in[!empty] <- sequ_in
+temp <- suppressWarnings(as.numeric(substr(expTab$ID,1,1)))
+temp <- which(!is.na(temp))
+
+for(i in temp){
+expTab$ID[i] <- paste("X", expTab$ID[i], sep="")
+}
+
+expTab <- expTab[order(expTab$ID),]
+
 # add saving unused sequences as extra files!!!
-
-
 # Mapp to refDB
 dir.create(paste(folder, "/_data/2_mapping", sep=""))
 dir.create(paste(folder, "/_stats/map_logs", sep=""))
@@ -159,6 +172,7 @@ temp <- aggregate(data$abund, by=list(data$ref), FUN="sum")
 tab <- merge(tab , temp, by.x="ID", by.y="Group.1", all=T, sort=T)
 names(tab)[i+1] <- sub(".*2_mapping/(.*).txt", "\\1", files[i])
 }
+names(tab) <- sub("_PE$", "", names(tab))
 
 tab <- tab[-1,] # remove NULL entry in the beginning
 tab[is.na(tab)] <- 0
@@ -233,10 +247,28 @@ tab2 <- tab2[order(rowSums(tab2[-c(1, ncol(tab2))]), decreasing=T),] # sort tabl
 write.csv(file=paste(folder, "/3_Raw_hit_table.csv", sep=""), tab2, row.names=F)
 
 
+# write stats file
+temp <- colSums(tab2[-c(1, ncol(tab2))])
+expTab <- data.frame(expTab, "reads_mapped"=temp, stringsAsFactors=F)
+temp <- round(expTab$reads_mapped/expTab$sequ_in*100, 2)
+temp[is.na(temp)] <- 0
+expTab <- data.frame(expTab, "pct_pass"=temp, stringsAsFactors=F)
 
+row.names(expTab) <- 1:nrow(expTab)
+
+write.csv(expTab, file=paste(folder, "/_stats/3_pct_matched.csv", sep=""))
 
 
 # make plots!
+# % matched
+
+Sequences_lost(expTab$sequ_in, expTab$reads_mapped, expTab$ID, out=paste(folder, "/_stats/Reads_mapped.pdf", sep=""), main=paste(folder, ": Reads mapped (with ", id, ")", sep=""))
+Sequences_lost(expTab$sequ_in, expTab$reads_mapped, expTab$ID, out=paste(folder, "/_stats/Reads_mapped_rel.pdf", sep=""), main=paste(folder, ": Reads mapped (with ", id, ")", sep=""), rel=T)
+
+
+
+
+# heatmap
 if(heatmap){
 pdf(paste(folder, "/rel_zero2.pdf", sep=""), height=(nrow(rel_abund)+20)/10, width=(ncol(rel_abund)-1)/2)
 
