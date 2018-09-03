@@ -87,7 +87,7 @@ if(software=="illumina-utils"){
 #needs to be moved in to bin!
 temp <- paste("starting to demultiplex using \"", software, "\" and indexes from the file \"", indexTable, "\"", sep="")
 message(temp)
-cat(file="log.txt", A, append=T, sep="\n")
+if(md5){cat(file="log.txt", A, append=T, sep="\n")}
 
 
 system2(exe, paste("-s ", indexTable, " --r1 ", fileR1, " --r2 ", fileR2, " -i ", fileI1, " -o ", folder, "/_data/", if(revcompI){" -x"}, sep=""))
