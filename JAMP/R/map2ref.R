@@ -1,6 +1,6 @@
 # U_cluster_otus v0.1
 
-Map2ref <- function(files="latest", refDB=NULL, id=0.97, strand="plus", onlykeephits=F, filter=0.01, maxaccepts=1, maxrejects=32, exe="usearch", heatmap=T, delete_data=T, JV=F){
+Map2ref <- function(files="latest", refDB=NULL, id=0.97, strand="plus", onlykeephits=T, filter=0.01, maxaccepts=1, maxrejects=32, exe="usearch", heatmap=T, delete_data=T, JV=F){
 
 
 
@@ -209,7 +209,7 @@ sequ <- read.fasta(refDB, forceDNAtolower=F, as.string=T)
 
 # KEEP ONLY HITS OR KEEP ALL IN DB
 if(onlykeephits){
-temp2 <- match(attr(sequ, "name"), tab$ID)
+temp2 <- match(tab$ID, attr(sequ, "name"))
 tab2 <- cbind(tab, "sequ"=as.vector(unlist(sequ[temp2])))
 
 } else {
