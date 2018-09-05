@@ -580,6 +580,12 @@ cat(file="log.txt", temp, append=T, sep="\n")
 
 RAW <- read.csv(paste(folder, "/3_Raw_OTU_table.csv", sep=""), stringsAsFactors=F)
 
+if(is.na(filter)){  # no filtering, plot only raw data
+if(heatmap){
+OTU_heatmap(paste(folder, "/3_Raw_OTU_table.csv", sep=""), out=paste(folder, "/_stats/OTU_plot_raw.pdf", sep=""), abundance=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
+}
+}
+
 if(!is.na(filter)){ # only highlight when subsetting
 KEEP <- read.csv(paste(folder, "/5_OTU_table_", filter,".csv", sep=""), stringsAsFactors=F)
 
@@ -610,7 +616,8 @@ OTU_heatmap(file=paste(folder, "/5_OTU_table_", filter,"_ZERO_rel.csv", sep=""),
 } else { # only plot unfiltered data if zero filtering is applied!
 OTU_heatmap(paste(folder, "/3_Raw_OTU_table.csv", sep=""), out=paste(folder, "/_stats/3_Raw_OTU_table.pdf", sep=""), abundance=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
 }
-} else {message("Heatmap generation skipped!")}
+}
+if(!heatmap){message("Heatmap generation skipped!")}
 
 
 
