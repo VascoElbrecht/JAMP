@@ -1,5 +1,5 @@
 # does not currently NOT suppots wrapped fasta files
-Length_distribution <- function(sequFile=NA, out="", fastq=NA, col=c("#ffffb2", "#fed976", "#feb24c", "#fd8d3c", "#fc4e2a"), maxL=600){
+Length_distribution <- function(sequFile=NA, out="", saveRawData=NA, fastq=NA, col=c("#ffffb2", "#fed976", "#feb24c", "#fd8d3c", "#fc4e2a"), maxL=600){
 
 ORIGscipen <- getOption("scipen")
 options(scipen=10)
@@ -34,6 +34,11 @@ NumberofReads <- length(B)
 temptab <- cbind(table(B))
 
 data <- data.frame("length" =as.numeric(row.names(temptab)), "reads"=temptab, rel= round(temptab/sum(temptab)*100, 6), "col"=col[1], stringsAsFactors=F)
+
+# save raw data if specified
+if(!is.na(saveRawData)){
+write.csv(data, saveRawData, row.names=F)
+}
 
 
 data$col[data$rel>0.01] <- col[2]
