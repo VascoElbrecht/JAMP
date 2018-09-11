@@ -35,16 +35,17 @@ temptab <- cbind(table(B))
 
 data <- data.frame("length" =as.numeric(row.names(temptab)), "reads"=temptab, rel= round(temptab/sum(temptab)*100, 6), "col"=col[1], stringsAsFactors=F)
 
-# save raw data if specified
-if(!is.na(saveRawData)){
-write.csv(data, saveRawData, row.names=F)
-}
-
 
 data$col[data$rel>0.01] <- col[2]
 data$col[data$rel>0.1] <- col[3]
 data$col[data$rel>1] <- col[4]
 data$col[data$rel>10] <- col[5]
+
+
+# save raw data if specified
+if(!is.na(saveRawData)){
+write.csv(data, saveRawData, row.names=F)
+}
 
 
 if(out!=""){
