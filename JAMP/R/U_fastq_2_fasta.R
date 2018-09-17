@@ -20,7 +20,7 @@ cat(file="log.txt", temp, append=T, sep="\n")
 
 # new file names
 new_names <- sub(".*(_data/.*)", "\\1", files)
-new_names <- sub(".fastq", ".fasta", new_names) # keep fastq
+new_names <- sub(".fastq$", ".fasta", new_names) # keep fastq
 new_names <- paste(folder, "/", new_names, sep="")
 
 #dir.create("_stats")
