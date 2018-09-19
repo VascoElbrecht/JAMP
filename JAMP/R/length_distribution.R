@@ -19,8 +19,10 @@ message(paste("WARNING: The following file is empty and does NOT contain any seq
 
 # autodetect fastq
 if(is.na(fastq)){
-fastq <- sum(A[1:30][seq(3, 30, 4)])==7
+fastq <- system2("head", sequFile, stdout=T)
+fastq <- grepl("^@", fastq[1])
 }
+
 
 # select reads only!
 if(fastq){
