@@ -1,14 +1,28 @@
 # Demultiplexing_indexed
 # v0.1
 
-Demultiplexing_index <- function(files="latest", fileR1=NA, fileR2=NA, fileI1=NA, indexTable=NA, software="illumina-utils", exe="iu-demultiplex", revcompI=T, md5=T, OS="autodetect", delete_data=T){
+Demultiplexing_index <- function(files="latest", fileR1=NA, fileR2=NA, fileI1=NA, indexTable=NA, software="illumina-utils", exe="iu-demultiplex", revcompI=T, md5=T, OS="autodetect", delete_data=T, addempty=T){
 
 folder <- Core(module="Demultiplexing_index", delete_data=delete_data)
 cat(file="log.txt", c("\n", "Version v0.1", "\n"), append=T, sep="\n")
 
 files_to_delete <- NULL
 
-indextab <- read.csv(indexTable, sep="\t", stringsAsFactors=F)
+indextab <- read.csv(indexTable, sep="\t", stringsAsFactors=F, header=F)
+
+# stop procesing if dumplicated name exists!
+if(sum(duplicated(indextab$V1))>0){
+temp <- data.frame(table(indextab$V1))
+temp <- temp[temp$Freq > 1,]
+
+message("Some sample names appear several times in the table! Make sure each sample name is unique, demultiplexing will be stopped!")
+for(i in 1:nrow(temp)){
+message(paste(temp$Var1[i], temp$Freq[i], sep=": "))
+}
+
+stop("Fix duplicate sample names please!")
+}
+
 
 #auto detect files!
 if (is.na(fileR1[1])){
@@ -141,9 +155,36 @@ message(temp)
 cat(file="log.txt", temp, append=T, sep="\n")
 
 if(!nrow(tab)/nrow(indextab)*100==100){
-temp <- paste("WARNING: Number of reads in index files does not match the number of samples recovered. Verify that files are correct!")
+temp <- paste("WARNING: Number of reads in index files does not match the number of samples recovered. Verify that files are correct!\n")
 message(temp)
 cat(file="log.txt", temp, append=T, sep="\n")
+
+# adding files that are missing as empty files!
+
+
+head(indextab)
+
+files_should_exist <- c(paste(indextab$V1, "-R1.fastq", sep=""), paste(indextab$V1, "-R2.fastq", sep=""))
+files_should_exist <- paste(folder, "/_data/", files_should_exist, sep="")
+
+file_does_exist <- list.files(paste(folder, "/_data", sep=""), full.names=T)
+
+
+
+files_should_exist[duplicated(files_should_exist)]
+length(file_does_exist)
+
+
+#write empty files!
+temp3 <- files_should_exist[!files_should_exist%in% file_does_exist]
+for (i in 1:length(temp3)){
+cat("", file=temp3[i], sep="")
+}
+
+text <- paste("Empty files where generated for ", length(temp)/2, " samples:\n", paste(temp, collapse="\n"), sep="")
+message(text)
+cat(file="log.txt", text, append=T, sep="")
+
 
 }
 
