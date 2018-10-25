@@ -181,7 +181,7 @@ for (i in 1:length(temp3)){
 cat("", file=temp3[i], sep="")
 }
 
-text <- paste("Empty files where generated for ", length(temp)/2, " samples:\n", paste(temp3, collapse="\n"), sep="")
+text <- paste("Empty files where generated for ", length(temp3)/2, " samples:\n", paste(temp3, collapse="\n"), sep="")
 message(text)
 cat(file="log.txt", text, append=T, sep="")
 
