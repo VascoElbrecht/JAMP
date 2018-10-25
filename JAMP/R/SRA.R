@@ -34,6 +34,15 @@ temp <- paste("Downloading complete!", " Downloaded a toatal of ", sum(tab_exp),
 message(temp)
 cat(file="log.txt", temp, append=T, sep="\n")
 
+#Rename R1 and R2
+
+filelist <- list.files(paste(folder, "/_data", sep=""), full.names=T)
+
+R1R2 <- sub("1.fastq", "R1.fastq", filelist)
+R1R2 <- sub("2.fastq", "R2.fastq", R1R2)
+
+file.rename(filelist, R1R2)
+
 
 # rename downloaded files!
 if(!is.na(rename[1])){
@@ -41,14 +50,17 @@ if(length(rename)==length(ID)){
 
 filelist <- list.files(paste(folder, "/_data", sep=""), full.names=T)
 
+ID_renamed <- NULL
 renamed <- filelist
 for (i in 1:length(ID)){
 renamed <- sub(ID[i], rename[i], renamed)
+ID_renamed[i] <- rename[i]
 }
 
 cbind(filelist, renamed)
 
 A <- file.rename(filelist, renamed)
+
 temp <- paste(sum(A), " out of ", length(A), " files renamed! (read 1 and 2)", sep="")
 message(temp)
 cat(file="log.txt", temp, append=T, sep="\n")
@@ -67,9 +79,20 @@ files_to_delete <- c(files_to_delete, list.files(paste(folder, "/_data", sep="")
 
 # write stats file!
 if(!is.na(rename[1])){
-final_names <- sub(".*_data/(.*)_1.fastq", "\\1", renamed[seq(1, length(renamed), 2)])} else {
+final_names <- ID_renamed} else {
 final_names <- ID
 }
+
+
+
+reorder <- sub(".*_data/(.*)_R1.fastq", "\\1", filelist[seq(1, length(filelist), 2)])
+
+cbind(reorder[match(reorder, ID)],ID)
+
+
+
+
+
 
 
 tab_exp <- data.frame("SRA_ID"=ID, "spots"= tab_exp, "file_names"=final_names)
@@ -87,9 +110,9 @@ Sequences_lost(temp$spots, temp$spots, temp$file_names, out=paste(folder, "/_sta
 message(" ")
 message("Module completed!")
 
-if(delete_data){
+
 cat(file=paste(folder, "/robots.txt", sep=""), "\n# DELETE_START", files_to_delete, "# DELETE_END", append=T, sep="\n")
-}
+
 
 cat(file="log.txt", paste(Sys.time(), "*** Module completed!", "", sep="\n"), append=T, sep="\n")
 }
