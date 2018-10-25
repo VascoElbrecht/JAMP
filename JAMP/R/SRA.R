@@ -25,7 +25,7 @@ A <- system2(exe, cmd[i], stdout=T, stderr=T)
 cat(c(paste(exe, cmd[i]), "", A, "", ""), file=paste(folder, "/_stats/download_log.txt", sep=""), sep="\n", append=T)
 
 tab_exp[i] <- as.numeric(sub("Written (.*) spots.*", "\\1", A[2]))
-temp <- paste(ID[i], ": ", tab_exp[i], if(!is.na(rename)){paste(" -> ", rename[i], sep="")}, sep="")
+temp <- paste(ID[i], ": ", tab_exp[i], if(!is.na(rename[1])){paste(" -> ", rename[i], sep="")}, sep="")
 message(temp)
 cat(file="log.txt", temp, append=T, sep="\n")
 
