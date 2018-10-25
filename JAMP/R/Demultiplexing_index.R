@@ -122,11 +122,11 @@ rel <- tab$num_reads_stored/sum(tab$num_reads_stored)*100
 tab <- data.frame(tab, "rel"=rel)
 
 
-write.csv(tab, paste(folder, "/_stats/stats.csv", sep=""))
+write.csv(tab, paste(folder, "/_stats/", sub("(.)_.*", "\\1", folder), "_stats.csv", sep=""))
 
 
 # make differnt pages
-pdf(paste(folder, "/_stats/plot_sequ_depth.pdf", sep=""), width=8, height=12)
+pdf(paste(folder, "/_stats/", sub("(.)_.*", "\\1", folder), "_plot_sequ_depth.pdf", sep=""), width=8, height=12)
 g <- 1
 while(nrow(tab)>(g*50-49)){
 

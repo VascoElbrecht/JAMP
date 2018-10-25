@@ -204,14 +204,15 @@ message(" ")
 abundance <- Count_sequences(list.files(paste(folder, "/_data", sep=""), full.names=T))
 temp <- data.frame("files_demultiplexed"=list.files(paste(folder, "/_data", sep="")), abundance)
 
-write.csv(temp, paste(folder, "/_stats/read_abundance.csv", sep=""))
+write.csv(temp, paste(folder, "/_stats/", sub("(.)_.*", "\\1", folder), "_read_abundance.csv", sep=""))
 
-temp <- read.csv(paste(folder, "/_stats/read_abundance.csv", sep=""))
+
+temp <- read.csv(paste(folder, "/_stats/", sub("(.)_.*", "\\1", folder), "_read_abundance.csv", sep=""))
 temp <- temp[seq(1, nrow(temp), 2), ]
 temp$files_demultiplexed <- sub("(.*)_[rR]1.*", "\\1", temp$files_demultiplexed)
 
 # make plot
-Sequences_lost(NA, temp$abundance, Sample_names=temp$files_demultiplexed, rel=F, main=paste(folder, ": Demultiplexed files", dep=""), out=paste(folder, "/_stats/demultiplexed.pdf", sep=""))
+Sequences_lost(NA, temp$abundance, Sample_names=temp$files_demultiplexed, rel=F, main=paste(folder, ": Demultiplexed files", dep=""), out=paste(folder, "/_stats/", sub("(.)_.*", "\\1", folder), "_demultiplexed.pdf", sep=""))
 
 
 options("scipen"=100, "digits"=7)

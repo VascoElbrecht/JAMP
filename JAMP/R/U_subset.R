@@ -69,14 +69,14 @@ cat(file="log.txt", "\n", append=T, sep="\n")
 # make log file
 temp <- data.frame("Sample"=sub("_data/","", sub(".*/(.*).*.fast.", "\\1", new_names)), "Sequ_count_in"=as.character(sequcounts), "Sequ_count_out"= as.character(as.numeric(sample_size)), "pct_pass"= as.character(round(as.numeric(sample_size)/sequcounts*100, 2)))
 
-write.csv(temp, paste(folder, "/_stats/subsampling.csv", sep=""))
+write.csv(temp, paste(folder, "/_stats/", sub("(.)_.*", "\\1", folder), "_subsampling.csv", sep=""))
 
 # make some plots?
 
-temp <- read.csv(paste(folder, "/_stats/subsampling.csv", sep=""))
+temp <- read.csv(paste(folder, "/_stats/", sub("(.)_.*", "\\1", folder), "_subsampling.csv", sep=""))
 
-Sequences_lost(temp$Sequ_count_in, temp$Sequ_count_out, sub("_PE.*", "", temp$Sample), out=paste(folder, "/_stats/Dsicarded_sequences.pdf", sep=""), main=paste(folder, ": Subsampling to ", sample_size, " reads", sep=""))
-Sequences_lost(temp$Sequ_count_in, temp$Sequ_count_out, sub("_PE.*", "", temp$Sample), rel=T, out=paste(folder, "/_stats/Dsicarded_sequences_rel.pdf", sep=""), main=paste(folder, ": Subsampling to ", sample_size, " reads", sep=""))
+Sequences_lost(temp$Sequ_count_in, temp$Sequ_count_out, sub("_PE.*", "", temp$Sample), out=paste(folder, "/_stats/", sub("(.)_.*", "\\1", folder), "_Dsicarded_sequences.pdf", sep=""), main=paste(folder, ": Subsampling to ", sample_size, " reads", sep=""))
+Sequences_lost(temp$Sequ_count_in, temp$Sequ_count_out, sub("_PE.*", "", temp$Sample), rel=T, out=paste(folder, "/_stats/", sub("(.)_.*", "\\1", folder), "_Dsicarded_sequences_rel.pdf", sep=""), main=paste(folder, ": Subsampling to ", sample_size, " reads", sep=""))
 
 merged_message <- paste("\nAverage number of sequences discarded ", round(100 - mean(temp$pct_pass), 2), "% on average (SD = ", round(sd(temp$pct_pass), 2), "%).\n", sep="")
 message(merged_message)

@@ -256,21 +256,21 @@ expTab <- data.frame(expTab, "pct_pass"=temp, stringsAsFactors=F)
 
 row.names(expTab) <- 1:nrow(expTab)
 
-write.csv(expTab, file=paste(folder, "/_stats/3_pct_matched.csv", sep=""))
+write.csv(expTab, file=paste(folder, "/_stats/", sub("(.)_.*", "\\1", folder), "_3_pct_matched.csv", sep=""))
 
 
 # make plots!
 # % matched
 
-Sequences_lost(expTab$sequ_in, expTab$reads_mapped, expTab$ID, out=paste(folder, "/_stats/Reads_mapped.pdf", sep=""), main=paste(folder, ": Reads mapped (with ", id, ")", sep=""))
-Sequences_lost(expTab$sequ_in, expTab$reads_mapped, expTab$ID, out=paste(folder, "/_stats/Reads_mapped_rel.pdf", sep=""), main=paste(folder, ": Reads mapped (with ", id, ")", sep=""), rel=T)
+Sequences_lost(expTab$sequ_in, expTab$reads_mapped, expTab$ID, out=paste(folder, "/_stats/", sub("(.)_.*", "\\1", folder), "_Reads_mapped.pdf", sep=""), main=paste(folder, ": Reads mapped (with ", id, ")", sep=""))
+Sequences_lost(expTab$sequ_in, expTab$reads_mapped, expTab$ID, out=paste(folder, "/_stats/", sub("(.)_.*", "\\1", folder), "_Reads_mapped_rel.pdf", sep=""), main=paste(folder, ": Reads mapped (with ", id, ")", sep=""), rel=T)
 
 
 
 
 # heatmap
 if(heatmap){
-pdf(paste(folder, "/rel_zero2.pdf", sep=""), height=(nrow(rel_abund)+20)/10, width=(ncol(rel_abund)-1)/2)
+pdf(paste(folder, "/_stats/", sub("(.)_.*", "\\1", folder), "_rel_zero2.pdf", sep=""), height=(nrow(rel_abund)+20)/10, width=(ncol(rel_abund)-1)/2)
 
 temp_heat <- rel_abund[,2:(ncol(rel_abund)-1)]
 row.names(temp_heat) <- rel_abund[,1]

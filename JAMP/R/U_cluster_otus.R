@@ -313,7 +313,7 @@ exp <- exp[order(exp[,1]),]
 exp2 <- data.frame("ID"=exp[,1], "Abundance"=colSums(tab[-1]), "pct_pass"=exp[,2], row.names=1:length(exp[,1]))
 
 
-write.csv(exp2, file=paste(folder, "/_stats/3_pct_matched.csv", sep=""))
+write.csv(exp2, file=paste(folder, "/_stats/", sub("(.)_.*", "\\1", folder), "_3_pct_matched.csv", sep=""))
 
 #### end raw data table
 
@@ -582,7 +582,7 @@ RAW <- read.csv(paste(folder, "/3_Raw_OTU_table.csv", sep=""), stringsAsFactors=
 
 if(is.na(filter)){  # no filtering, plot only raw data
 if(heatmap){
-OTU_heatmap(paste(folder, "/3_Raw_OTU_table.csv", sep=""), out=paste(folder, "/_stats/OTU_plot_raw.pdf", sep=""), abundance=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
+OTU_heatmap(paste(folder, "/3_Raw_OTU_table.csv", sep=""), out=paste(folder, "/_stats/", sub("(.)_.*", "\\1", folder), "_OTU_plot_raw.pdf", sep=""), abundance=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
 }
 }
 
@@ -592,7 +592,7 @@ KEEP <- read.csv(paste(folder, "/5_OTU_table_", filter,".csv", sep=""), stringsA
 higlight <- rev(!RAW$ID %in% KEEP$ID)
 
 if(heatmap){
-pdf(paste(folder, "/_stats/OTU_plot_3_RAW.pdf", sep=""), height=(nrow(RAW)+20)/10, width=(ncol(RAW)-1)/2)
+pdf(paste(folder, "/_stats/", sub("(.)_.*", "\\1", folder), "_OTU_plot_3_RAW.pdf", sep=""), height=(nrow(RAW)+20)/10, width=(ncol(RAW)-1)/2)
 
 OTU_heatmap(paste(folder, "/3_Raw_OTU_table.csv", sep=""), abundance=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
 
@@ -610,11 +610,11 @@ dev.off()
 }
 
 if(heatmap){
-OTU_heatmap(paste(folder, "/5_OTU_table_", filter,".csv", sep=""), out=paste(folder, "/_stats/OTU_plot_5_", filter, ".pdf", sep=""), abundance=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
-OTU_heatmap(paste(folder, "/5_OTU_table_", filter,"_ZERO.csv", sep=""), out=paste(folder, "/_stats/OTU_plot_5_", filter, "_ZERO.pdf", sep=""), abundance=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
-OTU_heatmap(file=paste(folder, "/5_OTU_table_", filter,"_ZERO_rel.csv", sep=""), out=paste(folder, "/_stats/OTU_plot_5_", filter, "_ZERO_rel.pdf", sep=""), abundance=T, rel=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
+OTU_heatmap(paste(folder, "/5_OTU_table_", filter,".csv", sep=""), out=paste(folder, "/_stats/", sub("(.)_.*", "\\1", folder), "_OTU_plot_5_", filter, ".pdf", sep=""), abundance=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
+OTU_heatmap(paste(folder, "/5_OTU_table_", filter,"_ZERO.csv", sep=""), out=paste(folder, "/_stats/", sub("(.)_.*", "\\1", folder), "_OTU_plot_5_", filter, "_ZERO.pdf", sep=""), abundance=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
+OTU_heatmap(file=paste(folder, "/5_OTU_table_", filter,"_ZERO_rel.csv", sep=""), out=paste(folder, "/_stats/", sub("(.)_.*", "\\1", folder), "_OTU_plot_5_", filter, "_ZERO_rel.pdf", sep=""), abundance=T, rel=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
 } else { # only plot unfiltered data if zero filtering is applied!
-OTU_heatmap(paste(folder, "/3_Raw_OTU_table.csv", sep=""), out=paste(folder, "/_stats/3_Raw_OTU_table.pdf", sep=""), abundance=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
+OTU_heatmap(paste(folder, "/3_Raw_OTU_table.csv", sep=""), out=paste(folder, "/_stats/", sub("(.)_.*", "\\1", folder), "_3_Raw_OTU_table.pdf", sep=""), abundance=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
 }
 }
 if(!heatmap){message("Heatmap generation skipped!")}

@@ -60,7 +60,7 @@ cat(file="log.txt", "\n", append=T, sep="\n")
 
 tab_exp <- data.frame(tab_exp)
 names(tab_exp) <- c("Sample", "Abundance", "pct_pass", "medianL")
-write.csv(tab_exp, paste(folder, "/_stats/truncate_pass.csv", sep=""))
+write.csv(tab_exp, paste(folder, "/_stats/", sub("(.)_.*", "\\1", folder), "_truncate_pass.csv", sep=""))
 
 
 message(" ")
