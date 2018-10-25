@@ -19,9 +19,6 @@ cat(file="log.txt", temp, append=T, sep="\n")
 cmd <- paste(if(split3){"--split-3 "}, ID, " -O ", folder,"/_data/", sep="")
 
 
-A <- system2(exe, cmd[i], stdout=T, stderr=T)
-
-
 tab_exp <- NULL
 for (i in 1:length(cmd)){
 A <- system2(exe, cmd[i], stdout=T, stderr=T)
