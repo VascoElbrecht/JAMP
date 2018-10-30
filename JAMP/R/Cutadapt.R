@@ -216,8 +216,8 @@ if(!FW_only){file.remove(paste(folder, "/_data/temp.txt", sep=""))} # remove tem
 # make some plots
 temp <- read.csv(paste(folder, "/_stats/", sub("(.)_.*", "\\1", folder), "_cut_pass.csv", sep=""), stringsAsFactors=F)
 
-Sequences_lost(temp$Sequ_count_in, temp$Sequ_count_out, sub("_PE.*", "", temp$Sample), out=paste(folder, "/_stats/", sub("(.)_.*", "\\1", folder), "_Primers_trimmed.pdf", sep=""), main=paste(folder, ": Proportion of reads with primer removed", sep=""))
-Sequences_lost(temp$Sequ_count_in, temp$Sequ_count_out, sub("_PE.*", "", temp$Sample), rel=T, out=paste(folder, "/_stats/", sub("(.)_.*", "\\1", folder), "_Primers_trimmed_rel.pdf", sep=""),  main=paste(folder, ": Proportion of reads with primer removed", sep=""))
+Sequences_lost(temp$Sequ_count_in, temp$Sequ_count_out, sub("_PE.*", "", temp$Sample), out=paste(folder, "/_stats/", sub("(.)_.*", "\\1", folder), "_Primers_trimmed.pdf", sep=""), main=paste(folder, ": Proportion of reads with no primer detected", sep=""))
+Sequences_lost(temp$Sequ_count_in, temp$Sequ_count_out, sub("_PE.*", "", temp$Sample), rel=T, out=paste(folder, "/_stats/", sub("(.)_.*", "\\1", folder), "_Primers_trimmed_rel.pdf", sep=""),  main=paste(folder, ": Proportion of reads with no primer detected", sep=""))
 
 merged_message <- paste("\nPrimers were successfully removed from ", round(mean(temp$pct_pass), 2), "% on average (SD = ", round(sd(temp$pct_pass), 2), "%).\n", sep="")
 message(merged_message)

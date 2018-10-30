@@ -233,7 +233,7 @@ text(6.1, 0, "Adapt", adj=0)
 text(8.1, 0, "N", adj=0)
 text(10.1, 0, "DivSD", adj=0)
 text(12.1, 0, "GC", adj=0)
-text(14.1, 0, "Dumpli", adj=0)
+text(14.1, 0, "Dupli", adj=0)
 
 g <- g+1
 #print(g)
