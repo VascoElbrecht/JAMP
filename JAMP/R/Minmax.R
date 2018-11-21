@@ -1,6 +1,6 @@
 # Minmax v0.2
 
-Minmax <- function(files="latest", min=NA, max=NA, plusminus=c(NA, 10), fastq=T, LDist=F, delete_data=T){
+Minmax <- function(files="latest", min=NA, max=NA, plusminus=c(NA, 10), fastq=T, LDist=F, delete_data=T, exe="cutadapt"){
 
 folder <- Core(module="Minmax", delete_data=delete_data)
 cat(file="../log.txt", c("Module Version: v0.2", "\n"), append=T, sep="\n")
@@ -8,7 +8,7 @@ cat(file="../log.txt", c("Module Version: v0.2", "\n"), append=T, sep="\n")
 files_to_delete <- NULL
 
 # cutadapt version
-temp <- paste("Version: ", "Cutadapt v", system2("cutadapt", "--v", stdout=T, stderr=T), sep="")
+temp <- paste("Version: ", "Cutadapt v", system2(exe, "--v", stdout=T, stderr=T), sep="")
 message(temp)
 cat(file="log.txt", temp, append=T, sep="\n")
 message(" ")
@@ -50,7 +50,7 @@ message(temp)
 exp <- NULL
 temp <- new_names
 for (i in 1:length(cmd)){
-A <- system2("cutadapt", cmd[i], stdout=T, stderr=T)
+A <- system2(exe, cmd[i], stdout=T, stderr=T)
 cat(file=paste(folder, "/", log_names[i], sep=""), A, append=T, sep="\n")
 
 # reporting
