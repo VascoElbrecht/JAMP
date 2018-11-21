@@ -1,6 +1,6 @@
 # Cutadapt v0.1
 
-Cutadapt <- function(files="latest", forward=NA, reverse=NA, bothsides=F, anchoring=T, fastq=T, LDist=F, delete_data=T){
+Cutadapt <- function(files="latest", forward=NA, reverse=NA, bothsides=F, anchoring=T, fastq=T, LDist=F, delete_data=T, exe="cutadapt", exeU="usearch"){
 
 FW_only <- F
 if (is.na(reverse)){FW_only <- T}
@@ -11,7 +11,7 @@ cat(file="log.txt", c("Module Version: v0.2", "\n"), append=T, sep="\n")
 files_to_delete <- NULL
 
 # cutadapt version
-temp <- paste("Using Version: ", "Cutadapt v", system2("cutadapt", "--v", stdout=T, stderr=T), sep="")
+temp <- paste("Using Version: ", "Cutadapt v", system2(exe, "--v", stdout=T, stderr=T), sep="")
 message(temp)
 cat(file="log.txt", temp, append=T, sep="\n")
 message(" ")
@@ -110,11 +110,11 @@ exp <- NULL
 temp <- new_names
 
 for (i in 1:length(cmd1)){
-A <- system2("cutadapt", cmd1[i], stdout=T, stderr=T)
+A <- system2(exe, cmd1[i], stdout=T, stderr=T)
 cat(file=log_names[i], A, append=T, sep="\n")
 if(!FW_only){
 if(!bothsides){ # not both sided
-A <- system2("cutadapt", cmd2[i], stdout=T, stderr=T)
+A <- system2(exe, cmd2[i], stdout=T, stderr=T)
 cat(file=log_names[i], A, append=T, sep="\n")
 } else {
 # trimm FW
@@ -124,13 +124,13 @@ cat(file=log_names[i], A, append=T, sep="\n")
 # trimm RW
 rev_primer <- paste("-a ", rw[i], if(anchoring){"$"}," -o ", folder, "/_data/temp_A.txt ", folder, "/_data/temp.txt -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") #rverse adapter
 
-A <- system2("cutadapt", rev_primer, stdout=T, stderr=T)
+A <- system2(exe, rev_primer, stdout=T, stderr=T)
 cat(file=log_names[i], A, append=T, sep="\n")
 
 # build revcomp
 
 revcom_cmd <- paste("-fastx_revcomp ", files[i],  if(fastq){" -fastqout "} else {"-fastaout "}, folder, "/_data/temp2_RC.txt  -label_suffix _RC",  sep="")
-A <- system2("usearch", revcom_cmd, stdout=T, stderr=T)
+A <- system2(exeU, revcom_cmd, stdout=T, stderr=T)
 
 cat(file=log_names[i], paste("usearch ", revcom_cmd, sep=""), append=T, sep="\n")
 cat(file=log_names[i], A, append=T, sep="\n")
@@ -139,13 +139,13 @@ cat(file=log_names[i], A, append=T, sep="\n")
 
 fw_primer_cmd <- paste("-g ", if(anchoring){"^"}, fw[i], " -o ", folder, "/_data/temp.txt ", folder, "/_data/temp2_RC.txt", " -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") # forward adapter
 
-A <- system2("cutadapt", fw_primer_cmd, stdout=T, stderr=T)
+A <- system2(exe, fw_primer_cmd, stdout=T, stderr=T)
 cat(file=log_names[i], A, append=T, sep="\n")
 
 
 rev_primer <- paste("-a ", rw[i], "$ -o ", folder, "/_data/temp_B.txt ", folder, "/_data/temp.txt -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed", sep="") #rverse adapter
 
-A <- system2("cutadapt", rev_primer, stdout=T, stderr=T)
+A <- system2(exe, rev_primer, stdout=T, stderr=T)
 cat(file=log_names[i], A, append=T, sep="\n")
 
 # combine files!
