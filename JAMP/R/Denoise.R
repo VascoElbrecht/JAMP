@@ -1,6 +1,6 @@
 # Haplotyping v0.1
 
-Denoise <- function(files="latest",  strategy="unoise", unoise_alpha=5, minsize=10, minrelsize=0.0001, OTUmin=0.01, minhaplosize=0.003, withinOTU=5, eachsampleOTUmin=NULL, minHaploPresence=1, minOTUPresence=1, renameSamples="(.*_.*)_cut.*"){
+Denoise <- function(files="latest",  strategy="unoise", unoise_alpha=5, minsize=10, minrelsize=0.0001, OTUmin=0.01, minhaplosize=0.003, withinOTU=5, eachsampleOTUmin=NULL, minHaploPresence=1, minOTUPresence=1, renameSamples="(.*_.*)_cut.*", exe="usearch"){
 
 
 
@@ -41,7 +41,7 @@ message(temp)
 
 temp <- new_names
 for (i in 1:length(cmd)){
-A <- system2("usearch", cmd[i], stdout=T, stderr=T)
+A <- system2(exe, cmd[i], stdout=T, stderr=T)
 meep <- sub(".*_data/(.*)", "\\1", temp[i])
 cat(file=paste(folder, "/_stats/1_derep_logs.txt", sep=""), paste("usearch ", cmd[i], sep="") , append=T, sep="\n")
 cat(file=paste(folder, "/_stats/1_derep_logs.txt", sep=""), meep, A, "\n", append=T, sep="\n")
@@ -71,7 +71,7 @@ message(info)
 cat(file="log.txt", info, append=T, sep="\n")
 
 cmd <- paste("-fastx_uniques \"", folder, "/_data/1_derep/samples_pooled.txt\" -fastaout \"", folder, "/_data/1_derep/samples_pooled_derep.txt\" -sizein -sizeout", sep="")
-A <- system2("usearch", cmd, stdout=T, stderr=T)
+A <- system2(exe, cmd, stdout=T, stderr=T)
 
 cat(file=paste(folder, "/_stats/1_derep_logs.txt", sep=""), paste("usearch", cmd, sep=""), append=T, sep="\n")
 cat(file=paste(folder, "/_stats/1_derep_logs.txt", sep=""), A, append=T, sep="\n")
@@ -115,7 +115,7 @@ cat(file="log.txt", info, append=T, sep="\n")
 
 cmd <- paste("-unoise3 \"", folder, "/_data/1_derep/samples_pooled_derep_renamed.txt\" -zotus \"", folder, "/_data/1_derep/samples_pooled_+_denoised.txt\" -unoise_alpha ", unoise_alpha,  sep="")
 
-A <- system2("usearch", cmd, stdout=T, stderr=T)
+A <- system2(exe, cmd, stdout=T, stderr=T)
 cat(file=paste(folder, "/_stats/2_unoise.txt", sep=""), c(info, "", paste("usearch", cmd), "", A), append=T, sep="\n")
 
 info <- paste("Denoising compelte! ", Count_sequences(paste(folder, "/_data/1_derep/samples_pooled_derep_renamed.txt", sep=""), fastq=F), " sequences were denoised using ", strategy, ".", "\nA total of ", sub(".*100.0% (.*) good, .* chimeras\r", "\\1", A[length(A)-1]), " haplotypes remained after denoising!\n", sep="")
@@ -166,7 +166,7 @@ cat(file="log.txt", info, append=T, sep="\n")
 
 cmd <- paste(" -cluster_otus ", folder, "/_data/1_derep/samples_pooled_+_denoised_renamed.txt -otus ", folder, "/_data/1_derep/samples_pooled_+_denoised_renamed_OTUsequ.txt -uparseout ", folder, "/_data/1_derep/samples_pooled_+_denoised_renamed_OTUtable.txt -relabel OTU_ -strand plus", sep="")
 
-A <- system2("usearch", cmd, stdout=T, stderr=T) # cluster OTUs!
+A <- system2(exe, cmd, stdout=T, stderr=T) # cluster OTUs!
 
 cat(file=paste(folder, "/_stats/2_unoise.txt", sep=""), c("Clustering haplotypes into OTUs for OTU table!", "", paste("usearch", cmd), "", A), append=T, sep="\n")
 
