@@ -187,7 +187,8 @@ k <- 1
 OTU_list <- NULL
 for (i in 1:nrow(OTUs)){
 
-if(OTUs$V2[i]=="OTU"){OTU_list[i] <- paste("OTU_", k, sep="")
+
+if(grepl("otu", OTUs$V2[i])){OTU_list[i] <- paste("OTU_", k, sep="")
 k <- k+1} else
 if(OTUs$V2[i]=="match"){OTU_list[i] <- sub(".*;top=(OTU_.*)\\(.*", "\\1", OTUs$V3[i])} else {OTU_list[i] <- OTUs$V2[i]}
 
