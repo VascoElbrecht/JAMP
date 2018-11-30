@@ -1,6 +1,6 @@
 # Haplotyping v0.1
 
-Denoise <- function(files="latest",  strategy="unoise", unoise_alpha=5, minsize=10, minrelsize=0.0001, OTUmin=0.01, minhaplosize=0.003, withinOTU=5, eachsampleOTUmin=NULL, minHaploPresence=1, minOTUPresence=1, renameSamples="(.*_.*)_cut.*", exe="usearch"){
+Denoise <- function(files="latest",  strategy="unoise", unoise_alpha=5, minsize=10, minrelsize=0.0001, poolsamples=F, OTUmin=0.01, minhaplosize=0.003, withinOTU=5, eachsampleOTUmin=NULL, minHaploPresence=1, minOTUPresence=1, renameSamples="(.*_.*)_cut.*", exe="usearch"){
 
 
 
@@ -56,7 +56,7 @@ message(log)
 
 # merge all files into one!
 
-
+if(poolsamples){
 cat(file=paste(folder, "/_stats/1_derep_logs.txt", sep=""), paste("\nCombining all files in a single file (samples_pooled.txt):\n", paste("cmd", cmd, collapse="", sep=""), collapse="", sep="") , append=T, sep="\n")
 cat(file="log.txt", "\nCombining all files in a single file (samples_pooled.txt)\n", append=T, sep="\n")
 
@@ -160,10 +160,54 @@ message(info)
 cat(file="log.txt", info, append=T, sep="\n")
 
 }
+}
+
+
+
+# If denoising on individual sampels!
+if(!poolsamples){
+
+dir.create(paste(folder, "/_data/2_denoised", sep=""))
+
+denoised <- new_names
+denoised <- sub("1_derep", "2_denoised", denoised)
+
+
+cmd <- paste("-unoise3 \"", new_names, "\" -zotus \"", denoised,"\" -unoise_alpha ", unoise_alpha, " -sizein -sizeout", sep="")
+
+
+for (i in 1:length(denoised)){
+
+A <- system2(exe, cmd[i], stdout=T, stderr=T)
+
+cat(file=paste(folder, "/_stats/2_denoise_logs.txt", sep=""), paste("usearch", cmd[i], sep=""), append=T, sep="\n")
+cat(file=paste(folder, "/_stats/2_denoise_logs.txt", sep=""), A, append=T, sep="\n")
+
+seqin <- Count_sequences(new_names[i], fastq=F)
+seqout <- Count_sequences(denoised[i], fastq=F)
+
+temp <- paste("Sample ", sub(".*/(.*)_PE_.*", "\\1", new_names[i]), " denoised ", seqin, " sequences to ", seqout, " ESVs (", round(seqout/seqin*100, 2), "% keeped)", sep="")
+message(temp)
+cat(file="log.txt", temp, append=T, sep="\n")
+}
+
+# Include abundance information again
+
+for (i in 1:length(denoised)){
+de <- read.fasta(denoised[i], as.string=T, forceDNAtolower=F)
+fast <- read.fasta(new_names[i], as.string=T, forceDNAtolower=F)
+matched <- match(fast, de)
+matched <- matched[!is.na(matched)]
+
+names(de) <- names(fast[matched])
+write.fasta(de, names(de), file.out= denoised[i])
+}
+
+} # indiv renamed (for indiv processing).
 
 
 # Cluster into OTUs (for OTU table information)
-
+if(poolsamples){
 cmd <- paste(" -cluster_otus ", folder, "/_data/1_derep/samples_pooled_+_denoised_renamed.txt -otus ", folder, "/_data/1_derep/samples_pooled_+_denoised_renamed_OTUsequ.txt -uparseout ", folder, "/_data/1_derep/samples_pooled_+_denoised_renamed_OTUtable.txt -relabel OTU_ -strand plus", sep="")
 
 A <- system2(exe, cmd, stdout=T, stderr=T) # cluster OTUs!
@@ -177,6 +221,49 @@ if(is.na(chimeras)){chimeras<-0}
 info <- paste("Clustered ", length(haplotypes), " haplotype sequences (cluster_otus, 3% simmilarity) into ", OTUs, " OTUs (+", chimeras, " chimeras).\nOTUs and (potentially) chimeric sequences will be included in the Haplotype table!\n", sep="" )
 message(info)
 cat(file="log.txt", info, append=T, sep="\n")
+} # end pooled processing
+
+
+# OTU clustering for indiv samples
+if(!poolsamples){
+
+dir.create(paste(folder, "/_data/3_pooledESV", sep=""))
+
+
+
+
+cat(file=paste(folder, "/_stats/1_derep_logs.txt", sep=""), paste("\nCombining all files in a single file (samples_pooled.txt):\n", paste("cmd", cmd, collapse="", sep=""), collapse="", sep="") , append=T, sep="\n")
+cat(file="log.txt", "\nCombining all files in a single file (samples_pooled.txt)\n", append=T, sep="\n")
+
+# dereplicating pooled file
+message("\nCombining all files in a single file (samples_pooled.txt)")
+cmd <- paste(paste(paste("\"", denoised, "\"", sep=""), collapse=" "), "> ", folder, "/_data/3_pooledESV/1_samples_pooled.txt", sep="")
+system2("cat", cmd)
+
+# dereplicating files
+info <- "Dereplicating pooled sequences!"
+message(info)
+cat(file="log.txt", info, append=T, sep="\n")
+
+cmd <- paste("-fastx_uniques \"", folder, "/_data/3_pooledESV/1_samples_pooled.txt\" -fastaout \"", folder, "/_data/3_pooledESV/2_samples_pooled_derep.txt\" -sizein -sizeout", sep="")
+A <- system2(exe, cmd, stdout=T, stderr=T)
+
+cat(file=paste(folder, "/_stats/1_derep_logs.txt", sep=""), paste("usearch", cmd, sep=""), append=T, sep="\n")
+cat(file=paste(folder, "/_stats/1_derep_logs.txt", sep=""), A, append=T, sep="\n")
+
+
+# rename files for ESV
+ESVs <- read.fasta(paste(folder, "/_data/3_pooledESV/2_samples_pooled_derep.txt", sep=""), forceDNAtolower=F, as.string=T)
+
+names(ESVs) <- paste("haplo_", 1:length(ESVs), sep="")
+write.fasta(ESVs, names=names(ESVs), paste(folder, "/_data/3_pooledESV/3_ESV_list.txt", sep=""))
+
+
+
+# need to keep working on this
+
+
+} # end processing indiv denoised files
 
 
 # generate one united haplotype table!

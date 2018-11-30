@@ -56,7 +56,7 @@ new_names <- sub("_data", paste("_data/1_derep_minsize_", minuniquesize, sep="")
 new_names <- paste(folder, "/", new_names, sep="")
 
 
-cmd <- paste("-derep_fulllength \"", files[!empty], "\" -output \"", new_names, "\" -sizeout", if(! mapp_singletons){paste(" -minuniquesize ", minuniquesize, sep="")}, sep="")
+cmd <- paste("-derep_fulllength \"", files[!empty], "\" -output \"", new_names, "\" -sizeout -sizein", if(! mapp_singletons){paste(" -minuniquesize ", minuniquesize, sep="")}, sep="")
 
 files_to_delete <- c(files_to_delete, new_names)
 
