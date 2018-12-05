@@ -38,7 +38,7 @@ excluded <- files[empty]
 # Dereplicate files using USEARCH
 dir.create(paste(folder, "/_data/1_derep", sep=""))
 
-new_names <- sub(".*(_data/.*)", "\\1", files[!empty])
+new_names <- sub(".*(/.*)", "_data\\1", files[!empty])
 new_names <- sub("_PE.*", "_PE_derep.fasta", new_names)
 new_names <- sub("_data", "_data/1_derep", new_names)
 new_names <- paste(folder, "/", new_names, sep="")

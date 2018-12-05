@@ -28,8 +28,8 @@ options("scipen" = temp)
 
 
 # new file names
-new_names <- sub(".*(_data/.*)", "\\1", files)
-new_names <- paste(folder, "/", new_names, sep="")
+new_names <- sub(".*(/.*)", "\\1", files)
+new_names <- paste(folder, "/_data", new_names, sep="")
 
 
 if(fastq_out){
