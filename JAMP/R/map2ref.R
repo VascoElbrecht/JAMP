@@ -43,7 +43,7 @@ new_names <- sub("_PE.*", "_PE_derep.fasta", new_names)
 new_names <- sub("_data", "_data/1_derep", new_names)
 new_names <- paste(folder, "/", new_names, sep="")
 
-cmd <- paste(if(version<9){"-derep_fulllength"}else{"-fastx_uniques"}, " \"", files[!empty], "\" -fastaout \"", new_names, "\" -sizeout",  sep="")
+cmd <- paste(if(version<9){"-derep_fulllength"}else{"-fastx_uniques"}, " \"", files[!empty], "\" -fastaout \"", new_names, "\" -sizeout -sizein",  sep="")
 
 files_to_delete <- c(files_to_delete, new_names)
 
