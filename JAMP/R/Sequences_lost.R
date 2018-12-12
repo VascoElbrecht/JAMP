@@ -4,9 +4,9 @@ Sequences_lost <- function(Reads_in=NA, Reads_out, Sample_names, out="", abundan
 ORIGscipen <- getOption("scipen")
 options(scipen=10)
 
-AddText <- !is.na(Reads_in[1])
+AddText <- sum(!is.na(Reads_in))>0
 
-if(is.na(Reads_in[1])){
+if(!AddText){
 Reads_in <- Reads_out
 }
 
