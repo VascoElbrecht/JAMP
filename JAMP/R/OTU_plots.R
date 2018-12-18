@@ -1,5 +1,5 @@
 # beta
-OTU_heatmap <- function(file=table, out="", abundance=F, plot0=F, rel=F, col=c("blue3", "white")){
+OTU_heatmap <- function(file=table, out="", abundance=F, plot0=F, rel=F, col=c("#2b83ba", "#abdda4", "#ffffbf", "#fdae61", "#d7191c")){
 
 ORIGscipen <- getOption("scipen")
 options(scipen=10)
