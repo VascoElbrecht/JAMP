@@ -1,6 +1,6 @@
 # U_cluster_otus v0.1
 
-Map2ref <- function(files="latest", refDB=NULL, id=0.97, strand="plus", onlykeephits=T, filter=0.01, maxaccepts=1, maxrejects=32, exe="usearch", heatmap=T, delete_data=T, JV=F){
+Map2ref <- function(files="latest", refDB=NULL, id=0.97, minuniquesize=1, strand="plus", onlykeephits=T, filter=0.01, maxaccepts=1, maxrejects=32, exe="usearch", heatmap=T, delete_data=T, JV=F){
 
 
 
@@ -43,7 +43,7 @@ new_names <- sub("_PE.*", "_PE_derep.fasta", new_names)
 new_names <- sub("_data", "_data/1_derep", new_names)
 new_names <- paste(folder, "/", new_names, sep="")
 
-cmd <- paste(if(version<9){"-derep_fulllength"}else{"-fastx_uniques"}, " \"", files[!empty], "\" -fastaout \"", new_names, "\" -sizeout -sizein",  sep="")
+cmd <- paste(if(version<9){"-derep_fulllength"}else{"-fastx_uniques"}, " \"", files[!empty], "\" -fastaout \"", new_names, "\" -sizeout -sizein -minuniquesize ", minuniquesize,  sep="")
 
 files_to_delete <- c(files_to_delete, new_names)
 
