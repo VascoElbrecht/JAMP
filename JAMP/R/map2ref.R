@@ -141,6 +141,7 @@ tab <- c("NULL")
 tab <- as.data.frame(tab, stringsAsFactors=F)
 names(tab) <- "ID"
 
+
 for (i in 1:length(files)){
 data <- read.csv(files[i], sep="\t", header=F, stringsAsFactors=F)
 
@@ -174,7 +175,8 @@ names(tab)[i+1] <- sub(".*2_mapping/(.*).txt", "\\1", files[i])
 }
 names(tab) <- sub("_PE$", "", names(tab))
 
-tab <- tab[-1,] # remove NULL entry in the beginning
+
+tab <- tab[!tab$ID=="NULL",] # remove NULL entry
 tab[is.na(tab)] <- 0
 
 # re add empty files
@@ -201,8 +203,6 @@ tab2 <- data.frame(tab, zero, stringsAsFactors=F)
 tab <- tab2[,c(1, order(names(tab2)[-1])+1)]
 }
 # end readd
-
-
 
 
 sequ <- read.fasta(refDB, forceDNAtolower=F, as.string=T)
