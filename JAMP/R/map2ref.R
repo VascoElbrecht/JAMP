@@ -1,6 +1,6 @@
 # U_cluster_otus v0.1
 
-Map2ref <- function(files="latest", refDB=NULL, id=0.97, minuniquesize=1, strand="plus", onlykeephits=T, filter=0.01, maxaccepts=1, maxrejects=32, exe="usearch", heatmap=T, delete_data=T, JV=F){
+Map2ref <- function(files="latest", refDB=NULL, id=0.97, minuniquesize=1, strand="plus", onlykeephits=T, filter=0.01, maxaccepts=1, maxrejects=32, exe="usearch", threads=NA, heatmap=T, delete_data=T, JV=F){
 
 
 
@@ -93,9 +93,9 @@ nohit <- sub("1_derep", "3_nohit_fasta", new_names)
 log_names <- sub("_data/2_mapping/", "_stats/map_logs/", blast_names)
 
 if(!JV){
-cmd <- paste("-usearch_global ", new_names, " -db \"", refDB, "\" -strand ", strand, " -id ", id, " -blast6out \"", blast_names, "\" -maxhits 1", " -notmatched \"", nohit, "\" -maxaccepts ", maxaccepts, " -maxrejects ", maxrejects, sep="")
+cmd <- paste("-usearch_global ", new_names, " -db \"", refDB, "\" -strand ", strand, " -id ", id, " -blast6out \"", blast_names, "\" -maxhits 1", " -notmatched \"", nohit, "\" -maxaccepts ", maxaccepts, " -maxrejects ", maxrejects, if(!is.na(threads)){paste(" -threads ", threads, sep="")}, sep="")
 } else { #legacy version, remove at some point
-cmd <- paste("-usearch_global ", new_names, " -db \"", refDB, "\" -strand ", strand, " -id ", id, " -blast6out \"", blast_names, "\" -notmatched \"", nohit, "\" -maxaccepts ", maxaccepts, " -maxrejects ", maxrejects, sep="")
+cmd <- paste("-usearch_global ", new_names, " -db \"", refDB, "\" -strand ", strand, " -id ", id, " -blast6out \"", blast_names, "\" -notmatched \"", nohit, "\" -maxaccepts ", maxaccepts, " -maxrejects ", maxrejects, if(!is.na(threads)){paste(" -threads ", threads, sep="")}, sep="")
 }
 files_to_delete <- c(files_to_delete, blast_names)
 
