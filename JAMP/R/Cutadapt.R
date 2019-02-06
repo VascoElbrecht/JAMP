@@ -129,7 +129,7 @@ cat(file=log_names[i], A, append=T, sep="\n")
 
 # build revcomp
 
-revcom_cmd <- paste("-fastx_revcomp ", files[i],  if(fastq){" -fastqout "} else {"-fastaout "}, folder, "/_data/temp2_RC.txt  -label_suffix _RC",  sep="")
+revcom_cmd <- paste("-fastx_revcomp ", files[i],  if(fastq){" -fastqout "} else {" -fastaout "}, folder, "/_data/temp2_RC.txt  -label_suffix _RC",  sep="")
 A <- system2(exeU, revcom_cmd, stdout=T, stderr=T)
 
 cat(file=log_names[i], paste("usearch ", revcom_cmd, sep=""), append=T, sep="\n")
