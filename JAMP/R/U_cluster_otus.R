@@ -83,10 +83,33 @@ message(meep)
 
 dir.create(paste(folder, "/_data/2_OTU_clustering", sep=""))
 
+# HOT FIX 190227 - split cat
+if(length(new_names)<800){
+
 cmd <- paste(paste(new_names, collapse=" "), " > ", folder, "/_data/2_OTU_clustering/A_all_files_united.fasta", collapse="", sep="")
 A <- system2("cat", cmd, stdout=T, stderr=T)
 
-files_to_delete <- c(files_to_delete, paste(folder, "/_data/2_OTU_clustering/A_all_files_united.fasta", sep=""))
+
+files_to_delete <- c(files_to_delete, paste(folder, "/_data/2_OTU_clustering/A_all_files_united.fasta", sep="")) } else {
+# SPLIT
+# TEMP A
+cmd <- paste(paste(new_names[1:700], collapse=" "), " > ", folder, "/_data/2_OTU_clustering/A_all_files_TEMP_A.fasta", collapse="", sep="")
+A <- system2("cat", cmd, stdout=T, stderr=T)
+# TEMP B
+cmd <- paste(paste(new_names[701:length(new_names)], collapse=" "), " > ", folder, "/_data/2_OTU_clustering/A_all_files_TEMP_B.fasta", collapse="", sep="")
+A <- system2("cat", cmd, stdout=T, stderr=T)
+
+message(length(new_names[1:700]))
+message(length(new_names[701:length(new_names)]))
+
+cmd <- paste(folder, "/_data/2_OTU_clustering/A_all_files_TEMP_A.fasta ", folder, "/_data/2_OTU_clustering/A_all_files_TEMP_B.fasta", " > ", folder, "/_data/2_OTU_clustering/A_all_files_united.fasta", collapse="", sep="")
+A <- system2("cat", cmd, stdout=T, stderr=T)
+
+
+
+} # end hot fix
+
+
 
 #check <- readLines("_data/2_OTU_clustering/A_all_files_united.fasta")
 #count <- as.numeric(sub(".*size=(.*)", "\\1", check))
