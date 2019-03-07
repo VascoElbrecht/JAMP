@@ -196,6 +196,11 @@ cat(file=paste(folder, "/_stats/2_denoise_logs.txt", sep=""), A, append=T, sep="
 seqin <- Count_sequences(new_names[i], fastq=F)
 seqout <- Count_sequences(denoised[i], fastq=F)
 
+if(seqout==0){
+empty_filesTF[i] <- F
+}
+
+
 temp <- paste("Sample ", sub(".*/(.*)_PE_.*", "\\1", new_names[i]), " denoised ", seqin, " sequences to ", seqout, " ESVs (", round(seqout/seqin*100, 2), "% keeped)", sep="")
 message(temp)
 cat(file="log.txt", temp, append=T, sep="\n")
@@ -384,7 +389,7 @@ data5 <- cbind(data[,c(1:3)], data4, data[,ncol(data)])
 names(data5)[ncol(data5)] <- "sequences"
 data <- data5
 } # end add empty
-
+head(data)
 write.csv(file=paste(folder, "/_data/4_denoised/A_Raw_haplotable.csv", sep=""), data, row.names=F)
 
 write.fasta(as.list(data$sequences[-nrow(data)]), paste(data$OTU[-nrow(data)], data$haplotype[-nrow(data)], sep="__"), paste(folder, "/_data/4_denoised/A_Raw_haplo_sequ_byOTU.txt", sep=""))
