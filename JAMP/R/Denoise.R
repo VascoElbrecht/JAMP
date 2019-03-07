@@ -363,7 +363,9 @@ dir.create(paste(folder, "/_data/4_denoised", sep=""))
 #right place?
 names(data) <- sub(renameSamples, "\\1", names(data))
 
-# Add back in empty cells
+
+# Add back in empty cells, if there where empty samples
+if(sum(!empty_filesTF)>0){
 tempname <- sub(".*_data/1_derep/", "", new_names[which(!empty_filesTF)])
 tempname <- sub(renameSamples, "\\1", tempname)
 
@@ -381,6 +383,7 @@ data5 <- cbind(data[,c(1:3)], data4, data[,ncol(data)])
 
 names(data5)[ncol(data5)] <- "sequences"
 data <- data5
+} # end add empty
 
 write.csv(file=paste(folder, "/_data/4_denoised/A_Raw_haplotable.csv", sep=""), data, row.names=F)
 
