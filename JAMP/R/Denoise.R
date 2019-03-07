@@ -418,9 +418,11 @@ data[i+3][temp < minhaplosize] <- 0
 
 
 # remove all rows with 0!
-data <- data[rowSums(data[5:ncol(data)-1])!=0,]
+data <- data[rowSums(data[5:ncol(data)-1], na.rm=T)!=0,]
 
 data[nrow(data), 3] <- paste("denoised+below", minhaplosize, sep="")
+
+
 
 write.csv(file=paste(folder,"/_data/4_denoised/B_haplotable_alpha_", unoise_alpha, "_haplosize_", minhaplosize, ".csv", sep=""), data, row.names=F)
 
@@ -442,8 +444,9 @@ for (i in 1:ncol(temp)){
 exp <- cbind(exp, aggregate(unlist(temp[i]), list(data$OTU), "sum")[2])
 exp[i+1] <- exp[i+1]/sums[i]*100
 exp[i+1] <- exp[i+1] >= OTUmin
+exp[i+1][is.na(exp[i+1])] <- F #
 }
-
+#head(exp)
 keep <- rowSums(exp[-1])
 keep2 <- exp$Group.1[keep>0]
 
@@ -451,7 +454,7 @@ discarded <- data[!data$OTU %in% keep2,] # adddiscarded reads to count
 data <- data[data$OTU %in% keep2,]
 data[nrow(data), (5:ncol(data)-1)] <- data[nrow(data), (5:ncol(data)-1)] + colSums(discarded[5:ncol(data)-1])
 
-
+cbind(names(data))
 
 info <- paste(sum(keep>0), " of ", length(exp$Group.1), " OTUs remain in the dataset. ", sum(keep==0), " OTUs were discarded (", round(sum(keep==0)/length(exp$Group.1)*100, 2), "%)\n", sep="", "\nDiscarded OTUs are:\n", paste(exp$Group.1[keep==0], sep="", collapse=", "), "\n\n")
 message(info)
