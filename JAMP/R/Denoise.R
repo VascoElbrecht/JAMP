@@ -208,6 +208,9 @@ cat(file="log.txt", temp, append=T, sep="\n")
 
 # Include abundance information again
 
+# NEED TO FIX
+
+
 for (i in which(empty_filesTF)){
 de <- read.fasta(denoised[i], as.string=T, forceDNAtolower=F)
 fast <- read.fasta(new_names[i], as.string=T, forceDNAtolower=F)
@@ -284,7 +287,9 @@ FileListDenoised <- list.files(paste(folder, "/_data/2_denoised", sep=""), full.
 
 dir.create(paste(folder, "/_data/3_unoise", sep=""))
 
-for (i in 1:length(FileListDenoised)){
+temp_TF <-  file.info(FileListDenoised)[,1]>0
+
+for (i in which(temp_TF)){
 
 temp <- read.fasta(FileListDenoised[i], forceDNAtolower=F, as.string=T)
 
@@ -389,7 +394,7 @@ data5 <- cbind(data[,c(1:3)], data4, data[,ncol(data)])
 names(data5)[ncol(data5)] <- "sequences"
 data <- data5
 } # end add empty
-head(data)
+#head(data)
 write.csv(file=paste(folder, "/_data/4_denoised/A_Raw_haplotable.csv", sep=""), data, row.names=F)
 
 write.fasta(as.list(data$sequences[-nrow(data)]), paste(data$OTU[-nrow(data)], data$haplotype[-nrow(data)], sep="__"), paste(folder, "/_data/4_denoised/A_Raw_haplo_sequ_byOTU.txt", sep=""))
