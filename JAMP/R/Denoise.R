@@ -176,8 +176,17 @@ denoised <- sub("1_derep", "2_denoised", denoised)
 
 cmd <- paste("-unoise3 \"", new_names, "\" -zotus \"", denoised,"\" -unoise_alpha ", unoise_alpha, " -sizein -sizeout", sep="")
 
+# check for empty dereplicated files
+empty_filesTF <- file.info(new_names)[,1]>0
 
-for (i in 1:length(denoised)){
+tempM <- paste("A toatal of ", sum(!empty_filesTF)," of ", length(empty_filesTF), " files are empty and will not be denoised!\n", paste(sub(".*_data/1_derep/", "", new_names)[!empty_filesTF], collapse="\n"), sep="")
+message(tempM)
+cat(file="log.txt", tempM, append=T, sep="\n")
+
+empty_files <- new_names[!empty_filesTF]
+
+
+for (i in which(empty_filesTF)){
 
 A <- system2(exe, cmd[i], stdout=T, stderr=T)
 
@@ -194,7 +203,7 @@ cat(file="log.txt", temp, append=T, sep="\n")
 
 # Include abundance information again
 
-for (i in 1:length(denoised)){
+for (i in which(empty_filesTF)){
 de <- read.fasta(denoised[i], as.string=T, forceDNAtolower=F)
 fast <- read.fasta(new_names[i], as.string=T, forceDNAtolower=F)
 matched <- match(fast, de)
@@ -238,7 +247,7 @@ cat(file="log.txt", "\nCombining all files in a single file (samples_pooled.txt)
 
 # dereplicating pooled file
 message("\nCombining all individually denoised files in a single file (samples_pooled.txt)")
-cmd <- paste(paste(paste("\"", denoised, "\"", sep=""), collapse=" "), "> ", folder, "/_data/3_pooledESV/1_samples_pooled.txt", sep="")
+cmd <- paste(paste(paste("\"", denoised[empty_filesTF], "\"", sep=""), collapse=" "), "> ", folder, "/_data/3_pooledESV/1_samples_pooled.txt", sep="")
 system2("cat", cmd)
 
 # dereplicating files
@@ -347,12 +356,31 @@ data <- cbind(data, "sequences"=unlist(haplotypes), stringsAsFactors=F)
 data <- data[order(suppressWarnings(as.numeric(sub("OTU_", "", data$OTU)))),]
 data <- cbind("sort"=1:nrow(data), data)
 
-data <- rbind(data, c(nrow(data)+1, NA, "rm_bydenoising",  counts-colSums(data[4:(ncol(data)-1)]), NA))
+data <- rbind(data, c(nrow(data)+1, NA, "rm_bydenoising",  counts[which(empty_filesTF)]-colSums(data[4:(ncol(data)-1)]), NA))
 
 dir.create(paste(folder, "/_data/4_denoised", sep=""))
 
 #right place?
 names(data) <- sub(renameSamples, "\\1", names(data))
+
+# Add back in empty cells
+tempname <- sub(".*_data/1_derep/", "", new_names[which(!empty_filesTF)])
+tempname <- sub(renameSamples, "\\1", tempname)
+
+data2 <- data[,-c(ncol(data))]
+
+for (i in 1:length(tempname)){
+data2 <- data.frame(data2, rep(0, nrow(data2)), stringsAsFactors=F)
+names(data2)[ncol(data2)] <- tempname[i]
+}
+
+data3 <- data2[,-c(1:3)]
+data4 <-data3[,order(names(data3))]
+
+data5 <- cbind(data[,c(1:3)], data4, data[,ncol(data)])
+
+names(data5)[ncol(data5)] <- "sequences"
+data <- data5
 
 write.csv(file=paste(folder, "/_data/4_denoised/A_Raw_haplotable.csv", sep=""), data, row.names=F)
 
