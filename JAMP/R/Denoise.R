@@ -414,8 +414,10 @@ for (i in 1:(ncol(data)-4)){ # set to 0!
 temp <- data[i+3]/sum(data[i+3])*100
 data[nrow(data), i+3] <- data[nrow(data), i+3] + sum(data[i+3][temp < minhaplosize])
 data[i+3][temp < minhaplosize] <- 0
+if(is.na(data[nrow(data), i+3])){data[nrow(data), i+3] <- 0}# remove NA in empty file
 }
 
+#data[nrow(data), ] 
 
 # remove all rows with 0!
 data <- data[rowSums(data[5:ncol(data)-1], na.rm=T)!=0,]
@@ -438,6 +440,8 @@ data <- read.csv(file=paste(folder, "/_data/4_denoised/B_haplotable_alpha_", uno
 temp <- data[5:ncol(data)-1]
 sums <- colSums(temp)
 exp <- aggregate(unlist(temp[1]), list(data$OTU), "sum")[1]
+
+
 
 i<-1
 for (i in 1:ncol(temp)){
