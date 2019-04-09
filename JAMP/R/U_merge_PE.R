@@ -21,17 +21,17 @@ cat(file="log.txt", temp, append=T, sep="\n")
 
 
 if (files[1]=="latest"){
-source(paste(folder, "/robots.txt", sep=""))
-file1 <- list.files(paste(last_data, "/_data", sep=""), full.names=T, pattern="_[rR]1")
-file2 <- list.files(paste(last_data, "/_data", sep=""), full.names=T, pattern="_[rR]2")} else {
+source(paste(folder, "/robots.txt", sep="")) # load last_data
+file1 <- list.files(paste(last_data, "/_data", sep=""), full.names=T, pattern="_[rR]1.fastq")
+file2 <- list.files(paste(last_data, "/_data", sep=""), full.names=T, pattern="_[rR]2.fastq")} else {
 
 if (length(files)>1 ){
-file1 <- files[grep("_[rR]1", files)]
-file2 <- files[grep("_[rR]2", files)]
+file1 <- files[grep("_[rR]1.fastq", files)]
+file2 <- files[grep("_[rR]2.fastq", files)]
 }
 }
 
-merge_identical <- sub(".*_data/(.*)_[rR]1.*", "\\1", file1)==sub(".*_data/(.*)_[rR]2.*", "\\1",file2)
+merge_identical <- sub(".*_data/(.*)_[rR]1.fastq", "\\1", file1)==sub(".*_data/(.*)_[rR]2.fastq", "\\1",file2)
 # merging not identical reads
 if(!sum(merge_identical)==length(merge_identical)){
 warning("There is a problem with the files you want to merge. Not all fastq files have a matchign pair with identical name. Please check. Package stopped.")
@@ -58,7 +58,7 @@ message(" ")
 # new file names
 
 new_names <- sub(".*(/.*)", "\\1", file1)
-if(fastq){new_names <- sub("_[rR]1.*", "_PE.fastq", new_names)} else {new_names <- sub("_[rR]1.*", "_PE.fasta", new_names)}
+if(fastq){new_names <- sub("_[rR]1.fastq", "_PE.fastq", new_names)} else {new_names <- sub("_[rR]1.fastq", "_PE.fasta", new_names)}
 
 new_names <- paste(folder, "/_data", new_names, sep="")
 
