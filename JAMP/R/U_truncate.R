@@ -30,8 +30,12 @@ new_names <- paste(folder, "/", new_names, sep="")
 
 
 # allow for vector truncation (in case of r1 or r2)
-
+if(sub(".*/", "", exe)=="usearch"){
 cmd <- paste("-fastx_truncate \"", files,"\"", " -stripleft ", left, " -stripright ", right, if(!is.na(trunclen)){paste(" -trunclen ", trunclen, sep="")}, if(keepshort){paste(" -padlen ", trunclen, sep="")}, if(fastq){" -fastqout "} else {" -fastaout "}, "\"", new_names, "\"", sep="")
+} else { # vsearch version
+cmd <- paste("-fastx_filter \"", files,"\"", " -fastq_stripleft ", left, " -fastq_stripright ", right, if(!is.na(trunclen)){paste(" -fastq_trunclen ", trunclen, sep="")}, if(keepshort){paste(" -padlen ", trunclen, sep="")}, if(fastq){" -fastqout "} else {" -fastaout "}, "\"", new_names, "\"", sep="")
+}
+
 
 files_to_delete <- c(files_to_delete, new_names)
 
