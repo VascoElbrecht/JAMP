@@ -20,13 +20,15 @@ files <- list.files(paste(last_data, "/_data", sep=""), full.names=T)
 }
 
 # new file names
-new_names <- sub(".*(_data/.*)", "\\1", files)
-new_names <- sub(".fast", "_minmax.fast", new_names)
+new_names <- sub(".*/(.*)", "\\1", files)
+if(fastq){new_names <- sub(".fastq$", "_minmax.fastq", new_names)}else{
+new_names <- sub(".fasta$", "_minmax.fasta", new_names)}
+new_names <- paste("_data/", new_names, sep="")
 
 #log names
 dir.create(paste(folder, "/_stats/_cutadapt_logs", sep=""))
 log_names <- sub("_data", "_stats/_cutadapt_logs", new_names)
-log_names <- sub(".fast[aq]", ".txt", log_names)
+log_names <- sub(".fast[aq]$", ".txt", log_names)
 
 # NEED TO REDO THIS, for now only plusminus works, no individual scores, no only onesided
 # calculate min max
