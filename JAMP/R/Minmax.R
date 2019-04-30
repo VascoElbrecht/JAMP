@@ -103,7 +103,7 @@ message("Generating length distribution plots. If this takes to long you can tur
 for (i in 1:length(new_names)){
 
 pdfname <- sub("_data/", "_stats/length distribution/", new_names[i])
-pdfname <- sub(".fast.", ".pdf", pdfname)
+pdfname <- sub(".fast.$", ".pdf", pdfname)
 
 message(paste("Plotting ", sub(".*distribution/(.*)_PE_.*pdf","\\1", pdfname), sep=""))
 Length_distribution(paste(folder, "/", new_names[i], sep=""), paste(folder, "/", pdfname, sep=""), fastq=fastq)

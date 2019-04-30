@@ -21,7 +21,7 @@ data <- as.matrix(rbind(Reads_out, delta))
 
 
 if(out!=""){
-pdf(out, height=c(length(Reads_in)+3)/4, width=9)
+pdf(out, height=c(length(Reads_in)+3)/4+0.3, width=9)
 }
 
 par(mar=c(3,8,2,1))
