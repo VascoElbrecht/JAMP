@@ -45,7 +45,6 @@ reverse <- rep(reverse, length(files))
 }
 
 
-
 # replace primer name with sequence
 if(length(forward)==1){
 fw <- primers$Primer_Sequence[primers$Primer_Name==forward]
@@ -53,7 +52,7 @@ if(length(fw)==0){fw <- forward}
 }
 if(length(reverse)==1){
 rw <- primers$Primer_Sequence[primers$Primer_Name==reverse]
-if(length(fw)==0){rw <- reverse}
+if(length(rw)==0){rw <- reverse}
 }
 
 # match multiple primer names
