@@ -1,6 +1,6 @@
 # U_cluster_otus v0.1
 
-Map2ref <- function(files="latest", refDB=NULL, id=0.97, minuniquesize=1, strand="plus", onlykeephits=T, filter=0.01, maxaccepts=1, maxrejects=32, exe="usearch", threads=NA, heatmap=T, delete_data=T, JV=F){
+Map2ref <- function(files="latest", refDB=NULL, id=0.97, minuniquesize=1, strand="plus", onlykeephits=T, filter=0.01, maxaccepts=1, maxrejects=32, exe="usearch", threads=NA, heatmap=T, delete_data=T){
 
 
 
@@ -31,6 +31,12 @@ cat(file="log.txt", temp , append=T, sep="\n")
 }
 excluded <- NULL
 excluded <- files[empty]
+
+
+# check if sequence names contain blank spaces
+# message("checking reference data for blank spaces in sequence names (should not be present).")
+# shigi <- read.fasta(refDB, as.string=T, forceDNAtolower=F, whole.header=T)
+
 
 
 
@@ -92,11 +98,10 @@ nohit <- sub("1_derep", "3_nohit_fasta", new_names)
 
 log_names <- sub("_data/2_mapping/", "_stats/map_logs/", blast_names)
 
-if(!JV){
+
 cmd <- paste("-usearch_global ", new_names, " -db \"", refDB, "\" -strand ", strand, " -id ", id, " -blast6out \"", blast_names, "\" -maxhits 1", " -notmatched \"", nohit, "\" -maxaccepts ", maxaccepts, " -maxrejects ", maxrejects, if(!is.na(threads)){paste(" -threads ", threads, sep="")}, sep="")
-} else { #legacy version, remove at some point
-cmd <- paste("-usearch_global ", new_names, " -db \"", refDB, "\" -strand ", strand, " -id ", id, " -blast6out \"", blast_names, "\" -notmatched \"", nohit, "\" -maxaccepts ", maxaccepts, " -maxrejects ", maxrejects, if(!is.na(threads)){paste(" -threads ", threads, sep="")}, sep="")
-}
+#cmd <- paste("-usearch_global ", new_names, " -db \"", refDB, "\" -strand ", strand, " -id ", id, " -blast6out \"", blast_names, "\" -notmatched \"", nohit, "\" -maxaccepts ", maxaccepts, " -maxrejects ", maxrejects, if(!is.na(threads)){paste(" -threads ", threads, sep="")}, sep="")
+
 files_to_delete <- c(files_to_delete, blast_names)
 
 temp <- paste("Comparing ", length(cmd)," files with dereplicated reads (incl. singletons) against refDB: \"", sub(".*/(.*)", "\\1", refDB), "\" using \"usearch_global\" and Usearch. Minimum identity (id) is ", id, ".\n", sep="")
@@ -141,28 +146,13 @@ tab <- c("NULL")
 tab <- as.data.frame(tab, stringsAsFactors=F)
 names(tab) <- "ID"
 
-
+#files <- list.files("F_Map2ref/_data/2_mapping", full.names=T)
 for (i in 1:length(files)){
 data <- read.csv(files[i], sep="\t", header=F, stringsAsFactors=F)
 
 names(data) <- c("query", "ref", "ident", "length", "mism", "gap", "qstart", "qend", "target_s", "target_e", "e.value", "bitscore")
 
 data <- data[,c(-11,-12)]
-
-if(JV){ # legacy version, OTU sorting by OTU number, not recommended any where else.
-
-data <- data.frame(data, "OTUnum"=as.numeric(sub("OTU", "", data$ref)), stringsAsFactors=F)
-temp <- data[order(data$OTUnum, decreasing=F),]
-temp2 <- temp[order(temp$ident, decreasing=T),]
-temp3 <- temp2[order(temp2$query),]
-
-#temp4[temp4$query=="M00517:488:000000000-BV32D:1:1101:19803:2074;size=9961;",]
-
-temp4 <- temp3[!duplicated(temp3$query),]
-
-data <- temp4
-
-}
 
 
 data <- cbind(data, "abund"=as.numeric(sub(".*size=(.*);", "\\1", data$query)), stringsAsFactors=F)
@@ -205,7 +195,7 @@ tab <- tab2[,c(1, order(names(tab2)[-1])+1)]
 # end readd
 
 
-sequ <- read.fasta(refDB, forceDNAtolower=F, as.string=T)
+sequ <- read.fasta(refDB, forceDNAtolower=F, as.string=T, whole.header=T)
 
 # KEEP ONLY HITS OR KEEP ALL IN DB
 if(onlykeephits){
