@@ -3,7 +3,7 @@
 Cutadapt <- function(files="latest", forward=NA, reverse=NA, bothsides=F, anchoring=T, fastq=T, LDist=F, cores=1, delete_data=T, exe="cutadapt", exeU="usearch"){
 
 FW_only <- F
-if (is.na(reverse)){FW_only <- T}
+if (is.na(reverse[1])){FW_only <- T}
 
 folder <- Core(module="Cutadapt", delete_data=delete_data)
 cat(file="log.txt", c("Module Version: v0.2", "\n"), append=T, sep="\n")
