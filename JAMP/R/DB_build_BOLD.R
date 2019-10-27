@@ -72,8 +72,8 @@ taxon[which(!is.na(data$subspecies_taxID))] <- 17
 
 
 message("Preparing taxonomy reference files...")
-if(is.na(savefatsa)){
-savefatsa <- paste("DB_", sub("(.*)\\..*$", "\\1", tsv), ".fasta", sep="")
+if(is.na(savefasta)){
+savefasta <- paste("DB_", sub("(.*)\\..*$", "\\1", tsv), ".fasta", sep="")
 }
 
 if(is.na(savetaxonomy)){
@@ -83,7 +83,7 @@ savetaxonomy <- paste("DB_", sub("(.*)\\..*$", "\\1", tsv), "_taxonomy.csv", sep
 
 ID <- NULL
 for (i in 1:nrow(data)){
-ID[i] <- paste(data$processid[i], "_", data$bin_uri[i], "_taxID=BOLD", data[i, taxon[i]], sep="")
+ID[i] <- paste(data$processid[i], "_", data$bin_uri[i], "_taxID=BOLD:", data[i, taxon[i]], sep="")
 }
 
 
@@ -100,9 +100,9 @@ taxonomyDB$taxRef <- gsub("[()]", "", taxonomyDB$taxRef)
 
 write.csv(taxonomyDB, savetaxonomy, row.names=F)
 
-cat(paste(paste(">", ID, "\n", sep=""), data$nucleotides, "\n", sep=""), file= savefatsa, sep="")
+cat(paste(paste(">", ID, "\n", sep=""), data$nucleotides, "\n", sep=""), file= savefasta, sep="")
 
 
-message("Module complete! use ", savefatsa, " as a refference database, in combination with the taxonomy table ", savetaxonomy)
+message("Module complete! use ", savefasta, " as a refference database, in combination with the taxonomy table ", savetaxonomy)
 }
 
