@@ -107,7 +107,3 @@ write.csv(exp, sub("hits.txt", "HitTable.csv", hitfile), row.names=F)
 
 
 
-
-assign_taxonomy(query="BEN_sub_OTUs.fasta", reffasta="DB_bold_data.fasta", "DB_bold_data_taxonomy.csv")
-
-
