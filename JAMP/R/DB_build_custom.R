@@ -18,7 +18,11 @@ stop(call="No file name for saving fasta files is given in \"savefasta\". Please
 if(is.na(savetaxonomy)){
 stop(call="No file name for saving taxonomy csv is given in \"savetaxonomy\". Please provide a file name to save the taxonomy csv.")
 }
-# apply length filtering
+# check for forbidden prefixes
+if(taxIDprefix=="BOLD" | taxIDprefix=="NCBI"){
+warning("taxIDprefix can not be \"", taxIDprefix, "\"! Defulting to taxIDprefix=\"JAMP\".")
+taxIDprefix <- "JAMP"
+}
 
 
 # Build taxonomy
