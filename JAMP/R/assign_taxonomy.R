@@ -28,7 +28,7 @@ fasta <- readLines(query) # read for later IDs
 
 hitfile <- paste(sub("(.*)\\..*$", "\\1", query), "_hits.txt", sep="")
 
-system2(exe,  paste("-usearch_global ", query, " -db ", reffasta," -id ", id, " -blast6out ", hitfile, " -strand ", strands, " -maxaccepts ", maxaccepts, " -maxrejects ", maxrejects, " -query_cov ", query_cov, " -maxhits 100 -threads 16", sep=""), stdout="", stderr="")
+system2(exe,  paste("-usearch_global \"", query, "\" -db \"", reffasta,"\" -id ", id, " -blast6out \"", hitfile, "\" -strand ", strands, " -maxaccepts ", maxaccepts, " -maxrejects ", maxrejects, " -query_cov ", query_cov, " -maxhits 100 -threads 16", sep=""), stdout="", stderr="")
 
 
 # reformatting 
