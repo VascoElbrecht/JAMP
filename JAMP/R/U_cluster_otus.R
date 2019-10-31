@@ -402,6 +402,8 @@ write.csv(exp, file=paste(folder, "/_data/5_subset/5_OTU_sub_", filter, "_not_re
 
 OTU_sub_filename <- paste(folder, "/_data/5_subset/5_OTU_sub_", filter, ".fasta", sep="")
 write.fasta(as.list(exp$sequ[-nrow(exp)]), exp$ID[-nrow(exp)], file.out=OTU_sub_filename)
+file.copy(OTU_sub_filename, sub("_data/5_subset/", "", OTU_sub_filename))
+
 
 # remapping of reads against subsetted OTUs!
 # compare against refernce sequences (including singletons)
