@@ -1,6 +1,6 @@
-# merge_PE Vsearch v0.1
+# merge_PE Vsearch Usearch v0.1
 
-Merge_PE <- function(files="latest", file1=NA, file2=NA, fastq_maxdiffs=99, fastq_maxdiffpct=100, fastq_minovlen=16, fastq=T, LDist=T, exe="vsearch", delete_data=T){
+Merge_PE <- function(files="latest", file1=NA, file2=NA, fastq_maxdiffs=99, fastq_maxdiffpct=25, fastq_minovlen=16, fastq=T, LDist=T, exe="vsearch", delete_data=T){
 
 #detect usearch or vsearch
 program <- detect_exe(exe)
@@ -14,8 +14,7 @@ files_to_delete <- NULL
 
 
 if(!is.na(file1[1])&!is.na(file2[1])){
-files[1] <- "NOT USED"
-
+#files[1] <- "NOT USED"
 temp <- "Custom list of files provided as file1 and file2 will be used\n\n"
 
 message(temp)
@@ -78,7 +77,7 @@ if(program=="vsearch"){
 cmd <- paste(" -fastq_mergepairs \"", file1, "\" -reverse \"", file2,  "\" ", if(fastq){"-fastqout"} else {"-fastaout"}, " \"", new_names, "\" -fastq_maxdiffs ", fastq_maxdiffs , " -fastq_maxdiffpct ", fastq_maxdiffpct, " -fastq_minovlen ", fastq_minovlen, sep="", " -fastq_allowmergestagger")
 }
 if(program=="usearch"){
-cmd <- paste(" -fastq_mergepairs \"", file1, "\" -reverse \"", file2,  "\" ", if(fastq){"-fastqout"} else {"-fastaout"}, " \"", new_names, "\"", " -report ", log_names, " -fastq_maxdiffs ", fastq_maxdiffs , " -fastq_pctid ", fastq_maxdiffpct, " -fastq_trunctail 0 -fastq_minovlen ", fastq_minovlen, sep="")
+cmd <- paste(" -fastq_mergepairs \"", file1, "\" -reverse \"", file2,  "\" ", if(fastq){"-fastqout"} else {"-fastaout"}, " \"", new_names, "\"", " -report ", log_names, " -fastq_maxdiffs ", fastq_maxdiffs , " -fastq_pctid ", 100-fastq_maxdiffpct, " -fastq_trunctail 0 -fastq_minovlen ", fastq_minovlen, sep="")
 }
 
 
