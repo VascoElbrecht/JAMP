@@ -153,8 +153,8 @@ write.csv(tab_exp, paste(folder, "/_stats/", sub("(.)_.*", "\\1", folder), "_seq
 # make some plots
 temp <- read.csv(paste(folder, "/_stats/", sub("(.)_.*", "\\1", folder), "_sequ_length_abund.csv", sep=""), stringsAsFactors=F)
 
-Sequences_lost(temp$Sequ_count_in, temp$Sequ_count_out, temp$Sample, out=paste(folder, "/_stats/", sub("(.)_.*", "\\1", folder), "_Sequences_merged.pdf", sep=""), main=paste(folder, ": Proportion of reads merged", sep=""))
-Sequences_lost(temp$Sequ_count_in, temp$Sequ_count_out, temp$Sample, rel=T, out=paste(folder, "/_stats/", sub("(.)_.*", "\\1", folder), "_Sequences_merged_rel.pdf", sep=""), main=paste(folder, ": Proportion of reads merged", sep=""))
+Sequences_lost(temp$Sequ_count_in, temp$Sequ_count_out, temp$Sample, out=paste(folder, "/_stats/", sub("(.)_.*", "\\1", folder), "_Sequences_merged.pdf", sep=""), main=paste(folder, ": Proportion of reads merged ", if(program=="vsearch"){"using vsearch"}else{"using usearch"}, sep=""))
+Sequences_lost(temp$Sequ_count_in, temp$Sequ_count_out, temp$Sample, rel=T, out=paste(folder, "/_stats/", sub("(.)_.*", "\\1", folder), "_Sequences_merged_rel.pdf", sep=""), main=paste(folder, ": Proportion of reads merged ", if(program=="vsearch"){"using vsearch"}else{"using usearch"}, sep=""))
 
 merged_message <- paste("\nOn average ", round(mean(temp$percent_merged), 2), "% sequences merged (SD = ", round(sd(temp$percent_merged), 2), "%).\n", sep="")
 message(merged_message)
