@@ -1,8 +1,9 @@
 # merge_PE Vsearch v0.1
 
-merge_PE <- function(files="latest", file1=NA, file2=NA, fastq_maxdiffs=99, fastq_maxdiffpct=100, fastq_minovlen=16, fastq=T, LDist=T, exe="vsearch", delete_data=T){
+Merge_PE <- function(files="latest", file1=NA, file2=NA, fastq_maxdiffs=99, fastq_maxdiffpct=100, fastq_minovlen=16, fastq=T, LDist=T, exe="vsearch", delete_data=T){
 
-
+#detect usearch or vsearch
+program <- detect_exe(exe)
 
 
 folder <- Core(module="merge_PE", delete_data= delete_data)
@@ -69,7 +70,19 @@ dir.create(paste(folder, "/_stats/merge_stats", sep=""))
 log_names <- sub("_data", "_stats/merge_stats", new_names)
 log_names <- sub("_PE.fast[aq]", "_PE_log.txt", log_names)
 
+
+
+# merge command usearch / vsearch
+
+if(program=="vsearch"){
 cmd <- paste(" -fastq_mergepairs \"", file1, "\" -reverse \"", file2,  "\" ", if(fastq){"-fastqout"} else {"-fastaout"}, " \"", new_names, "\" -fastq_maxdiffs ", fastq_maxdiffs , " -fastq_maxdiffpct ", fastq_maxdiffpct, " -fastq_minovlen ", fastq_minovlen, sep="", " -fastq_allowmergestagger")
+}
+if(program=="usearch"){
+cmd <- paste(" -fastq_mergepairs \"", file1, "\" -reverse \"", file2,  "\" ", if(fastq){"-fastqout"} else {"-fastaout"}, " \"", new_names, "\"", " -report ", log_names, " -fastq_maxdiffs ", fastq_maxdiffs , " -fastq_pctid ", fastq_maxdiffpct, " -fastq_trunctail 0 -fastq_minovlen ", fastq_minovlen, sep="")
+}
+
+
+
 
 files_to_delete <- c(files_to_delete, new_names)
 
@@ -79,11 +92,12 @@ tab_exp <- NULL
 for (i in 1:length(cmd)){
 temp <- system2(exe, cmd[i], stdout=T, stderr=T)
 
+
+# table export vsearch 
+if(program=="vsearch"){
 # save cmd in log name!
-cat(file=log_names[i], c(paste("vsearch", cmd[i]), temp), sep="\n\n")
+cat(file=log_names[i], c(paste("vsearch", cmd[i]), "\n", "\n", temp), sep="\n")
 
-
-# table export
 merged <- sub("(.*) Merged.*", "\\1",temp[6])
 merged <- as.numeric(gsub(" ", "", merged))
 
@@ -93,7 +107,6 @@ rawdata_counts <- as.numeric(gsub(" ", "", rawdata_counts))
 median_length <-  sub("(.*) Mean fragment length", "\\1",  temp[grep("Mean fragment length", temp)])
 median_length <- as.numeric(gsub(" ", "", median_length))
 
-#temp_count <- Count_sequences(new_names[i], fastq)
 temp_count <- merged
 
 short_name <- sub(".*_data/(.*)_PE.fast.", "\\1", new_names[i])
@@ -102,6 +115,30 @@ tab_exp <- rbind(tab_exp, c(short_name, rawdata_counts, temp_count, round(merged
 meep <- paste(short_name, ": ", round(merged/rawdata_counts*100, 2), "% merged - median length: ", median_length, sep="")
 message(meep)
 cat(file="log.txt", meep, append=T, sep="\n")
+} # vsearch end
+
+
+if(program=="usearch"){
+temp <- readLines(log_names[i])
+
+# save cmd in log name!
+cat(file=log_names[i], c(paste("usearch", cmd[i]), temp), sep="\n")
+
+
+# table export
+merged <- as.numeric(sub(".*merged \\((.*)..", "\\1",temp[6]))
+rawdata_counts <- as.numeric(sub(".* / (.*) pairs merged.*", "\\1", temp[6]))
+median_length <- as.numeric(sub("(.*)Median", "\\1",temp[11]))
+temp_count <- Count_sequences(new_names[i], fastq)
+short_name <- sub(".*_data/(.*)_PE.fast.", "\\1", new_names[i])
+tab_exp <- rbind(tab_exp, c(short_name, rawdata_counts, temp_count, merged, median_length))
+
+meep <- paste(short_name, ": ", merged, "% merged - median length: ", median_length, sep="")
+message(meep)
+cat(file="log.txt", meep, append=T, sep="\n")
+} # usearch end
+
+
 }
 
 cat(file="log.txt", "\n", append=T, sep="\n")
