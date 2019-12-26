@@ -21,10 +21,12 @@ data <- as.matrix(rbind(Reads_out, delta))
 
 
 if(out!=""){
-pdf(out, height=c(length(Reads_in)+3)/4+0.3, width=9)
+pdf(out, height=c(length(Reads_in)+3)/4+0.3, width=6.5+0.08*max(nchar(Sample_names)))
 }
 
-par(mar=c(3,8,2,1))
+factor <- 4+0.40*max(nchar(Sample_names))
+
+par(mar=c(3,factor,2,1))
 x <- barplot(data, col=col, border=0, horiz=T, xlim=c(0,max(data[1,]+data[2,], na.rm=T)*1.1), ylim=c(0.042*length(Reads_in), 1.156*length(Reads_in)))
 axis(2, x, labels= Sample_names, las=2, tick=F)
 mtext(main, side=3, adj=0, line=0.5, cex=1.2, font=2)
