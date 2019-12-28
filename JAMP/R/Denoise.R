@@ -83,7 +83,7 @@ message(info)
 cat(file="log.txt", info, append=T, sep="\n")
 
 
-haplo <- read.fasta(paste(folder, "/_data/1_derep/samples_pooled_derep.txt", sep=""), forceDNAtolower=F, as.string=T)
+haplo <- read.fasta(paste(folder, "/_data/1_derep/samples_pooled_derep.txt", sep=""), forceDNAtolower=F, as.string=T, whole.header=T)
 
 temp <- sub(".*(;size=.*;)", "\\1", names(haplo))
 temp2 <- paste("haplo_", 1:length(haplo), temp, sep="")
@@ -97,8 +97,19 @@ renamed <- sub(".txt", "_renamed.txt", new_names)
 renamed <- sub("/1_derep/", "/2_renamed/", renamed)
 
 
-for (i in 1:length(new_names)){
-sample <- read.fasta(new_names[i], as.string=T, forceDNAtolower=F)
+# check for empty dereplicated files
+empty_filesTF <- file.info(new_names)[,1]>0
+
+tempM <- paste("A toatal of ", sum(!empty_filesTF)," of ", length(empty_filesTF), " files are empty and will not be denoised!\n", paste(sub(".*_data/1_derep/", "", new_names)[!empty_filesTF], collapse="\n"), sep="")
+message(tempM)
+cat(file="log.txt", tempM, append=T, sep="\n")
+
+empty_files <- new_names[!empty_filesTF]
+
+
+
+for (i in which(empty_filesTF)){
+sample <- read.fasta(new_names[i], as.string=T, forceDNAtolower=F, whole.header=T)
 matched <- match(sample, haplo)
 
 new_sample <- haplo[matched] # DNA sequences
@@ -127,8 +138,8 @@ cat(file="log.txt", info, append=T, sep="\n")
 
 #Zotus, get old names back (original haplotypes)!
 
-Zotus <- read.fasta(paste(folder, "/_data/1_derep/samples_pooled_+_denoised.txt", sep=""), as.string=T, forceDNAtolower=F)
-renamed_sequ <- read.fasta(paste(folder, "/_data/1_derep/samples_pooled_derep_renamed.txt", sep=""), as.string=T, forceDNAtolower=F)
+Zotus <- read.fasta(paste(folder, "/_data/1_derep/samples_pooled_+_denoised.txt", sep=""), as.string=T, forceDNAtolower=F, whole.header=T)
+renamed_sequ <- read.fasta(paste(folder, "/_data/1_derep/samples_pooled_derep_renamed.txt", sep=""), as.string=T, forceDNAtolower=F, whole.header=T)
 
 matched <- match(Zotus, renamed_sequ)
 new_sample <- renamed_sequ[matched] # DNA sequences
@@ -147,9 +158,9 @@ denoised_sequences <- sub("_renamed.txt", "_denoised.txt", denoised_sequences)
 
 
 # check dereplicated files agains the list of haplotypes (unoise3 all files)
-for (i in 1:length(denoised_sequences)){
+for (i in which(empty_filesTF)){
 
-sample <- read.fasta(renamed[i], as.string=T, forceDNAtolower=F)
+sample <- read.fasta(renamed[i], as.string=T, forceDNAtolower=F, whole.header=T)
 sample_keep <- sample[sample%in%haplotypes]
 
 write.fasta(sample_keep, names(sample_keep), denoised_sequences[i])
@@ -237,6 +248,8 @@ if(is.na(chimeras)){chimeras<-0}
 info <- paste("Clustered ", length(haplotypes), " haplotype sequences (cluster_otus, 3% simmilarity) into ", OTUs, " OTUs (+", chimeras, " chimeras).\nOTUs and (potentially) chimeric sequences will be included in the Haplotype table!\n", sep="" )
 message(info)
 cat(file="log.txt", info, append=T, sep="\n")
+
+denoised_sequences <- list.files(paste(folder, "/_data/3_unoise", sep=""), full.names=T)
 } # end pooled processing
 
 
@@ -350,7 +363,7 @@ if(OTUs$V2[i]=="match"){OTU_list[i] <- sub(".*;top=(OTU_.*)\\(.*", "\\1", OTUs$V
 data <- data.frame("haplotype"=sub(";size=.*;", "",names(haplotypes)), "OTU"=OTU_list, stringsAsFactors=F)
 
 for (i in 1:length(denoised_sequences)){
-sample <- names(read.fasta(denoised_sequences[i]))
+sample <- names(read.fasta(denoised_sequences[i], whole.header=T))
 matched <- match(sub(";size=.*;", "", sample), data$haplotype)
 abundance <- rep(0, nrow(data))
 abundance[matched] <- as.numeric(sub(".*;size=(.*);", "\\1", sample))
