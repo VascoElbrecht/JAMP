@@ -1,6 +1,6 @@
 # Haplotyping v0.1
 
-Denoise <- function(files="latest",  strategy="unoise", unoise_alpha=5, minsize=10, minrelsize=0.0001, poolsamples=F, OTUmin=0.01, minhaplosize=0.003, withinOTU=5, eachsampleOTUmin=NULL, minHaploPresence=1, minOTUPresence=1, renameSamples="(.*_.*)_cut.*", exe="usearch"){
+Denoise <- function(files="latest", strategy="unoise", unoise_alpha=5, minsize=10, minrelsize=0.0001, poolsamples=F, OTUmin=0.01, minhaplosize=0.003, withinOTU=5, eachsampleOTUmin=NULL, minHaploPresence=1, minOTUPresence=1, renameSamples="(.*_.*)_cut.*", exe="usearch"){
 
 
 
@@ -34,7 +34,7 @@ new_names <- paste(folder, "/", new_names, sep="")
 
 cmd <- paste("-fastx_uniques \"", files, "\" -fastaout \"", new_names, "\" -sizeout", " -minuniquesize ", size,  sep="")
 
-temp <- paste(length(files), " files are dereplicated and sequences in each sample below ", minrelsize, "% (or minuniqesize of ", minsize,")  are beeing discarded:", sep="")
+temp <- paste(length(files), " files are dereplicated and sequences in each sample below ", minrelsize, "% (or minuniqesize of ", minsize,") are beeing discarded:", sep="")
 cat(file="log.txt", temp , append=T, sep="\n")
 message(temp)
 
@@ -165,6 +165,8 @@ cat(file="log.txt", info, append=T, sep="\n")
 # end denoising POOLED samples
 
 
+
+
 # If denoising on individual sampels!
 if(!poolsamples){
 
@@ -174,7 +176,7 @@ denoised <- new_names
 denoised <- sub("1_derep", "2_denoised", denoised)
 
 
-cmd <- paste("-unoise3 \"", new_names, "\" -zotus \"", denoised,"\" -unoise_alpha ", unoise_alpha, " -sizein -sizeout", sep="")
+cmd <- paste("-unoise3 \"", new_names, "\" -zotus \"", denoised,"\" -unoise_alpha ", unoise_alpha, sep="") # " -sizein -sizeout" not supported
 
 # check for empty dereplicated files
 empty_filesTF <- file.info(new_names)[,1]>0
@@ -208,15 +210,11 @@ cat(file="log.txt", temp, append=T, sep="\n")
 
 # Include abundance information again
 
-# NEED TO FIX
-
-
 for (i in which(empty_filesTF)){
-de <- read.fasta(denoised[i], as.string=T, forceDNAtolower=F)
-fast <- read.fasta(new_names[i], as.string=T, forceDNAtolower=F)
+de <- read.fasta(denoised[i], as.string=T, forceDNAtolower=F, whole.header=T)
+fast <- read.fasta(new_names[i], as.string=T, forceDNAtolower=F, whole.header=T)
 matched <- match(fast, de)
 matched <- matched[!is.na(matched)]
-
 names(de) <- names(fast[matched])
 write.fasta(de, names(de), file.out= denoised[i])
 }
@@ -224,7 +222,7 @@ write.fasta(de, names(de), file.out= denoised[i])
 } # Done with indiv procesing.
 
 
-# Cluster into OTUs (for OTU table information)
+# Cluster into OTUs (for OTU table information), pooled
 if(poolsamples){
 cmd <- paste(" -cluster_otus ", folder, "/_data/1_derep/samples_pooled_+_denoised_renamed.txt -otus ", folder, "/_data/1_derep/samples_pooled_+_denoised_renamed_OTUsequ.txt -uparseout ", folder, "/_data/1_derep/samples_pooled_+_denoised_renamed_OTUtable.txt -relabel OTU_ -strand plus", sep="")
 
@@ -242,12 +240,12 @@ cat(file="log.txt", info, append=T, sep="\n")
 } # end pooled processing
 
 
+
+
 # OTU clustering for indiv samples
 if(!poolsamples){
 
 dir.create(paste(folder, "/_data/3_pooledESV", sep=""))
-
-
 
 
 cat(file=paste(folder, "/_stats/1_derep_logs.txt", sep=""), paste("\nCombining all files in a single file (samples_pooled.txt):\n", paste("cmd", cmd, collapse="", sep=""), collapse="", sep="") , append=T, sep="\n")
@@ -271,7 +269,7 @@ cat(file=paste(folder, "/_stats/1_derep_logs.txt", sep=""), A, append=T, sep="\n
 
 
 # rename files for ESV
-ESVs <- read.fasta(paste(folder, "/_data/3_pooledESV/2_samples_pooled_derep.txt", sep=""), forceDNAtolower=F, as.string=T)
+ESVs <- read.fasta(paste(folder, "/_data/3_pooledESV/2_samples_pooled_derep.txt", sep=""), forceDNAtolower=F, as.string=T, whole.header=T)
 
 
 
@@ -280,7 +278,7 @@ write.fasta(ESVs, names=names(ESVs), paste(folder, "/_data/3_pooledESV/3_ESV_lis
 
 
 # rename ESVs in dereplicated files
-ESV_list <- read.fasta(paste(folder, "/_data/3_pooledESV/3_ESV_list.txt", sep=""), forceDNAtolower=F, as.string=T)
+ESV_list <- read.fasta(paste(folder, "/_data/3_pooledESV/3_ESV_list.txt", sep=""), forceDNAtolower=F, as.string=T, whole.header=T)
 
 
 FileListDenoised <- list.files(paste(folder, "/_data/2_denoised", sep=""), full.names=T)
@@ -291,7 +289,7 @@ temp_TF <-  file.info(FileListDenoised)[,1]>0
 
 for (i in which(temp_TF)){
 
-temp <- read.fasta(FileListDenoised[i], forceDNAtolower=F, as.string=T)
+temp <- read.fasta(FileListDenoised[i], forceDNAtolower=F, as.string=T,  whole.header=T)
 
 temp_size <- sub(".*(;size=.*;)", "\\1", names(temp))
 
@@ -308,7 +306,7 @@ write.fasta(temp, names=names(temp), temp_filename)
 
 
 
-cmd <- paste(" -cluster_otus ", folder, "/_data/3_pooledESV/3_ESV_list.txt -otus ", folder, "/_data/1_derep/samples_pooled_+_denoised_renamed_OTUsequ.txt -uparseout ", folder, "/_data/1_derep/samples_pooled_+_denoised_renamed_OTUtable.txt -relabel OTU_ -strand plus", sep="")
+cmd <- paste(" -cluster_otus ", folder, "/_data/3_pooledESV/3_ESV_list.txt -otus ", folder, "/_data/1_derep/samples_pooled_+_denoised_renamed_OTUsequ.txt -uparseout ", folder, "/_data/1_derep/samples_pooled_+_denoised_renamed_OTUtable.txt -relabel OTU_ -strand plus -minsize 1", sep="")
 
 A <- system2(exe, cmd, stdout=T, stderr=T) # cluster OTUs!
 
