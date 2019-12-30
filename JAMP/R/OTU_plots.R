@@ -8,7 +8,10 @@ if(is.character(file)){
 data <- read.csv(file, stringsAsFactors=F)
 row.names(data) <- data[,2]
 data <- data[,-c(1,2, ncol(data))]
-} else {data <- file}
+} else {
+data <- file
+row.names(data) <- data[,2]
+data <- data[-c(1,2)]}
 
 backup <- data
 

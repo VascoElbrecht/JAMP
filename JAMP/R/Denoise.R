@@ -1,6 +1,6 @@
 # Haplotyping v0.1
 
-Denoise <- function(files="latest", strategy="unoise", unoise_alpha=5, minsize=10, minrelsize=0.0001, poolsamples=F, OTUmin=0.01, minhaplosize=0.003, withinOTU=5, eachsampleOTUmin=NULL, minHaploPresence=1, minOTUPresence=1, renameSamples="(.*_.*)_cut.*", exe="usearch"){
+Denoise <- function(files="latest", strategy="unoise", unoise_alpha=5, minsize=10, minrelsize=0.0001, poolsamples=F, OTUmin=0.01, minhaplosize=0.003, withinOTU=5, eachsampleOTUmin=NULL, minHaploPresence=1, minOTUPresence=1, renameSamples="(.*_.*)_cut.*", heatmap=T, exe="usearch"){
 
 
 
@@ -764,6 +764,14 @@ write.fasta(as.list(data$sequences[centroids]), data$OTU[centroids], paste(folde
 Denoise_barplot(paste(folder, "/E_haplo_table.csv", sep=""), out=paste(folder, "/_stats/Haplotype_barplot_E.pdf", sep=""), emptyOTUs=T)
 message(paste(sep="Haplotype distribution plot generated:\n", folder, "/_stats/Haplotype_barplot_E.pdf\n\nYou may use the fuction \"Denoise_barplot\"(",folder, "/E_haplo_table.csv) to further customise that plot.\n\n"))
 
+
+
+
+if(heatmap){
+OTU_heatmap(file=data.frame(data[1], paste(data[,2], data[,3], sep=" "), data[4:(ncol(data)-1)],  stringsAsFactors=F), out=paste(folder, "/_stats/map_E_haplo_table.pdf", sep=""), abundance=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
+
+
+}
 
 temp <- "\nModule completed!"
 message(temp)
