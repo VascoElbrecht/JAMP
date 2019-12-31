@@ -15,6 +15,24 @@ files <- list.files(paste(last_data, "/_data", sep=""), full.names=T)
 
 
 
+# Exclude empty imput files!
+
+empty_filesTFin <- file.info(files)[,1]>0
+
+if(sum(!empty_filesTFin)>0){
+message(sum(!empty_filesTFin), " files don't contain any reads and will be excluded from processing:")
+message(paste(files[!empty_filesTFin], collapse="\n"))
+files <- files[empty_filesTFin]
+}
+
+empty_files <- NULL
+empty_files <- c(empty_files, sub(".*/_data/(.*)", "\\1", files[!empty_filesTFin]))
+empty_files <- sub(renameSamples, "\\1", empty_files)
+
+
+
+
+
 # count sequences in each file
 counts <- Count_sequences(files, fastq=F)
 size <- round(counts* minrelsize/100) # get nim abundance
@@ -24,7 +42,6 @@ size[size<minsize] <- minsize # min size!
 
 # Dereplicate files using Usearch
 dir.create(paste(folder, "/_data/1_derep", sep=""))
-
 
 new_names <- sub(".*(_data/.*)", "\\1", files)
 new_names <- sub(".fasta", "_derep.fasta", new_names)
@@ -39,8 +56,10 @@ cat(file="log.txt", temp , append=T, sep="\n")
 message(temp)
 
 
+
+
 temp <- new_names
-for (i in 1:length(cmd)){
+for (i in 1:length(new_names)){
 A <- system2(exe, cmd[i], stdout=T, stderr=T)
 meep <- sub(".*_data/(.*)", "\\1", temp[i])
 cat(file=paste(folder, "/_stats/1_derep_logs.txt", sep=""), paste("usearch ", cmd[i], sep="") , append=T, sep="\n")
@@ -62,7 +81,7 @@ cat(file=paste(folder, "/_stats/1_derep_logs.txt", sep=""), paste("\nCombining a
 cat(file="log.txt", "\nCombining all files in a single file (samples_pooled.txt)\n", append=T, sep="\n")
 
 # dereplicating pooled file
-message("\nCombining all files in a single file (samples_pooled.txt)")
+message("\nCombining all ", length(new_names) , " files into a single file (samples_pooled.txt)")
 cmd <- paste(paste(paste("\"", new_names, "\"", sep=""), collapse=" "), "> ", folder, "/_data/1_derep/samples_pooled.txt", sep="")
 system2("cat", cmd)
 
@@ -104,7 +123,10 @@ tempM <- paste("A toatal of ", sum(!empty_filesTF)," of ", length(empty_filesTF)
 message(tempM)
 cat(file="log.txt", tempM, append=T, sep="\n")
 
-empty_files <- new_names[!empty_filesTF]
+
+empty_files <- c(empty_files, sub(".*/_data/1_derep/(.*)", "\\1", new_names[!empty_filesTF]))
+empty_files <- sub(renameSamples, "\\1", empty_files)
+
 
 
 
@@ -121,7 +143,7 @@ write.fasta(new_sample, new_haplo_seque_names, renamed[i])
 # UNOISE3
 # Apply denoising on the POOLED dereplicated renamed file!
 
-info <- paste("\nDenoising the file 1_derep/samples_pooled_derep_renamed.txt (containing", length(renamed), "samples).")
+info <- paste("\nDenoising the file 1_derep/samples_pooled_derep_renamed.txt (containing", sum(empty_filesTF), "samples).")
 message(info)
 cat(file="log.txt", info, append=T, sep="\n")
 
@@ -196,7 +218,11 @@ tempM <- paste("A toatal of ", sum(!empty_filesTF)," of ", length(empty_filesTF)
 message(tempM)
 cat(file="log.txt", tempM, append=T, sep="\n")
 
-empty_files <- new_names[!empty_filesTF]
+#empty_files <- c(empty_files, new_names[!empty_filesTF])
+
+empty_files <- c(empty_files, sub(".*/_data/1_derep/(.*)", "\\1", new_names[!empty_filesTF]))
+empty_files <- sub(renameSamples, "\\1", empty_files)
+
 
 
 for (i in which(empty_filesTF)){
@@ -386,9 +412,10 @@ names(data) <- sub(renameSamples, "\\1", names(data))
 
 
 # Add back in empty cells, if there where empty samples
-if(sum(!empty_filesTF)>0){
-tempname <- sub(".*_data/1_derep/", "", new_names[which(!empty_filesTF)])
-tempname <- sub(renameSamples, "\\1", tempname)
+if(!is.null(empty_files)){
+empty_files <- gsub("-", ".", empty_files)
+tempname <- empty_files
+
 
 data2 <- data[,-c(ncol(data))]
 
