@@ -795,7 +795,7 @@ message(paste(sep="Haplotype distribution plot generated:\n", folder, "/_stats/H
 
 
 if(heatmap){
-OTU_heatmap(file=paste(folder, "/E_haplo_table.csv", sep=""),  stringsAsFactors=F), out=paste(folder, "/_stats/map_E_haplo_table.pdf", sep=""), abundance=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
+OTU_heatmap(file=paste(folder, "/E_haplo_table.csv", sep=""), out=paste(folder, "/_stats/map_E_haplo_table.pdf", sep=""), abundance=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
 
 
 }
