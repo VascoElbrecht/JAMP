@@ -1,7 +1,7 @@
-# 180125 convert table into files for demultiplexing
+# 200201 convert table into files for demultiplexing
 
 # set directory
-setwd("~/Documents/UNI_und_VORLESUNGEN/14 Guelph/1 TEACHING/2018 metabarcoding course/1 JAMP/_converter")
+setwd("~/Documents/GitHub/Metabarcoding_Workshop/2020 Eukaryotic Metabarcoding/_converter")
 
 #table
 data <- read.csv("Leray2017.txt", stringsAsFactor=F, sep="\t")
@@ -16,7 +16,7 @@ indexe
 
 write.csv(indexe, row.names=F, file="indexe_1.csv")
 
-combos <- data.frame("ID"=paste(indexe$ID, "_", indexe$ID, sep=""), "File1"=paste("L", 1:7, "_r1.txt", sep=""), "File2"=paste("L", 1:7, "_r2.txt", sep=""))
+combos <- data.frame("ID"=paste(indexe$ID, "_", indexe$ID, sep=""), "File1"=paste("L", 1:7, "_R1.fastq", sep=""), "File2"=paste("L", 1:7, "_R2.fastq", sep=""))
 
 combos
 
