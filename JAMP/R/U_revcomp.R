@@ -9,7 +9,7 @@ message(" ")
 
 files_to_delete <- NULL
 
-if (files=="latest"){
+if (files[1]=="latest"){
 source(paste(folder, "/robots.txt", sep=""))
 files <- list.files(paste(last_data, "/_data", sep=""), full.names=T)
 }
