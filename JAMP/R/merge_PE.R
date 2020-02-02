@@ -48,10 +48,10 @@ stop()
 
 
 
-if(length(grep(".*N_debris_r1..*", file1))==1){message("N_debris are excluded and not merged.")}
+if(length(grep(".*N_debris_[rR]1..*", file1))==1){message("N_debris are excluded and not merged.")}
 
-file1 <- file1[!grepl(".*N_debris_r1..*", file1)] # remove debres from list
-file2 <- file2[!grepl(".*N_debris_r2..*", file2)] # remove debres from list
+file1 <- file1[!grepl(".*N_debris_[rR]1..*", file1)] # remove debres from list
+file2 <- file2[!grepl(".*N_debris_[rR]2..*", file2)] # remove debres from list
 
 
 message(paste("Starting to PE merge ", length(file1), " samples.", sep=""))

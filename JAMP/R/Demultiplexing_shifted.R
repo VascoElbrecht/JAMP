@@ -184,7 +184,7 @@ A <- which(match_sequ==k)
 if(length(A)>0){savesequ(combos$File1[k], combos$File2[k], rm1_master[A], rm2_master[A])}
 }
 A <- which(is.na(match_sequ))
-if(length(A)>0){savesequ("N_debris_r1.txt", "N_debris_r2.txt", 0, 0)}
+if(length(A)>0){savesequ("N_debris_R1.fastq", "N_debris_R2.fastq", 0, 0)}
 
 # repeat loop enede
 } # looping all sequence files!
