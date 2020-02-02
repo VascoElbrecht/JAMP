@@ -412,7 +412,7 @@ names(data) <- sub(renameSamples, "\\1", names(data))
 
 
 # Add back in empty cells, if there where empty samples
-if(!is.null(empty_files)){
+if(length(empty_files)!=0){
 empty_files <- gsub("-", ".", empty_files)
 tempname <- empty_files
 
@@ -795,7 +795,12 @@ message(paste(sep="Haplotype distribution plot generated:\n", folder, "/_stats/H
 
 
 if(heatmap){
-OTU_heatmap(file=paste(folder, "/E_haplo_table.csv", sep=""), out=paste(folder, "/_stats/map_E_haplo_table.pdf", sep=""), abundance=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
+
+gluma <- read.csv(paste(folder, "/E_haplo_table.csv", sep=""), stringsAsFactors=F)
+row.names(gluma) <- paste(gluma$haplotype, gluma$OTU, sep="__")
+gluma <- gluma[, -c(1:3, ncol(gluma))]
+
+OTU_heatmap(file= gluma, out=paste(folder, "/_stats/map_E_haplo_table.pdf", sep=""), abundance=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
 
 }
 
