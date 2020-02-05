@@ -2,6 +2,8 @@
 
 Demultiplexing_shifted <- function(file1, file2, tags=NA, combinations=NA, md5=T, OS="autodetect"){
 
+
+
 folder <- Core(module="Demultiplexing_shifted")
 cat(file="log.txt", c("\n", "Version v0.2", "\n"), append=T, sep="\n")
 
@@ -15,7 +17,18 @@ if(tags=="BF_BR"){
 barcodes <- read.csv(paste(system.file(package="JAMP"), "/BF_BR.csv", sep=""), stringsAsFactors=F)
 } else {barcodes <- read.csv(tags, stringsAsFactors=F)}
 
-tagL <- nchar(barcodes[1,1])
+
+if(sum(names(barcodes)[1:3]==c("barcode","rm","ID"))!=3){
+message("Tagging coulm names are not correct!")
+message(paste(names(barcodes), collapse="\t"))
+message("\n")
+message("Should be:")
+message(paste(c("barcode","rm","ID"), collapse="\t"))
+stop("Function stopped!")
+}
+
+
+tagL <- nchar(barcodes$barcode[1])
 
 # save original imput file tags
 write.csv(file=paste(folder, "/tags.csv", sep=""), barcodes, quote=F, row.names=F)
