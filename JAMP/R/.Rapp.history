@@ -1,26 +1,3 @@
-files <- lift.files("~/Desktop/package_test/A_Demultiplexing_shifted/_data")
-files <- list.files("~/Desktop/package_test/A_Demultiplexing_shifted/_data")
-files
-files <- list.files("~/Desktop/package_test/A_Demultiplexing_shifted/_data", full.names=T)
-fastq=T
-if(fastq){#
-cmd <- paste("", files, " | wc -l", sep="")#
-#
-A <- NULL#
-for (i in 1:length(files)){#
-A[i] <- system2("cat", cmd[i], stdout=T)#
-print(i)#
-}
-abundance <- as.numeric(sub(" ", "", A))#
-#
-} else {}
-abundance
-OS="autodetect"
-sys <- Sys.info()[['sysname']]
-sys
-Sys.info()
-comd
-cmd
 md5_cmd <- "md5"
 md5_cmd
 data <- read.csv("~/Desktop/Tutorial/H_U_cluster_otus/5_OTU_table_0.01_ZERO.csv", stringsAsFactors=F)
@@ -1730,3 +1707,42 @@ cat(file=paste(folder, "/robots.txt", sep=""), "\n# DELETE_START", files_to_dele
 #
 cat(file="log.txt", paste(Sys.time(), "*** Module completed!", "", sep="\n"), append=T, sep="\n")#
 }
+barcodes <- read.csv(paste(system.file(package="JAMP"), "/BF_BR.csv", sep=""), stringsAsFactors=F)
+barcodes
+names(barcodes)
+sum(names(barcodes)[1:3]!=c("barcode","rm","ID"))
+names(barcodes)[1:3]!=c("barcode","rm","ID")
+sum(names(barcodes)[1:3]==c("barcode","rm","ID"))
+sum(names(barcodes)[1:3]==c("barcode","rm","ID"))!=3
+message(paste(names(barcodes)))
+names(barcodes)
+message(paste(names(barcodes), collapse=""))
+message(paste(names(barcodes), collapse=""))
+paste(names(barcodes), collapse="")
+message(paste(names(barcodes), collapse="\t"))
+message(paste(c("barcode","rm","ID"), collapse="\t"))
+message("Tagging coulm names are not correct!")#
+message(paste(names(barcodes), collapse="\t"))#
+message("")#
+message("Should be")#
+message(paste(c("barcode","rm","ID"), collapse="\t"))#
+stop()
+if(sum(names(barcodes)[1:3]==c("barcode","rm","ID"))!=3){#
+message("Tagging coulm names are not correct!")#
+message(paste(names(barcodes), collapse="\t"))#
+message("")#
+message("Should be")#
+message(paste(c("barcode","rm","ID"), collapse="\t"))#
+stop("Function stopped!")#
+}
+message("Tagging coulm names are not correct!")#
+message(paste(names(barcodes), collapse="\t"))#
+message("")#
+message("Should be")#
+message(paste(c("barcode","rm","ID"), collapse="\t"))#
+stop("Function stopped!")
+install.packages(c("bold", "XML", "seqinr", "devtools", "fastqcr"), dependencies=T)#
+# Load devtools and install package directly from GitHub#
+library("devtools")#
+install_github("VascoElbrecht/PrimerMiner", subdir="PrimerMiner")#
+install_github("VascoElbrecht/JAMP", subdir="JAMP")

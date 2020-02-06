@@ -18,8 +18,8 @@ barcodes <- read.csv(paste(system.file(package="JAMP"), "/BF_BR.csv", sep=""), s
 } else {barcodes <- read.csv(tags, stringsAsFactors=F)}
 
 
-if(sum(names(barcodes)[1:3]==c("barcode","rm","ID"))!=3){
-message("Tagging coulm names are not correct!")
+if(sum(names(barcodes)%in%c("barcode","rm","ID"))!=3){
+message("Tagging coulm names are not correct! Tagging in file:")
 message(paste(names(barcodes), collapse="\t"))
 message("\n")
 message("Should be:")
@@ -69,7 +69,7 @@ combos <- read.csv(combinations, stringsAsFactors=F)
 write.csv(file= paste(folder, "/combinations.csv", sep=""), combos, row.names=F)
 
 # auto convert file if FileName is uesed (add R1 / R2)
-if(names(combos)[2]=="FileName"){
+if(sum(names(combos)%in%"FileName")==1){
 
 combos2 <- data.frame("ID"=combos$ID, "File1"=paste(combos$FileName, "_R1.fastq", sep=""), "File2"=paste(combos$FileName, "_R2.fastq", sep=""))
 
