@@ -1,52 +1,3 @@
-md5_cmd <- "md5"
-md5_cmd
-data <- read.csv("~/Desktop/Tutorial/H_U_cluster_otus/5_OTU_table_0.01_ZERO.csv", stringsAsFactors=F)
-temp <- data.matrix(data)
-head(data)
-temp <- data.matrix(data[-c(1,2, ncol(data))])
-head(data)
-temp <- data.matrix(data[-c(1,2, ncol(data)),])
-temp <- data.matrix(data[,-c(1,2, ncol(data))])
-head(data)
-head(temp)
-nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = cm.colors(256), scale="column", margins=c(5,10))
-temp
-nba_heatmap <- heatmap(log10(temp), Rowv=NA, Colv=NA, col = cm.colors(256), scale="column", margins=c(5,10))
-nba_heatmap <- heatmap(log(temp), Rowv=NA, Colv=NA, col = cm.colors(256), scale="column", margins=c(5,10))
-nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = cm.colors(256), scale="column", margins=c(5,10))
-cm.colors(256)
-nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = cm.colors(10), scale="column", margins=c(5,10))
-nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = cm.colors(3), scale="column", margins=c(5,10))
-nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = cm.colors(10000), scale="column", margins=c(5,10))
-nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = heat.colors(256), scale="column", margins=c(5,10))
-row.names(temp)
-row.names(data)
-row.names(data) <- data[2,]
-row.names(data) <- data[2]
-data[2]
-data <- read.csv("~/Desktop/Tutorial/H_U_cluster_otus/5_OTU_table_0.01_ZERO.csv", stringsAsFactors=F)#
-row.names(data) <- data[2]
-row.names(data) <- data[2,]
-row.names(data) <- data[,2]
-data <- read.csv("~/Desktop/Tutorial/H_U_cluster_otus/5_OTU_table_0.01_ZERO.csv", stringsAsFactors=F)#
-row.names(data) <- data[,2]#
-#
-temp <- data.matrix(data[,-c(1,2, ncol(data))])#
-nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = heat.colors(256), scale="column", margins=c(5,10))
-log(data[,-c(1,2, ncol(data))])
-log10(data[,-c(1,2, ncol(data))])
-temp <- log10(data[,-c(1,2, ncol(data))])
-is.inf(temp)
-temp[temp<0]
-temp <- log10(data[,-c(1,2, ncol(data))])#
-temp[temp<0] <-0
-nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = heat.colors(256), scale="column", margins=c(5,10))
-data <- read.csv("~/Desktop/Tutorial/H_U_cluster_otus/5_OTU_table_0.01_ZERO.csv", stringsAsFactors=F)#
-row.names(data) <- data[,2]#
-temp <- log10(data[,-c(1,2, ncol(data))])#
-temp[temp<0] <-0
-nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = heat.colors(256), scale="column", margins=c(5,10))
-temp
 temp <- data.matrix(temp)
 nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = heat.colors(256), scale="column", margins=c(5,10))
 nba_heatmap <- heatmap(temp, Rowv=NA, Colv=NA, col = rev(heat.colors(256)), scale="column", margins=c(5,10))
@@ -1717,7 +1668,6 @@ sum(names(barcodes)[1:3]==c("barcode","rm","ID"))!=3
 message(paste(names(barcodes)))
 names(barcodes)
 message(paste(names(barcodes), collapse=""))
-message(paste(names(barcodes), collapse=""))
 paste(names(barcodes), collapse="")
 message(paste(names(barcodes), collapse="\t"))
 message(paste(c("barcode","rm","ID"), collapse="\t"))
@@ -1746,3 +1696,56 @@ install.packages(c("bold", "XML", "seqinr", "devtools", "fastqcr"), dependencies
 library("devtools")#
 install_github("VascoElbrecht/PrimerMiner", subdir="PrimerMiner")#
 install_github("VascoElbrecht/JAMP", subdir="JAMP")
+tags = "~/Documents/GitHub/JAMP/Tutorial/_converter/indexe_1.csv"
+tags
+barcodes <- read.csv(tags, stringsAsFactors=F)
+barcodes
+names(barcodes)[1:3]
+names(barcodes)%in%c("barcode","rm","ID")
+message("Tagging coulm names are not correct!")#
+message(paste(names(barcodes), collapse="\t"))#
+message("\n")#
+message("Should be:")#
+message(paste(c("barcode","rm","ID"), collapse="\t"))#
+stop("Function stopped!")
+names(combos)%in%"FileName"
+combinations="~/Documents/GitHub/JAMP/Tutorial/_converter/combos_1.csv"
+combos <- read.csv(combinations, stringsAsFactors=F)
+combos
+sum(names(combos)%in%"FileName")==1
+nchar(barcodes$barcode)
+message("A total of ", length(tagL), " barcodes detected in \"", tags, "\". " )
+tagL <- nchar(barcodes$barcode)
+message("A total of ", length(tagL), " barcodes detected in \"", tags, "\". " )
+table(tagL)
+length(table(tagL))==1
+message("All tags have the length of ", tagL, ".")
+message("All tags have the length of ", tagL[1], ".")
+message("All tags have the length of ", tagL[1], ", looks good.")
+paste(table(tagL))
+tagL <- nchar(barcodes$barcode)
+paste(table(tagL))
+tagL
+table(tagL)
+tagL[3]<- 2
+tagL
+table(tagL)
+paste(table(tagL))
+table(tagL)
+table(tagL)
+names(table(tagL))
+message("Barcodes have difference length:", paste(names(table(tagL)), collapse=", ")
+message("Barcodes have difference length:", paste(names(table(tagL)), collapse=", "))
+message("Barcodes have difference length:", paste(names(table(tagL)), collapse=", "))
+message("Barcodes have difference length: ", paste(names(table(tagL)), collapse=", "))
+stop("Please make sure barcodes have all the same length for demultiplexing!")
+message("A total of ", length(tagL), " barcodes detected in \"", tags, "\". " )#
+if(length(table(tagL))==1){#
+message("All tags have the length of ", tagL[1], ", looks good.")#
+tagL <- tagL[1]#
+} else {#
+message("Barcodes have difference length: ", paste(names(table(tagL)), collapse=", "))#
+stop("Please make sure barcodes have all the same length for demultiplexing!")#
+}
+message("Barcodes have difference length: ", paste(names(table(tagL)), collapse=", "), " bp")
+barcodes

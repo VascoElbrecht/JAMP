@@ -17,7 +17,7 @@ if(tags=="BF_BR"){
 barcodes <- read.csv(paste(system.file(package="JAMP"), "/BF_BR.csv", sep=""), stringsAsFactors=F)
 } else {barcodes <- read.csv(tags, stringsAsFactors=F)}
 
-
+# check tagging file names
 if(sum(names(barcodes)%in%c("barcode","rm","ID"))!=3){
 message("Tagging coulm names are not correct! Tagging in file:")
 message(paste(names(barcodes), collapse="\t"))
@@ -27,8 +27,23 @@ message(paste(c("barcode","rm","ID"), collapse="\t"))
 stop("Function stopped!")
 }
 
+# check that all tags have the same length
+tagL <- nchar(barcodes$barcode)
 
-tagL <- nchar(barcodes$barcode[1])
+message("A total of ", length(tagL), " barcodes detected in \"", tags, "\". " )
+if(length(table(tagL))==1){
+message("All tags have the length of ", tagL[1], ", looks good.")
+tagL <- tagL[1]
+} else {
+message("Barcodes have difference length: ", paste(names(table(tagL)), collapse=", "), " bp")
+stop("Please make sure barcodes have all the same length for demultiplexing!")
+}
+
+
+tagL[3]<- 2
+names(table(tagL))
+
+
 
 # save original imput file tags
 write.csv(file=paste(folder, "/tags.csv", sep=""), barcodes, quote=F, row.names=F)
@@ -70,6 +85,7 @@ write.csv(file= paste(folder, "/combinations.csv", sep=""), combos, row.names=F)
 
 # auto convert file if FileName is uesed (add R1 / R2)
 if(sum(names(combos)%in%"FileName")==1){
+
 
 combos2 <- data.frame("ID"=combos$ID, "File1"=paste(combos$FileName, "_R1.fastq", sep=""), "File2"=paste(combos$FileName, "_R2.fastq", sep=""))
 
