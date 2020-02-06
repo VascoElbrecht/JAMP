@@ -40,10 +40,6 @@ stop("Please make sure barcodes have all the same length for demultiplexing!")
 }
 
 
-tagL[3]<- 2
-names(table(tagL))
-
-
 
 # save original imput file tags
 write.csv(file=paste(folder, "/tags.csv", sep=""), barcodes, quote=F, row.names=F)
