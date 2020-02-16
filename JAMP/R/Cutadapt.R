@@ -150,7 +150,7 @@ A <- system2(exe, fw_primer_cmd, stdout=T, stderr=T)
 cat(file=log_names[i], A, append=T, sep="\n")
 
 
-rev_primer <- paste("-a ", rw[i], "$ -o ", folder, "/_data/temp_B.txt ", folder, "/_data/temp.txt -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed --cores=", cores, if(ambsequ){" --match-read-wildcards"}, sep="", " --error-rate ", error) #rverse adapter
+rev_primer <- paste("-a ", rw[i], if(anchoring){"$"}," -o ", folder, "/_data/temp_B.txt ", folder, "/_data/temp.txt -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed --cores=", cores, if(ambsequ){" --match-read-wildcards"}, sep="", " --error-rate ", error) #rverse adapter
 
 A <- system2(exe, rev_primer, stdout=T, stderr=T)
 cat(file=log_names[i], A, append=T, sep="\n")
