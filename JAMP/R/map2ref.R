@@ -1,12 +1,13 @@
 # U_cluster_otus v0.1
 
-Map2ref <- function(files="latest", refDB=NULL, id=0.97, minuniquesize=1, strand="plus", onlykeephits=T, filter=0.01, maxaccepts=1, maxrejects=32, exe="usearch", threads=NA, heatmap=T, delete_data=T){
+Map2ref <- function(files="latest", refDB=NULL, id=0.97, minuniquesize=1, strand="plus", onlykeephits=T, filter=0.01, maxaccepts=1, maxrejects=32, exe="vsearch", threads=NA, heatmap=T, delete_data=T){
 
 
 
-A <- system2(exe, stdout=T)
+A <- system2(exe, stdout=T, stderr=T)
+if(exe=="usearch"){
 version <- as.numeric(sub("usearch v(.+)\\.+.*\\..*_.*", "\\1", A[1]))
-
+}
 
 folder <- Core(module="Map2ref", delete_data=delete_data)
 cat(file="log.txt", c("Version v0.1", "\n"), append=T, sep="\n")
@@ -49,11 +50,15 @@ new_names <- sub("_PE.*", "_PE_derep.fasta", new_names)
 new_names <- sub("_data", "_data/1_derep", new_names)
 new_names <- paste(folder, "/", new_names, sep="")
 
+if(exe=="usearch"){
 cmd <- paste(if(version<9){"-derep_fulllength"}else{"-fastx_uniques"}, " \"", files[!empty], "\" -fastaout \"", new_names, "\" -sizeout -sizein -minuniquesize ", minuniquesize,  sep="")
+} else {
+cmd <- paste("-derep_fulllength \"", files[!empty], "\" -output \"", new_names, "\" -sizeout -sizein -minuniquesize ", minuniquesize,  sep="", if(!is.na(threads)){paste(" -threads ", threads, sep="")})
+}
 
 files_to_delete <- c(files_to_delete, new_names)
 
-temp <- paste(length(cmd), " files are dereplicated (incl. singletons):", sep="")
+temp <- paste(length(cmd), " files are dereplicated ", if(minuniquesize==1){"(incl. singletons):"} else {paste("with minuniquesize = ", minuniquesize, sep="")}, sep="")
 cat(file="log.txt", temp , append=T, sep="\n")
 message(temp)
 
@@ -98,13 +103,16 @@ nohit <- sub("1_derep", "3_nohit_fasta", new_names)
 
 log_names <- sub("_data/2_mapping/", "_stats/map_logs/", blast_names)
 
-
+if(exe="usearch"){
+cmd <- paste("-usearch_global ", new_names, " -db \"", refDB, "\" -strand ", strand, " -id ", id, " -blast6out \"", blast_names, "\" -maxhits 1", " -notmatched \"", nohit, "\" -maxaccepts ", maxaccepts, " -maxrejects ", maxrejects, if(!is.na(threads)){paste(" -threads ", threads, sep="")}, sep="")} else {
+#vsearch
 cmd <- paste("-usearch_global ", new_names, " -db \"", refDB, "\" -strand ", strand, " -id ", id, " -blast6out \"", blast_names, "\" -maxhits 1", " -notmatched \"", nohit, "\" -maxaccepts ", maxaccepts, " -maxrejects ", maxrejects, if(!is.na(threads)){paste(" -threads ", threads, sep="")}, sep="")
+}
 #cmd <- paste("-usearch_global ", new_names, " -db \"", refDB, "\" -strand ", strand, " -id ", id, " -blast6out \"", blast_names, "\" -notmatched \"", nohit, "\" -maxaccepts ", maxaccepts, " -maxrejects ", maxrejects, if(!is.na(threads)){paste(" -threads ", threads, sep="")}, sep="")
 
 files_to_delete <- c(files_to_delete, blast_names)
 
-temp <- paste("Comparing ", length(cmd)," files with dereplicated reads (incl. singletons) against refDB: \"", sub(".*/(.*)", "\\1", refDB), "\" using \"usearch_global\" and Usearch. Minimum identity (id) is ", id, ".\n", sep="")
+temp <- paste("Comparing ", length(cmd)," files with dereplicated reads (incl. singletons) against refDB: \"", sub(".*/(.*)", "\\1", refDB), "\" using \"usearch_global\" and Usearch. Minimum identity (id) = ", id, ", maxaccepts = ", maxaccepts, " maxrejects = ", maxrejects, ".\n", sep="")
 message(temp)
 cat(file="log.txt", temp, append=T, sep="\n")
 
@@ -115,7 +123,12 @@ A <- system2(exe, cmd[i], stdout=T, stderr=T)
 cat(file= log_names[i], paste("usearch ", cmd[i], sep=""), "\n", A, append=F, sep="\n")
 
 meep <- sub("_data/.*/(.*)", "\\1", temp[i])
+if(exe=="usearch"){
 pass <- sub(".*, (.*)% matched\r", "\\1", A[grep("matched\r", A)])
+} else {
+pass <- sub(".* .(.*)%.$", "\\1", A[grep("Matching unique query sequences:", A)])
+}
+
 exp <- rbind(exp, c(meep, pass))
 glumanda <- paste(meep," - ", pass, "% reads matched", sep="")
 cat(file="log.txt", glumanda, append=T, sep="\n")
@@ -154,8 +167,12 @@ names(data) <- c("query", "ref", "ident", "length", "mism", "gap", "qstart", "qe
 
 data <- data[,c(-11,-12)]
 
-
+if(exe=="usearch"){
 data <- cbind(data, "abund"=as.numeric(sub(".*size=(.*);", "\\1", data$query)), stringsAsFactors=F)
+} else {
+data <- cbind(data, "abund"=as.numeric(sub(".*size=(.*)", "\\1", data$query)), stringsAsFactors=F)
+}
+
 
 #head(data)
 
