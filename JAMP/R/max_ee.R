@@ -1,6 +1,6 @@
 # U_max_ee v0.1
 
-Max_ee <- function(files="latest", max_ee=1, fastq=F, exe="vsearch", delete_data=T){
+Max_ee <- function(files="latest", max_ee=1, fastq=F, exe="vsearch", maxN=0, delete_data=T){
 
 # add max Ns option: fastq_maxns
 
@@ -15,7 +15,7 @@ source(paste(folder, "/robots.txt", sep=""))
 files <- list.files(paste(last_data, "/_data", sep=""), full.names=T)
 }
 
-temp <- paste("Starting to quality filter (max expected errors = " , max_ee, ") in ", length(files), " samples.", sep="")
+temp <- paste("Starting to quality filter (max expected errors = " , max_ee, "", if(exe=="vsearch"){paste(", maxN = ", maxN, sep="")}, ") in ", length(files), " samples.", sep="")
 message(temp)
 message(" ")
 cat(file="log.txt", temp, append=T, sep="\n")
@@ -43,21 +43,22 @@ log_names <- sub("fast.$", "txt", log_names)
 if(exe=="usearch"){
 cmd <- paste("-fastq_filter \"", files, "\"", if(fastq){" -fastqout "} else {" -fastaout "}, "\"", new_names, "\" -fastq_maxee ", max_ee, " -fastq_qmax 60", sep="")
 } else {
-cmd <- paste("-fastq_filter \"", files, "\"", if(fastq){" -fastqout "} else {" -fastaout "}, "\"", new_names, "\" -fastq_maxee ", max_ee, " -fastq_qmax 60", sep="")
-
-print(cmd[1])
+cmd <- paste("-fastq_filter \"", files, "\"", if(fastq){" -fastqout "} else {" -fastaout "}, "\"", new_names, "\" -fastq_maxee ", max_ee, " -fastq_qmax 60 -fastq_maxns ", maxN, sep="")
+#fix stats
 }
 
 
 
 files_to_delete <- c(files_to_delete, new_names)
 
-i <- 11
+
 tab_exp <- NULL
 for (i in 1:length(cmd)){
 A <- system2(exe, cmd[i], stdout=T, stderr=T)
-cat(A, file=log_names[i], sep="\n")
+cat(paste(exe, cmd[i], sep=" "), "\n\n\n", file=log_names[i], sep="")
+cat(A, file=log_names[i], sep="\n", append=T)
 
+if(exe=="usearch"){
 imput <- A[grep("Reads \\(", A)]
 imput <- sub("(.*)Reads.*", "\\1", imput)
 imput <- as.numeric(imput)
@@ -65,6 +66,18 @@ imput <- as.numeric(imput)
 pass <- A[grep("Filtered reads", A)]
 pass <- sub("(.*)Filtered reads .*", "\\1", pass)
 pass <- as.numeric(pass)
+} else { # vsearch
+pass <- A[grep("sequences kept ", A)]
+pass <- sub("(.*)sequences kept .*", "\\1", pass)
+pass <- as.numeric(pass)
+
+imput <- A[grep("sequences kept ", A)]
+imput <- sub(".*, (.*) sequences discarded.", "\\1", imput)
+imput <- as.numeric(imput)
+imput <- imput+pass
+
+}
+
 
 pct <- round(pass/imput*100, digits=2)
 
@@ -91,6 +104,7 @@ meep <- paste("WARNING:", short_name, ": ", if(imput>0){"0 sequences passed qual
 message(meep)
 cat(file="log.txt", meep, append=T, sep="\n")
 }
+
 cat(file="log.txt", "\n", append=T, sep="\n")
 
 tab_exp <- data.frame(tab_exp)
