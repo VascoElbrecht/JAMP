@@ -1,9 +1,9 @@
 # U_cluster_otus v0.1
 
-U_cluster_otus <- function(files="latest", minuniquesize=2, strand="plus", filter=0.01, filterN=1, exe="vsearch", otu_radius_pct=3, mapp_singletons=T, maxaccepts=1, maxrejects=32, delete_data=T, heatmap=T, threads=NA){
+Cluster_otus <- function(files="latest", minuniquesize=2, strand="plus", filter=0.01, filterN=1, exe="vsearch", otu_radius_pct=3, mapp_singletons=T, maxaccepts=1, maxrejects=32, delete_data=T, heatmap=T, threads=NA){
 #, unoise_min=NA - unoise denoising removed, no longer supported!
 
-folder <- Core(module="U_cluster_otus", delete_data=delete_data)
+folder <- Core(module="Cluster_otus", delete_data=delete_data)
 cat(file="log.txt", c("Version v0.2", "\n"), append=T, sep="\n")
 message(" ")
 
@@ -188,7 +188,7 @@ cat(file="log.txt", temp, append=T, sep="\n")
 } else {
 # Clustering with vsearch! Needs extra denoising. 200309
 # sequencesa re already sorted by derelication before
-cmd <- paste(" -cluster_smallmem ", folder, "/_data/2_OTU_clustering/", filename_all_unique, " -centroids ", folder, "/_data/2_OTU_clustering/", sub("OTUs.fasta", "OTUs+chimeras.fasta", OTU_file), " -strand ", strand, " -usersort -id ", (100-otu_radius_pct)*0.01, sep="")
+cmd <- paste(" -cluster_smallmem ", folder, "/_data/2_OTU_clustering/", filename_all_unique, " -centroids ", folder, "/_data/2_OTU_clustering/", sub("OTUs.fasta", "OTUs+chimeras.fasta", OTU_file), " -strand ", strand, " -usersort -id ", (100-otu_radius_pct)*0.01, sep="", " -uc ", folder, "/_data/2_OTU_clustering/", sub(".fasta", "_OTUtab.txt", OTU_file))
 
 A <- system2(exe, cmd, stdout=T, stderr=T) # cluster OTUs!
 
