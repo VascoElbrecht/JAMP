@@ -194,8 +194,27 @@ A <- system2(exe, cmd, stdout=T, stderr=T) # cluster OTUs!
 
 cat(file=paste(folder, "/_stats/2_OTU_clustering_log.txt", sep=""), "\n", paste("vsearch", cmd), "\n", A, "", append=T, sep="\n")
 
+input <- as.numeric(sub(".* nt in (.*) seqs, min.*", "\\1", A[grep(" nt in .* seqs, min", A)]))
+OTUs <- as.numeric(sub("Clusters: (.*) Size .*", "\\1", A[grep("^Clusters: ", A)]))
+
+temp <- paste("Clustered ", input, " sequences into ", OTUs, " OTU clusters using a treshold of ", otu_radius_pct, "%.\n\nNext step: Denovo chimera removal.\n")
+message(temp)
+cat(file="log.txt", temp, append=T, sep="\n")
+
+# vsearch chimera removal
+cmd <- paste(" -uchime_denovo ", folder, "/_data/2_OTU_clustering/", sub("OTUs.fasta", "OTUs+chimeras.fasta", OTU_file), " -nonchimeras ",  folder, "/_data/2_OTU_clustering/", OTU_file, sep="", " -sizein -sizeout -fasta_width 0")
+# -fasta_width 0 -> no wrapping
+A <- system2(exe, cmd, stdout=T, stderr=T) # remove chimeras!
+
+cat(file=paste(folder, "/_stats/2_OTU_clustering_log.txt", sep=""), "\n", paste("vsearch", cmd), "\n", A, "", append=T, sep="\n")
 
 
+chimeras <- as.numeric(sub("^Found (.*) .* chimeras, .*", "\\1", A[grep("^Found 13902 .* chimeras, .*", A)]))
+OTUs <- as.numeric(sub(".* chimeras, (.*) .* non-chimeras.*", "\\1", A[grep("^Found 13902 .* chimeras, .*", A)]))
+
+temp <- paste("Chimeras removed de novo: ", chimeras, " (", round(chimeras/(chimeras+OTUs)*100, 2), "%)\n          OTUs remaining: ", OTUs , " (", 100-round(chimeras/(chimeras+OTUs)*100, 2), "%)", sep="", "\n")
+message(temp)
+cat(file="log.txt", temp, append=T, sep="\n")
 
 }
 
@@ -216,12 +235,17 @@ blast_names <- sub("1_derep_unoise3", "3_Compare_OTU_derep", blast_names)
 blast_names <- sub("_PE_derep.*.fasta", ".txt", blast_names)
 log_names <- sub("_data", "_stats", blast_names)
 
-
+if(exe=="usearch"){
 cmd <- paste("-usearch_global ", new_names, " -db ", "\"", folder, "/_data/2_OTU_clustering/", OTU_file, "\"", " -strand plus -id ", (100-otu_radius_pct)/100, " -blast6out \"", blast_names, "\" -maxhits 1 -maxaccepts ", maxaccepts, " -maxrejects ", maxrejects, sep="")
+} else {
+# vserch
+cmd <- paste("-usearch_global ", new_names, " -db ", "\"", folder, "/_data/2_OTU_clustering/", OTU_file, "\"", " -strand plus -id ", (100-otu_radius_pct)/100, " -blast6out \"", blast_names, "\" -maxhits 1 -maxaccepts ", maxaccepts, " -maxrejects ", maxrejects, sep="", if(!is.na(threads)){paste(" -threads ", threads, sep="")})
+}
+
 
 files_to_delete <- c(files_to_delete, blast_names)
 
-temp <- paste("Comparing ", length(cmd)," files with dereplicated reads (incl. singletons) against OTUs \"", folder, "/", OTU_file, "\" using \"usearch_global\" with id=", (100-otu_radius_pct)/100,".\n", sep="")
+temp <- paste("Comparing ", length(cmd)," files with dereplicated reads (incl. singletons) against OTUs \"", folder, "/", OTU_file, "\" using \"usearch_global\" with id=", (100-otu_radius_pct)/100," as implemented in ", if(exe=="usearch"){"usearch"}else{"vsearch"}, ".\n", sep="")
 message(temp)
 cat(file="log.txt", temp, append=T, sep="\n")
 
@@ -232,7 +256,12 @@ A <- system2(exe, cmd[i], stdout=T, stderr=T)
 cat(file= log_names[i], paste("usearch ", cmd[i], sep=""), "\n", A, append=F, sep="\n")
 
 meep <- sub("_data/.*/(.*)", "\\1", temp[i])
+
+if(exe=="usearch"){
 pass <- sub(".*, (.*)% matched\r", "\\1", A[grep("matched\r", A)])
+} else {
+pass <- sub(".*, (.*)% matched\r", "\\1", A[grep("matched\r", A)])
+}
 exp <- rbind(exp, c(meep, pass))
 glumanda <- paste(meep," - ", pass, "% reads matched", sep="")
 cat(file="log.txt", glumanda, append=T, sep="\n")
