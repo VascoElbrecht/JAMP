@@ -1,6 +1,6 @@
 # U_truncate v0.1
 
-U_truncate <- function(files="latest", left=0, right=0, trunclen=NA, fastq=T, rename=T, keepshort=F, exe="usearch", delete_data=T){
+Truncate <- function(files="latest", left=0, right=0, trunclen=NA, fastq=T, rename=T, keepshort=F, exe="vsearch", delete_data=T){
 
 folder <- Core(module="U_truncate", delete_data=delete_data)
 cat(file="log.txt", c("\n","Version v0.2", "\n"), append=T, sep="\n")
@@ -47,6 +47,7 @@ new_count <- Count_sequences(new_names[i], fastq= fastq)
 old_count <- Count_sequences(files[i], fastq= fastq)
 passed <- round(new_count/old_count*100, digits=2)
 
+# need to adapt stats for vsearch!
 A <- system2(exe, paste("-fastx_info \"", new_names[i], "\" -secs 5", sep=""), stdout=T, stderr=T)
 medianL <- as.numeric(sub(".*median (.*), hi.*", "\\1", A[grep("Lengths min ", A)]))
 
