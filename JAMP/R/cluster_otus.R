@@ -476,8 +476,13 @@ blast_names <- sub("1_derep_unoise3", "5_subset/usearch_global", blast_names)
 log_names <- sub("_data/", "_stats/", blast_names)
 log_names <- sub("/usearch_global", "", log_names)
 
-
+if(exe=="usearch"){
 cmd <- paste("-usearch_global ", new_names, " -db ", OTU_sub_filename, " -strand plus -id ", (100-otu_radius_pct)/100, " -blast6out ", blast_names, " -maxhits 1 -maxaccepts ", maxaccepts, " -maxrejects ", maxrejects, sep="")
+} else {
+#vsearch
+cmd <- paste("-usearch_global ", new_names, " -db ", OTU_sub_filename, " -strand plus -id ", (100-otu_radius_pct)/100, " -blast6out ", blast_names, " -maxhits 1 -maxaccepts ", maxaccepts, " -maxrejects ", maxrejects, sep="", if(!is.na(threads)){paste(" -threads ", threads, sep="")})
+}
+
 
 files_to_delete <- c(files_to_delete, blast_names)
 
@@ -492,7 +497,11 @@ A <- system2(exe, cmd[i], stdout=T, stderr=T)
 cat(file= log_names[i], paste(exe, " ", cmd[i], sep=""), "\n", A, append=F, sep="\n")
 
 meep <- sub(".*singletons/(.*)", "\\1", temp[i])
+if(exe=="usearch"){
 pass <- sub(".*, (.*)% matched\r", "\\1", A[grep("matched\r", A)])
+} else {
+pass <- sub("Matching unique query sequences: .* of .* \\((.*)%\\)", "\\1", A[grep("Matching unique query sequences: ", A)])
+}
 exp <- rbind(exp, c(meep, pass))
 glumanda <- paste(meep," - ", pass, "% reads matched", sep="")
 cat(file="log.txt", glumanda, append=T, sep="\n")
