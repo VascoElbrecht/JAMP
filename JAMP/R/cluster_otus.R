@@ -255,7 +255,8 @@ for (i in 1:length(cmd)){
 A <- system2(exe, cmd[i], stdout=T, stderr=T)
 cat(file= log_names[i], paste("usearch ", cmd[i], sep=""), "\n", A, append=F, sep="\n")
 
-meep <- sub("_data/.*/(.*)", "\\1", temp[i])
+meep <- sub(".*_data/.*/(.*)", "\\1", temp[i])
+
 
 if(exe=="usearch"){
 pass <- sub(".*, (.*)% matched\r", "\\1", A[grep("matched\r", A)])
@@ -496,7 +497,8 @@ for (i in 1:length(cmd)){
 A <- system2(exe, cmd[i], stdout=T, stderr=T)
 cat(file= log_names[i], paste(exe, " ", cmd[i], sep=""), "\n", A, append=F, sep="\n")
 
-meep <- sub(".*singletons/(.*)", "\\1", temp[i])
+meep <- sub(".*_data/.*/(.*)", "\\1", temp[i])
+
 if(exe=="usearch"){
 pass <- sub(".*, (.*)% matched\r", "\\1", A[grep("matched\r", A)])
 } else {
