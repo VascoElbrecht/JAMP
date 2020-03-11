@@ -4,7 +4,7 @@ Cluster_otus <- function(files="latest", minuniquesize=2, strand="plus", filter=
 #, unoise_min=NA - unoise denoising removed, no longer supported!
 
 folder <- Core(module="Cluster_otus", delete_data=delete_data)
-cat(file="log.txt", c("Version v0.2", "\n"), append=T, sep="\n")
+cat(file="log.txt", c("Version v0.3", "\n"), append=T, sep="\n")
 message(" ")
 
 files_to_delete <- NULL
@@ -60,7 +60,7 @@ if(exe=="usearch"){
 # might need to be changed!
 cmd <- paste("-derep_fulllength \"", files[!empty], "\" -output \"", new_names, "\" -sizeout -sizein", if(! mapp_singletons){paste(" -minuniquesize ", minuniquesize, sep="")}, sep="")
 }else{
-cmd <- paste("-derep_fulllength \"", files[!empty], "\" -output \"", new_names, "\" -sizeout -sizein", if(! mapp_singletons){paste(" -minuniquesize ", minuniquesize, sep="")}, if(!is.na(threads)){paste(" -threads ", threads, sep="")}, sep="")
+cmd <- paste("-derep_fulllength \"", files[!empty], "\" -output \"", new_names, "\" -sizeout -sizein", if(! mapp_singletons){paste(" -minuniquesize ", minuniquesize, sep="")}, if(!is.na(threads)){paste(" -threads ", threads, sep="")}, sep="", " -fasta_width 0")
 }
 
 files_to_delete <- c(files_to_delete, new_names)
@@ -135,7 +135,7 @@ if(exe=="usearch"){
 # Needs to be updated
 cmd <- paste("-derep_fulllength ", folder, "/_data/2_OTU_clustering/A_all_files_united.fasta -output ", folder, "/_data/2_OTU_clustering/B_all_derep_min", minuniquesize, ".fasta -sizein -sizeout -minuniquesize ", minuniquesize, sep="")
 } else {
-cmd <- paste("-derep_fulllength ", folder, "/_data/2_OTU_clustering/A_all_files_united.fasta -output ", folder, "/_data/2_OTU_clustering/B_all_derep_min", minuniquesize, ".fasta -sizein -sizeout -minuniquesize ", minuniquesize, sep="")
+cmd <- paste("-derep_fulllength ", folder, "/_data/2_OTU_clustering/A_all_files_united.fasta -output ", folder, "/_data/2_OTU_clustering/B_all_derep_min", minuniquesize, ".fasta -sizein -sizeout -minuniquesize ", minuniquesize, sep="", " -fasta_width 0")
 }
 
 filename_all_unique <- paste("B_all_derep_min", minuniquesize, ".fasta", sep="")
@@ -188,7 +188,7 @@ cat(file="log.txt", temp, append=T, sep="\n")
 } else {
 # Clustering with vsearch! Needs extra denoising. 200309
 # sequencesa re already sorted by derelication before
-cmd <- paste(" -cluster_smallmem ", folder, "/_data/2_OTU_clustering/", filename_all_unique, " -centroids ", folder, "/_data/2_OTU_clustering/", sub("OTUs.fasta", "OTUs+chimeras.fasta", OTU_file), " -strand ", strand, " -usersort -id ", (100-otu_radius_pct)*0.01, sep="", " -uc ", folder, "/_data/2_OTU_clustering/", sub(".fasta", "_OTUtab.txt", OTU_file))
+cmd <- paste(" -cluster_smallmem ", folder, "/_data/2_OTU_clustering/", filename_all_unique, " -centroids ", folder, "/_data/2_OTU_clustering/", sub("OTUs.fasta", "OTUs+chimeras.fasta", OTU_file), " -strand ", strand, " -usersort -id ", (100-otu_radius_pct)*0.01, sep="", " -uc ", folder, "/_data/2_OTU_clustering/", sub(".fasta", "_OTUtab.txt", OTU_file), " -fasta_width 0 -relabel otu_ -sizein -sizeout")
 
 A <- system2(exe, cmd, stdout=T, stderr=T) # cluster OTUs!
 
@@ -197,20 +197,20 @@ cat(file=paste(folder, "/_stats/2_OTU_clustering_log.txt", sep=""), "\n", paste(
 input <- as.numeric(sub(".* nt in (.*) seqs, min.*", "\\1", A[grep(" nt in .* seqs, min", A)]))
 OTUs <- as.numeric(sub("Clusters: (.*) Size .*", "\\1", A[grep("^Clusters: ", A)]))
 
-temp <- paste("Clustered ", input, " sequences into ", OTUs, " OTU clusters using a treshold of ", otu_radius_pct, "%.\n\nNext step: Denovo chimera removal.\n")
+temp <- paste("Clustered ", input, " sequences into ", OTUs, " OTU clusters using a treshold of ", otu_radius_pct, "%.\n\nNext step: Denovo chimera removal.\n", sep="")
 message(temp)
 cat(file="log.txt", temp, append=T, sep="\n")
 
 # vsearch chimera removal
-cmd <- paste(" -uchime_denovo ", folder, "/_data/2_OTU_clustering/", sub("OTUs.fasta", "OTUs+chimeras.fasta", OTU_file), " -nonchimeras ",  folder, "/_data/2_OTU_clustering/", OTU_file, sep="", " -sizein -sizeout -fasta_width 0")
+cmd <- paste(" -uchime_denovo ", folder, "/_data/2_OTU_clustering/", sub("OTUs.fasta", "OTUs+chimeras.fasta", OTU_file), " -nonchimeras ",  folder, "/_data/2_OTU_clustering/", OTU_file, sep="", " -sizein -sizeout -fasta_width 0 -relabel OTU_")
 # -fasta_width 0 -> no wrapping
 A <- system2(exe, cmd, stdout=T, stderr=T) # remove chimeras!
 
 cat(file=paste(folder, "/_stats/2_OTU_clustering_log.txt", sep=""), "\n", paste("vsearch", cmd), "\n", A, "", append=T, sep="\n")
 
 
-chimeras <- as.numeric(sub("^Found (.*) .* chimeras, .*", "\\1", A[grep("^Found 13902 .* chimeras, .*", A)]))
-OTUs <- as.numeric(sub(".* chimeras, (.*) .* non-chimeras.*", "\\1", A[grep("^Found 13902 .* chimeras, .*", A)]))
+chimeras <- as.numeric(sub("^Found (.*) .* chimeras, .*", "\\1", A[grep("^Found .* .* chimeras, .*", A)]))
+OTUs <- as.numeric(sub(".* chimeras, (.*) .* non-chimeras.*", "\\1", A[grep("^Found .* .* chimeras, .*", A)]))
 
 temp <- paste("Chimeras removed de novo: ", chimeras, " (", round(chimeras/(chimeras+OTUs)*100, 2), "%)\n          OTUs remaining: ", OTUs , " (", 100-round(chimeras/(chimeras+OTUs)*100, 2), "%)", sep="", "\n")
 message(temp)
@@ -260,7 +260,7 @@ meep <- sub("_data/.*/(.*)", "\\1", temp[i])
 if(exe=="usearch"){
 pass <- sub(".*, (.*)% matched\r", "\\1", A[grep("matched\r", A)])
 } else {
-pass <- sub(".*, (.*)% matched\r", "\\1", A[grep("matched\r", A)])
+pass <- sub("Matching unique query sequences: .* of .* \\((.*)%\\)", "\\1", A[grep("Matching unique query sequences: ", A)])
 }
 exp <- rbind(exp, c(meep, pass))
 glumanda <- paste(meep," - ", pass, "% reads matched", sep="")
@@ -296,7 +296,8 @@ names(data) <- c("query", "otu", "ident", "length", "mism", "gap", "qstart", "qe
 
 data <- data[,c(-11,-12)]
 
-data <- cbind(data, "abund"=as.numeric(sub(".*size=(.*)", "\\1", data$query)), "otu_no"=sub("(.*)size.*", "\\1", data$otu), stringsAsFactors=F)
+# might need to rm ; for usearch...
+data <- cbind(data, "abund"=as.numeric(sub(".*size=(.*)", "\\1", data$query)), "otu_no"=sub("(.*);size.*", "\\1", data$otu), stringsAsFactors=F)
 
 head(data)
 
@@ -344,7 +345,7 @@ tab <- tab2[,c(1, order(names(tab2)[-1])+1)]
 sequ <- read.fasta(paste(folder, "/_data/2_OTU_clustering/", OTU_file, sep=""), forceDNAtolower=F, as.string=T)
 
 # check for different numbers
-temp <- sort(table(unlist(c(names(sequ), tab$ID))), decreasing=T)
+temp <- sort(table(unlist(c(sub(";size=.*", "", names(sequ)), tab$ID))), decreasing=T)
 temp <- temp[temp==1]
 if(length(temp)>0){
 report <- paste("\n\nWARNING: The following OTU", if(length(temp)>1){"s"}, " did not get any sequences assigned in read mapping. This might happen if they are very low abundant and closely related OTUs are near by. Still maybe take a look.\nAffected sequences: ", paste(names(temp), collapse=" "), sep="")
@@ -353,7 +354,7 @@ cat(file="log.txt", report, append=T, sep="\n")
 }
 
 
-tab2 <- data.frame("sort"=as.numeric(sub("OTU_", "", tab[,1])), tab, "sequ"=unlist(sequ[match(tab$ID, names(sequ))]), stringsAsFactors=F)
+tab2 <- data.frame("sort"=as.numeric(sub("OTU_", "", tab[,1])), tab, "sequ"=unlist(sequ[match(tab$ID, sub(";size=.*", "", names(sequ)))]), stringsAsFactors=F)
 
 
 write.csv(file=paste(folder, "/3_Raw_OTU_table.csv", sep=""), tab2, row.names=F)
