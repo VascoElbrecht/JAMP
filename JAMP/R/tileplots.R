@@ -2,6 +2,7 @@
 # A, G, C, T, N - color
 
 
+PlotTiles <- function(file=NA, subset=100000, cycles="ALL", folder="TilePlots", color=c("Red", "Gold", "Blue", "Green2", "Gray"), format="png", width=2, height=19, Nalert=0.10, cex=0.75, exe="vsearch"){
 
 
 
@@ -27,21 +28,34 @@ stop("Fuction stopped, nothing overwritten. Feel free to specify a different fol
 # Import file
 compression <- gsub(".*\\.(.*)$", "\\1", file)
 
-if(compression=="gz"){
-con <- gzfile(file, "rt")
-} else if(compression=="bz2"){
-con <- bzfile(file, "rt")
-} else if(compression=="fastq"){
-con <- file(file, "rt")
+#if(compression=="gz"){
+#} else if(compression=="bz2"){
+#} else if(compression=="fastq"){
+#} else {
+#warning("Raw data has to be compressed in \".gz\" or \".bz2\" or uncompressed in \".fastq\" format! Processing was stopped, please check your raw data format.")
+#stop()
+#}
+
+
+#data <- readLines(con, subset*4) # read chunck
+#close(con)
+
+# apply subsampling using vsearch
+
+suppressWarnings(A <- system2(exe, paste("-fastx_subsample \"", file, "\" -fastqout \"", folder, "/subset_", format(subset, scientific=F), ".txt\" -sample_size ", format(subset, scientific=F), sep=""), stdout=T, stderr=T))
+
+
+if(length(grep("Fatal error: Cannot subsample more reads than in the original sample", A))>0){
+count <- sub(".* nt in (.*) seqs, min .*", "\\1", A[grep("seqs, min", A)])
+message("File ", file, "contains only ", count, " sequences, thus no subsampling (subset=", format(subset, scientific=F), ") will be applyed!\nReading in file...")
+
+data <- readLines(file)
+
 } else {
-warning("Raw data has to be compressed in \".gz\" or \".bz2\" or uncompressed in \".fastq\" format! Processing was stopped, please check your raw data format.")
-stop()
+message(paste(A, collapse="\n"))
+message("subsetting was applyed!")
+data <- readLines(paste(folder, "/subset_", format(subset, scientific=F), ".txt", sep=""))
 }
-
-
-data <- readLines(con, subset*4) # read chunck
-close(con)
-
 
 
 # get cycles to plot
@@ -56,10 +70,16 @@ message("Plotting user defined possitions: ", paste(cycles, collapse=" "))
 }
 
 
+#data <- c("@FS10000474:11:BPG80716-2107:1:1101:1930:1000", "@M00307:138:000000000-CTLD2:1:1101:10100:1464 2:N:0:1")
+
+data[seq(1, length(data), 4)] <- sub(" .:.:.:.", "", data[seq(1, length(data), 4)])
+
+sub(".+:.+:.+:.+:(.+):.+:.+ ?.?:?.?:?.?:?.?", "\\1", data)
+sub(".+:.+:.+:.+:(.+):.+:.+ .:.:.:.", "\\1", data)
 
 # extract relevant information from fastq
 
-data2 <- data.frame("tile"=as.numeric(sub(".*:(.*):.*:.* .*", "\\1", data[seq(1, length(data), 4)])), "x"=as.numeric(sub(".*:.*:(.*):.* .*", "\\1", data[seq(1, length(data), 4)])), "y"=as.numeric(sub(".*:.*:.*:(.*) .*", "\\1", data[seq(1, length(data), 4)])),  stringsAsFactors=F, "sequ"=data[seq(2, length(data), 4)])
+data2 <- data.frame("tile"=as.numeric(sub(".*:(.*):.*:.*", "\\1", data[seq(1, length(data), 4)])), "x"=as.numeric(sub(".*:.*:(.*):.*", "\\1", data[seq(1, length(data), 4)])), "y"=as.numeric(sub(".*:.*:.*:(.*)", "\\1", data[seq(1, length(data), 4)])),  stringsAsFactors=F, "sequ"=data[seq(2, length(data), 4)])
 
 unique <- unique(data2$tile)
 unique <- sort(unique)
