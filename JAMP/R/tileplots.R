@@ -2,7 +2,6 @@
 # A, G, C, T, N - color
 
 
-PlotTiles <- function(file=NA, subset=1000000, cycles="ALL", folder="TilePlots", color=c("Red", "Yellow", "Blue", "Green", "Gray"), format="png", width=2, height=19, Nalert=0.10){
 
 
 
@@ -15,7 +14,7 @@ dir.create(paste(folder, "/plots", sep=""))
 dir.create(paste(folder, "/stats", sep=""))
 
 } else {
-temp <- menu(c("y", "n"), title="Folder already exists. Things inside might be overwritten. Is that ok?\n\ny = Yes, over write exisiting files!\nn = No, stop function!")
+temp <- menu(c("y", "n"), title=paste("Folder \"", folder ,"\" already exists. Things inside might be overwritten. Is that ok?\n\ny = Yes, over write exisiting files!\nn = No, stop function!", sep=""))
 if(temp==2){
 stop("Fuction stopped, nothing overwritten. Feel free to specify a different folder with \"folder\".")
 }
@@ -49,7 +48,7 @@ close(con)
 
 if(cycles=="ALL"){
 message("Automatically detecting the number of cycles in file!")
-cycles <- 1:nchar(data[2])
+cycles <- 1:max(nchar(data[seq(2, length(data), 4)]))
 
 message("Will generate plots for possition 1 to ", max(cycles), ". Specify the numbers of the cycles in \"cycle\" if you would like to plot a specific cycle.")
 } else {
@@ -101,9 +100,9 @@ for(i in 1:length(unique)){
 temp <- extacted[data2$tile==unique[i]]
 
 if(i==1){
-stats[1,] <- c(k, i, length(temp), sum(temp=="A"), sum(temp=="T"), sum(temp=="G"), sum(temp=="C"), sum(temp=="N"), NA)
+stats[1,] <- c(k, i, length(temp[temp!=""]), sum(temp=="A"), sum(temp=="T"), sum(temp=="G"), sum(temp=="C"), sum(temp=="N"), NA)
 } else {
-stats <- rbind(stats, c(k, i, length(temp), sum(temp=="A"), sum(temp=="T"), sum(temp=="G"), sum(temp=="C"), sum(temp=="N"), NA))
+stats <- rbind(stats, c(k, i, length(temp[temp!=""]), sum(temp=="A"), sum(temp=="T"), sum(temp=="G"), sum(temp=="C"), sum(temp=="N"), NA))
 }
 
 
@@ -126,8 +125,13 @@ temp[temp=="T"] <- color[4]
 temp[temp=="N"] <- color[5]
 
 par(mar=c(0,0,0,0))
-plot(data2$x[data2$tile==unique[i]], data2$y[data2$tile==unique[i]], main="", col= temp, xlab="", ylab="", xaxt="n", yaxt="n", bty="n", pch=20, cex=0.75)
-text(min(data2$x), max(data2$y), paste("Tile: ", unique[i], sep="", " - clusters: ", length(data2$x[data2$tile==unique[i]])), pos=4)
+# convert short sequences
+x <- data2$x[data2$tile==unique[i]][temp!=""]
+y <- data2$y[data2$tile==unique[i]][temp!=""]
+temp <- temp[temp!=""]
+
+plot(x, y, main="", col= temp, xlab="", ylab="", xaxt="n", yaxt="n", bty="n", pch=20, cex=cex)
+text(min(x), max(y), paste("Tile: ", unique[i], sep="", " - clusters: ", length(x), pos=4))
 
 
 
