@@ -975,8 +975,37 @@ data_rel[select, i] <- temp
 write.csv(data, paste(folder, "/_data/4_denoised/E_haplo_table.csv", sep=""), row.names=F)
 write.csv(data, paste(folder, "/E_haplo_table.csv", sep=""), row.names=F)
 
+
 write.csv(data_rel, paste(folder, "/_data/4_denoised/E_haplo_table_rel.csv", sep=""), row.names=F)
 write.csv(data_rel, paste(folder, "/E_haplo_table_rel.csv", sep=""), row.names=F)
+
+
+# condesne ESV table by OTUs
+
+uniOTU <- unique(data$OTU)
+condensed <- data[1,]
+ESV_count <- uniOTU
+
+for (j in 1:length(uniOTU)){
+temp <- data[uniOTU[j]==data$OTU,]
+if(nrow(temp)==1){
+condensed <- rbind(condensed, temp)
+ESV_count[j] <- 1
+} else {
+tempcount <- temp[,4:(ncol(temp)-1)]
+select <- order(rowSums(tempcount), decreasing=T)[1]
+condensed <- rbind(condensed, as.vector(c(temp[select, 1:3], colSums(tempcount), "sequences"=temp[select, ncol(condensed)])))
+ESV_count[j] <- nrow(temp)
+}
+}
+
+condensed <- condensed[-1,]
+condensed <- data.frame("sort"=1:nrow(condensed), "ESV_count"= ESV_count,  condensed[,-1], stringsAsFactors=F)
+
+write.csv(condensed, paste(folder, "/E_haplo2OTU.csv", sep=""), row.names=F)
+write.csv(condensed, paste(folder, "/_data/4_denoised/E_haplo2OTU.csv", sep=""), row.names=F)
+
+
 
 
 
@@ -986,6 +1015,7 @@ write.fasta(as.list(data$sequences[-nrow(data)]), data$haplotype[-nrow(data)], p
 centroids <- which(!duplicated(data$OTU))
 centroids <- centroids[-length(centroids)]
 write.fasta(as.list(data$sequences[centroids]), data$OTU[centroids], paste(folder, "/_data/4_denoised/E_haplo_OTU_Centroids.txt", sep=""))
+
 
 
 Denoise_barplot(paste(folder, "/E_haplo_table.csv", sep=""), out=paste(folder, "/_stats/Haplotype_barplot_E.pdf", sep=""), emptyOTUs=T)
@@ -1001,6 +1031,14 @@ row.names(gluma) <- paste(gluma$haplotype, gluma$OTU, sep="__")
 gluma <- gluma[, -c(1:3, ncol(gluma))]
 
 OTU_heatmap(file= gluma, out=paste(folder, "/_stats/map_E_haplo_table.pdf", sep=""), abundance=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
+
+# OTU plot
+gluma <- read.csv(paste(folder, "/E_haplo2OTU.csv", sep=""), stringsAsFactors=F)
+row.names(gluma) <- paste(gluma$OTU)
+gluma <- gluma[, -c(1:4, ncol(gluma))]
+
+OTU_heatmap(file= gluma, out=paste(folder, "/_stats/map_E_haplo2OTU.pdf", sep=""), abundance=T, col=rev(c("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba")))
+
 
 }
 
