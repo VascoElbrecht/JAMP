@@ -20,7 +20,8 @@ abundance <- as.numeric(sub(" ", "", A))/4
 }
 
 if(!fastq){ # count fasta
-cmd <- paste(" -o \"^>\" \"", files, "\" | wc -l", sep="")
+cmd <- paste(" -c \"^>\" \"", files, "\"", sep="")
+#cmd <- paste(" -o \"^>\" \"", files, "\" | wc -l", sep="") # old
 
 A <- NULL
 for (i in 1:length(files)){
@@ -39,7 +40,7 @@ A <- NULL
 for (i in 1:length(files)){
 fasta_sequ <- readLines(files[i])
 fasta_sequ <- fasta_sequ[grep(">", fasta_sequ)]
-A[i] <- sum(as.numeric(sub(".*;size=(.*);", "\\1", fasta_sequ)))
+A[i] <- sum(as.numeric(sub(".*;size=(.*);?", "\\1", fasta_sequ)))
 }
 
 abundance <- as.numeric(sub(" ", "", A))

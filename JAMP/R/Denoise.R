@@ -1,6 +1,6 @@
-# Haplotyping v0.1
+# Denoising into ESVs v0.2
 
-Denoise <- function(files="latest", strategy="unoise", unoise_alpha=5, minsize=10, minrelsize=0.0001, poolsamples=F, OTUmin=0.01, minhaplosize=0.003, withinOTU=5, eachsampleOTUmin=NULL, minHaploPresence=1, minOTUPresence=1, renameSamples="(.*_.*)_cut.*", heatmap=T, exe="usearch"){
+Denoise <- function(files="latest", strategy="unoise3", unoise_alpha=5, minsize=10, minrelsize=0.0001, poolsamples=F, OTUmin=0.01, minhaplosize=0.003, withinOTU=5, eachsampleOTUmin=NULL, minHaploPresence=1, minOTUPresence=1, renameSamples="(.*_.*)_cut.*", heatmap=T, exe="vsearch", strand="plus", otu_radius_pct=3){
 
 
 
@@ -8,33 +8,35 @@ folder <- Core(module="Denoising")
 cat(file="log.txt", c("Version v0.1", "\n"), append=T, sep="\n")
 message(" ")
 
-if (files[1]=="latest"){
+if(files[1]=="latest"){
 source(paste(folder, "/robots.txt", sep=""))
-files <- list.files(paste(last_data, "/_data", sep=""), full.names=T)
+inputfiles <- list.files(paste(last_data, "/_data", sep=""), full.names=T)
+} else {
+inputfiles <- files
 }
 
 
 
 # Exclude empty imput files!
 
-empty_filesTFin <- file.info(files)[,1]>0
+empty_filesTFin <- file.info(inputfiles)[,1]>0
 
 if(sum(!empty_filesTFin)>0){
-message(sum(!empty_filesTFin), " files don't contain any reads and will be excluded from processing:")
-message(paste(files[!empty_filesTFin], collapse="\n"))
-files <- files[empty_filesTFin]
+message(" files don't contain any reads and will be excluded from processing:")
+message(paste(inputfiles[!empty_filesTFin], collapse="\n"))
+inputfiles <- inputfiles[empty_filesTFin]
 }
 
 empty_files <- NULL
-empty_files <- c(empty_files, sub(".*/_data/(.*)", "\\1", files[!empty_filesTFin]))
+empty_files <- c(empty_files, sub(".*/_data/(.*)", "\\1", inputfiles[!empty_filesTFin]))
 empty_files <- sub(renameSamples, "\\1", empty_files)
 
 
 
-
+message("Counting input sequences")
 
 # count sequences in each file
-counts <- Count_sequences(files, fastq=F)
+counts <- Count_sequences(inputfiles, fastq=F)
 size <- round(counts* minrelsize/100) # get nim abundance
 size[size<minsize] <- minsize # min size!
 
@@ -43,15 +45,17 @@ size[size<minsize] <- minsize # min size!
 # Dereplicate files using Usearch
 dir.create(paste(folder, "/_data/1_derep", sep=""))
 
-new_names <- sub(".*(_data/.*)", "\\1", files)
-new_names <- sub(".fasta", "_derep.fasta", new_names)
-new_names <- paste(new_names, "_size_", size, ".txt", sep="")
+new_names <- sub(".*(_data/.*)", "\\1", inputfiles)
+new_names <- sub(".fasta", "_derep_", new_names)
+new_names <- paste(new_names, "size_", size, ".fasta", sep="")
 new_names <- sub("_data", "_data/1_derep", new_names)
 new_names <- paste(folder, "/", new_names, sep="")
 
-cmd <- paste("-fastx_uniques \"", files, "\" -fastaout \"", new_names, "\" -sizeout", " -minuniquesize ", size,  sep="")
+if(exe == "usearch"){
+cmd <- paste("-fastx_uniques \"", inputfiles, "\" -fastaout \"", new_names, "\" -sizeout", " -minuniquesize ", size,  sep="")} else {
+cmd <- paste("-derep_fulllength \"", inputfiles, "\" -output \"", new_names, "\" -sizeout", " -minuniquesize ", size,  " -fasta_width 0", sep="")}
 
-temp <- paste(length(files), " files are dereplicated and sequences in each sample below ", minrelsize, "% (or minuniqesize of ", minsize,") are beeing discarded:", sep="")
+temp <- paste(length(inputfiles), " files are dereplicated and sequences in each sample below ", format(minrelsize, scientific = FALSE), "% (or minuniqesize of ", minsize,") are beeing discarded:", sep="")
 cat(file="log.txt", temp , append=T, sep="\n")
 message(temp)
 
@@ -66,7 +70,7 @@ cat(file=paste(folder, "/_stats/1_derep_logs.txt", sep=""), paste("usearch ", cm
 cat(file=paste(folder, "/_stats/1_derep_logs.txt", sep=""), meep, A, "\n", append=T, sep="\n")
 
 
-log_count <- Count_sequences(new_names[i], count_size=T)
+log_count <- Count_sequences(new_names[i], count_size=T, fastq=F)
 log <- paste(sub(".*_data/1_derep/(.*)", "\\1", temp[i]), ": ", log_count, " of ", counts[i], " keept (", round((log_count/counts[i])*100, digits=4), "%, min size: ", size[i],")", sep="")
 cat(file="log.txt", log , append=T, sep="\n")
 message(log)
@@ -90,7 +94,11 @@ info <- "Dereplicating pooled sequences! (no min size)"
 message(info)
 cat(file="log.txt", info, append=T, sep="\n")
 
-cmd <- paste("-fastx_uniques \"", folder, "/_data/1_derep/samples_pooled.txt\" -fastaout \"", folder, "/_data/1_derep/samples_pooled_derep.txt\" -sizein -sizeout", sep="")
+
+if(exe == "usearch"){
+cmd <- paste("-fastx_uniques \"", folder, "/_data/1_derep/samples_pooled.txt\" -fastaout \"", folder, "/_data/1_derep/samples_pooled_derep.txt\" -sizein -sizeout", sep="")} else {
+cmd <- paste("-derep_fulllength \"", folder, "/_data/1_derep/samples_pooled.txt\" -output \"", folder, "/_data/1_derep/samples_pooled_derep.txt\" -sizein -sizeout",  " -fasta_width 0", sep="")}
+
 A <- system2(exe, cmd, stdout=T, stderr=T)
 
 cat(file=paste(folder, "/_stats/1_derep_logs.txt", sep=""), paste("usearch", cmd, sep=""), append=T, sep="\n")
@@ -104,7 +112,7 @@ cat(file="log.txt", info, append=T, sep="\n")
 
 haplo <- read.fasta(paste(folder, "/_data/1_derep/samples_pooled_derep.txt", sep=""), forceDNAtolower=F, as.string=T, whole.header=T)
 
-temp <- sub(".*(;size=.*;)", "\\1", names(haplo))
+temp <- sub(".*(;size=.*;?)", "\\1", names(haplo))
 temp2 <- paste("haplo_", 1:length(haplo), temp, sep="")
 
 write.fasta(haplo, temp2, paste(folder, "/_data/1_derep/samples_pooled_derep_renamed.txt", sep=""))
@@ -135,7 +143,7 @@ sample <- read.fasta(new_names[i], as.string=T, forceDNAtolower=F, whole.header=
 matched <- match(sample, haplo)
 
 new_sample <- haplo[matched] # DNA sequences
-new_haplo_seque_names <- paste("haplo_", matched, sub(".*(;size=.*;)", "\\1", names(sample)), sep="") # sizes
+new_haplo_seque_names <- paste("haplo_", matched, sub(".*(;size=.*;?)", "\\1", names(sample)), sep="") # sizes
 
 write.fasta(new_sample, new_haplo_seque_names, renamed[i])
 }
@@ -147,29 +155,62 @@ info <- paste("\nDenoising the file 1_derep/samples_pooled_derep_renamed.txt (co
 message(info)
 cat(file="log.txt", info, append=T, sep="\n")
 
-cmd <- paste("-unoise3 \"", folder, "/_data/1_derep/samples_pooled_derep_renamed.txt\" -zotus \"", folder, "/_data/1_derep/samples_pooled_+_denoised.txt\" -unoise_alpha ", unoise_alpha,  sep="")
+
+if(exe == "usearch"){
+cmd <- paste("-unoise3 \"", folder, "/_data/1_derep/samples_pooled_derep_renamed.txt\" -zotus \"", folder, "/_data/1_derep/samples_pooled_+_denoised.txt\" -unoise_alpha ", unoise_alpha,  sep="")} else {
+cmd <- paste("-cluster_unoise \"", folder, "/_data/1_derep/samples_pooled_derep_renamed.txt\" -centroids \"", folder, "/_data/1_derep/samples_pooled_+_denoised_StillChimeric.txt\" -unoise_alpha ", unoise_alpha, " --minsize 1 --fasta_width 0", sep="")}
+
 
 A <- system2(exe, cmd, stdout=T, stderr=T)
 cat(file=paste(folder, "/_stats/2_unoise.txt", sep=""), c(info, "", paste("usearch", cmd), "", A), append=T, sep="\n")
 
+if(exe == "usearch"){
 info <- paste("Denoising compelte! ", Count_sequences(paste(folder, "/_data/1_derep/samples_pooled_derep_renamed.txt", sep=""), fastq=F), " sequences were denoised using ", strategy, ".", "\nA total of ", sub(".*100.0% (.*) good, .* chimeras\r", "\\1", A[length(A)-1]), " haplotypes remained after denoising!\n", sep="")
+} else {
+# vsearch stats
+info <- paste("Denoising compelte! ", sub(".* nt in (.*) seqs, min.*", "\\1", A[5]), " sequences were denoised using ", strategy, ".", "\nA total of ", sub("Clusters: (.*) Size mi.*", "\\1", A[12]), " haplotypes remained after denoising!\n", sep="")
+}
+
 message(info)
 cat(file="log.txt", info, append=T, sep="\n")
+
+# chimera removal for vsearch reads
+if(exe == "vsearch"){
+message("Using Vsearch to remove chimeric sequences de novo!")
+cmd <- paste(" -uchime_denovo \"", folder, "/_data/1_derep/samples_pooled_+_denoised_StillChimeric.txt\"  -nonchimeras \"",  folder, "/_data/1_derep/samples_pooled_+_denoised.txt\"", sep="", " -sizein -sizeout -fasta_width 0")
+# -fasta_width 0 -> no wrapping
+A <- system2(exe, cmd, stdout=T, stderr=T) # remove chimeras!
+
+cat(file=paste(folder, "/_stats/2_OTU_clustering_log.txt", sep=""), "\n", paste("vsearch", cmd), "\n", A, "", append=T, sep="\n")
+
+
+chimeras <- as.numeric(sub("^Found (.*) .* chimeras, .*", "\\1", A[grep("^Found .* .* chimeras, .*", A)]))
+OTUs <- as.numeric(sub(".* chimeras, (.*) .* non-chimeras.*", "\\1", A[grep("^Found .* .* chimeras, .*", A)]))
+
+temp <- paste("Chimeras removed de novo: ", chimeras, " (", round(chimeras/(chimeras+OTUs)*100, 2), "%)\n          ESVs remaining: ", OTUs , " (", 100-round(chimeras/(chimeras+OTUs)*100, 2), "%)", sep="", "\n")
+message(temp)
+cat(file="log.txt", temp, append=T, sep="\n")
+
+}
+
+
 
 
 
 #Zotus, get old names back (original haplotypes)!
 
-Zotus <- read.fasta(paste(folder, "/_data/1_derep/samples_pooled_+_denoised.txt", sep=""), as.string=T, forceDNAtolower=F, whole.header=T)
-renamed_sequ <- read.fasta(paste(folder, "/_data/1_derep/samples_pooled_derep_renamed.txt", sep=""), as.string=T, forceDNAtolower=F, whole.header=T)
+Zotus <- unlist(read.fasta(paste(folder, "/_data/1_derep/samples_pooled_+_denoised.txt", sep=""), as.string=T, forceDNAtolower=F, whole.header=T))
+Zotus <- toupper(Zotus)
+
+renamed_sequ <- unlist(read.fasta(paste(folder, "/_data/1_derep/samples_pooled_derep_renamed.txt", sep=""), as.string=T, forceDNAtolower=F, whole.header=T))
 
 matched <- match(Zotus, renamed_sequ)
 new_sample <- renamed_sequ[matched] # DNA sequences
 
-write.fasta(new_sample, names(new_sample), paste(folder, "/_data/1_derep/samples_pooled_+_denoised_renamed.txt", sep=""))
+write.fasta(as.list(new_sample), names(new_sample), paste(folder, "/_data/1_derep/samples_pooled_+_denoised_renamed.txt", sep=""))
 
 
-names(new_sample) <- sub(";size(.*);", "", names(new_sample))
+names(new_sample) <- sub(";size(.*);?", "", names(new_sample))
 haplotypes <- new_sample
 
 dir.create(paste(folder, "/_data/3_unoise", sep=""))
@@ -209,7 +250,10 @@ denoised <- new_names
 denoised <- sub("1_derep", "2_denoised", denoised)
 
 
+if(exe=="usearch"){
 cmd <- paste("-unoise3 \"", new_names, "\" -zotus \"", denoised,"\" -unoise_alpha ", unoise_alpha, sep="") # " -sizein -sizeout" not supported
+} else {
+cmd <- paste("-cluster_unoise ", new_names, " -centroids ", folder, "/_data/_temp_ESV.txt -unoise_alpha ", unoise_alpha, " --minsize 1 --fasta_width 0", sep="")}
 
 # check for empty dereplicated files
 empty_filesTF <- file.info(new_names)[,1]>0
@@ -227,6 +271,7 @@ empty_files <- sub(renameSamples, "\\1", empty_files)
 
 for (i in which(empty_filesTF)){
 
+if(exe=="usearch"){
 A <- system2(exe, cmd[i], stdout=T, stderr=T)
 
 cat(file=paste(folder, "/_stats/2_denoise_logs.txt", sep=""), paste("usearch", cmd[i], sep=""), append=T, sep="\n")
@@ -243,10 +288,48 @@ empty_filesTF[i] <- F
 temp <- paste("Sample ", sub(".*/(.*)_PE_.*", "\\1", new_names[i]), " denoised ", seqin, " sequences to ", seqout, " ESVs (", round(seqout/seqin*100, 2), "% keeped)", sep="")
 message(temp)
 cat(file="log.txt", temp, append=T, sep="\n")
+} else {
+# VSEARCH processing	
+A <- system2(exe, cmd[i], stdout=T, stderr=T)
+cat(file=paste(folder, "/_stats/2_denoise_logs.txt", sep=""), paste("Vsearch", cmd[i], sep=""), append=T, sep="\n")
+cat(file=paste(folder, "/_stats/2_denoise_logs.txt", sep=""), A, append=T, sep="\n")
+
+seqin <- Count_sequences(new_names[i], fastq=F)
+seqout <- Count_sequences(paste(folder, "/_data/_temp_ESV.txt", sep=""), fastq=F)
+
+if(seqout==0){
+empty_filesTF[i] <- F
 }
 
-# Include abundance information again
+# if file not empty -> remove chimeras!
+if(empty_filesTF[i]){
+cmd_chim <- paste(" -uchime_denovo ", folder, "/_data/_temp_ESV.txt  -nonchimeras ", denoised[i], sep="", " -sizein -sizeout -fasta_width 0")
+A <- system2(exe, cmd_chim, stdout=T, stderr=T) # remove chimeras!
 
+cat(file=paste(folder, "/_stats/2_denoise_logs.txt", sep=""), paste("Vsearch", cmd_chim, sep=""), append=T, sep="\n")
+cat(file=paste(folder, "/_stats/2_denoise_logs.txt", sep=""), A, append=T, sep="\n")
+
+seqin <- Count_sequences(new_names[i], fastq=F)
+seqout <- Count_sequences(denoised[i], fastq=F)
+
+if(seqout==0){
+empty_filesTF[i] <- F
+}
+}
+
+
+temp <- paste("Sample ", sub(".*/(.*)_PE_.*", "\\1", new_names[i]), " denoised ", seqin, " sequences to ", seqout, " ESVs (", round(seqout/seqin*100, 2), "% kept)", sep="")
+message(temp)
+cat(file="log.txt", temp, append=T, sep="\n")
+
+file.remove(paste(paste(folder, "/_data/_temp_ESV.txt", sep="")))
+
+} # end Vsearch denoising indiv files
+} # End loop, denoising indiv files
+
+
+# Include abundance information again, for usearch
+if(exe=="usearch"){
 for (i in which(empty_filesTF)){
 de <- read.fasta(denoised[i], as.string=T, forceDNAtolower=F, whole.header=T)
 fast <- read.fasta(new_names[i], as.string=T, forceDNAtolower=F, whole.header=T)
@@ -255,12 +338,16 @@ matched <- matched[!is.na(matched)]
 names(de) <- names(fast[matched])
 write.fasta(de, names(de), file.out= denoised[i])
 }
+}
 
 } # Done with indiv procesing.
 
 
+
+
 # Cluster into OTUs (for OTU table information), pooled
 if(poolsamples){
+if(exe=="usearch"){
 cmd <- paste(" -cluster_otus ", folder, "/_data/1_derep/samples_pooled_+_denoised_renamed.txt -otus ", folder, "/_data/1_derep/samples_pooled_+_denoised_renamed_OTUsequ.txt -uparseout ", folder, "/_data/1_derep/samples_pooled_+_denoised_renamed_OTUtable.txt -relabel OTU_ -strand plus", sep="")
 
 A <- system2(exe, cmd, stdout=T, stderr=T) # cluster OTUs!
@@ -269,14 +356,64 @@ cat(file=paste(folder, "/_stats/2_unoise.txt", sep=""), c("Clustering haplotypes
 
 chimeras <- as.numeric(sub(".*100.0% .* OTUs, (.*) chimeras\r", "\\1", A[grep("chimeras\r", A)]))
 OTUs <- as.numeric(sub(".*100.0% (.*) OTUs, .* chimeras\r", "\\1", A[grep("chimeras\r", A)]))
-if(is.na(chimeras)){chimeras<-0}
+if(is.na(chimeras)){chimeras<-0}	
+
 
 info <- paste("Clustered ", length(haplotypes), " haplotype sequences (cluster_otus, 3% simmilarity) into ", OTUs, " OTUs (+", chimeras, " chimeras).\nOTUs and (potentially) chimeric sequences will be included in the Haplotype table!\n", sep="" )
 message(info)
 cat(file="log.txt", info, append=T, sep="\n")
 
+
+} else { # clustering with VSEARCH!
+
+
+cmd <- paste(" -cluster_smallmem ", folder, "/_data/1_derep/samples_pooled_+_denoised_renamed.txt -strand ", strand, " -usersort -id ", (100-otu_radius_pct)*0.01, sep="", " -centroids ", folder, "/_data/1_derep/samples_pooled_+_denoised_renamed_OTUsequ.txt", " -uc ", folder, "/_data/1_derep/samples_pooled_+_denoised_renamed_OTUtable.txt -fasta_width 0 -sizein -sizeout -relabel OTU_")
+
+A <- system2(exe, cmd, stdout=T, stderr=T) # cluster OTUs!
+
+cat(file=paste(folder, "/_stats/2_OTU_clustering_log.txt", sep=""), "\n", paste("vsearch", cmd), "\n", A, "", append=T, sep="\n")
+
+input <- as.numeric(sub(".* nt in (.*) seqs, min.*", "\\1", A[grep(" nt in .* seqs, min", A)]))
+OTUs <- as.numeric(sub("Clusters: (.*) Size .*", "\\1", A[grep("^Clusters: ", A)]))
+
+temp <- paste("Clustered ", input, " sequences into ", OTUs, " OTU clusters using a treshold of ", otu_radius_pct, "%.\n\nNext step: Denovo chimera removal.\n", sep="")
+message(temp)
+cat(file="log.txt", temp, append=T, sep="\n")
+
+# vsearch chimera removal
+cmd <- paste(" -uchime_denovo ", folder, "/_data/1_derep/samples_pooled_+_denoised_renamed_OTUsequ.txt -nonchimeras ",  folder, "/_data/1_derep/samples_pooled_+_denoised_renamed_OTUsequ_NoChimeras.txt", sep="", " -sizein -sizeout -fasta_width 0")
+A <- system2(exe, cmd, stdout=T, stderr=T) # remove chimeras!
+
+cat(file=paste(folder, "/_stats/2_OTU_clustering_log.txt", sep=""), "\n", paste("vsearch", cmd), "\n", A, "", append=T, sep="\n")
+
+
+chimeras <- as.numeric(sub("^Found (.*) .* chimeras, .*", "\\1", A[grep("^Found .* .* chimeras, .*", A)]))
+OTUs <- as.numeric(sub(".* chimeras, (.*) .* non-chimeras.*", "\\1", A[grep("^Found .* .* chimeras, .*", A)]))
+
+temp <- paste("Chimeras removed de novo: ", chimeras, " (", round(chimeras/(chimeras+OTUs)*100, 2), "%)\n          OTUs remaining: ", OTUs , " (", 100-round(chimeras/(chimeras+OTUs)*100, 2), "%)", sep="", "\n")
+message(temp)
+cat(file="log.txt", temp, append=T, sep="\n")
+
+# reformat OTU table to match usearch
+
+
+
+
+
+
+# 200331might need to remove or flag chimeric sequences in OTU table!!!
+
+
+
+} # end vsearch clustering
+
+
 denoised_sequences <- list.files(paste(folder, "/_data/3_unoise", sep=""), full.names=T)
 } # end pooled processing
+
+# 200331 - implemented vsearch denoising till here
+
+
 
 
 
@@ -300,10 +437,14 @@ info <- "Dereplicating pooled sequences!"
 message(info)
 cat(file="log.txt", info, append=T, sep="\n")
 
-cmd <- paste("-fastx_uniques \"", folder, "/_data/3_pooledESV/1_samples_pooled.txt\" -fastaout \"", folder, "/_data/3_pooledESV/2_samples_pooled_derep.txt\" -sizein -sizeout", sep="")
+if(exe=="usearch"){
+cmd <- paste(" -fastx_uniques \"", folder, "/_data/3_pooledESV/1_samples_pooled.txt\" -fastaout \"", folder, "/_data/3_pooledESV/2_samples_pooled_derep.txt\" -sizein -sizeout", sep="")
+} else {
+cmd <- paste(" -derep_fulllength \"", folder, "/_data/3_pooledESV/1_samples_pooled.txt\" -output \"", folder, "/_data/3_pooledESV/2_samples_pooled_derep.txt\" -sizein -sizeout  -fasta_width 0", sep="")}
+
 A <- system2(exe, cmd, stdout=T, stderr=T)
 
-cat(file=paste(folder, "/_stats/1_derep_logs.txt", sep=""), paste("usearch", cmd, sep=""), append=T, sep="\n")
+cat(file=paste(folder, "/_stats/1_derep_logs.txt", sep=""), paste(if(exe=="usearch"){"usearch"}else{"vsearch"}, cmd, sep=""), append=T, sep="\n")
 cat(file=paste(folder, "/_stats/1_derep_logs.txt", sep=""), A, append=T, sep="\n")
 
 
@@ -312,7 +453,7 @@ ESVs <- read.fasta(paste(folder, "/_data/3_pooledESV/2_samples_pooled_derep.txt"
 
 
 
-names(ESVs) <- paste("haplo_", 1:length(ESVs), sub(".*(;size=.*;)", "\\1", names(ESVs)), sep="")
+names(ESVs) <- paste("haplo_", 1:length(ESVs), sub(".*(;size=.*;?)", "\\1", names(ESVs)), sep="")
 write.fasta(ESVs, names=names(ESVs), paste(folder, "/_data/3_pooledESV/3_ESV_list.txt", sep=""))
 
 
@@ -330,9 +471,9 @@ for (i in which(temp_TF)){
 
 temp <- read.fasta(FileListDenoised[i], forceDNAtolower=F, as.string=T,  whole.header=T)
 
-temp_size <- sub(".*(;size=.*;)", "\\1", names(temp))
+temp_size <- sub(".*(;size=.*;?)", "\\1", names(temp))
 
-names(temp) <- sub(";size=.*;", "", names(ESV_list)[match(temp, ESV_list)])
+names(temp) <- sub(";size=.*;?", "", names(ESV_list)[match(temp, ESV_list)])
 
 names(temp) <- paste(names(temp), temp_size, sep="")
 
@@ -344,8 +485,9 @@ write.fasta(temp, names=names(temp), temp_filename)
 } # end renaming
 
 
-
+if(exe=="usearch"){
 cmd <- paste(" -cluster_otus ", folder, "/_data/3_pooledESV/3_ESV_list.txt -otus ", folder, "/_data/1_derep/samples_pooled_+_denoised_renamed_OTUsequ.txt -uparseout ", folder, "/_data/1_derep/samples_pooled_+_denoised_renamed_OTUtable.txt -relabel OTU_ -strand plus -minsize 1", sep="")
+
 
 A <- system2(exe, cmd, stdout=T, stderr=T) # cluster OTUs!
 
@@ -358,6 +500,47 @@ if(is.na(chimeras)){chimeras<-0}
 info <- paste("Clustered ", length(ESV_list), " haplotype sequences (cluster_otus, 3% simmilarity) into ", OTUs, " OTUs (+", chimeras, " chimeras).\nOTUs and (potentially) chimeric sequences will be included in the Haplotype table!\n", sep="" )
 message(info)
 cat(file="log.txt", info, append=T, sep="\n")
+
+
+} else { #VSEARCH
+
+
+cmd <- paste(" -cluster_smallmem ", folder, "/_data/3_pooledESV/3_ESV_list.txt -strand ", strand, " -usersort -id ", (100-otu_radius_pct)*0.01, sep="", " -centroids ", folder, "/_data/1_derep/samples_pooled_+_denoised_renamed_OTUsequ.txt", " -uc ", folder, "/_data/1_derep/samples_pooled_+_denoised_renamed_OTUtable.txt -fasta_width 0 -sizein -sizeout -relabel OTU_")
+
+A <- system2(exe, cmd, stdout=T, stderr=T) # cluster OTUs!
+
+cat(file=paste(folder, "/_stats/2_OTU_clustering_log.txt", sep=""), "\n", paste("vsearch", cmd), "\n", A, "", append=T, sep="\n")
+
+input <- as.numeric(sub(".* nt in (.*) seqs, min.*", "\\1", A[grep(" nt in .* seqs, min", A)]))
+OTUs <- as.numeric(sub("Clusters: (.*) Size .*", "\\1", A[grep("^Clusters: ", A)]))
+
+temp <- paste("Clustered ", input, " sequences into ", OTUs, " OTU clusters using a treshold of ", otu_radius_pct, "%.\n\nNext step: Denovo chimera removal.\n", sep="")
+message(temp)
+cat(file="log.txt", temp, append=T, sep="\n")
+
+# vsearch chimera removal
+cmd <- paste(" -uchime_denovo ", folder, "/_data/1_derep/samples_pooled_+_denoised_renamed_OTUsequ.txt -nonchimeras ",  folder, "/_data/1_derep/samples_pooled_+_denoised_renamed_OTUsequ_NoChimeras.txt", sep="", " -sizein -sizeout -fasta_width 0")
+A <- system2(exe, cmd, stdout=T, stderr=T) # remove chimeras!
+
+cat(file=paste(folder, "/_stats/2_OTU_clustering_log.txt", sep=""), "\n", paste("vsearch", cmd), "\n", A, "", append=T, sep="\n")
+
+
+chimeras <- as.numeric(sub("^Found (.*) .* chimeras, .*", "\\1", A[grep("^Found .* .* chimeras, .*", A)]))
+OTUs <- as.numeric(sub(".* chimeras, (.*) .* non-chimeras.*", "\\1", A[grep("^Found .* .* chimeras, .*", A)]))
+
+temp <- paste("Chimeras removed de novo: ", chimeras, " (", round(chimeras/(chimeras+OTUs)*100, 2), "%)\n          OTUs remaining: ", OTUs , " (", 100-round(chimeras/(chimeras+OTUs)*100, 2), "%)", sep="", "\n")
+message(temp)
+cat(file="log.txt", temp, append=T, sep="\n")
+
+# reformat OTU table to match usearch
+
+
+# 200331might need to remove or flag chimeric sequences in OTU table!!!
+
+}
+
+
+
 
 haplotypes <- ESV_list
 denoised_sequences <- list.files(paste(folder, "/_data/3_unoise", sep=""), full.names=T)
@@ -374,6 +557,8 @@ denoised_sequences <- list.files(paste(folder, "/_data/3_unoise", sep=""), full.
 
 OTUs <- read.csv(paste(folder, "/_data/1_derep/samples_pooled_+_denoised_renamed_OTUtable.txt", sep=""), stringsAsFactors=F, sep="\t", header=F)
 
+
+if(exe == "usearch"){
 k <- 1
 OTU_list <- NULL
 for (i in 1:nrow(OTUs)){
@@ -384,20 +569,34 @@ k <- k+1} else
 if(OTUs$V2[i]=="match"){OTU_list[i] <- sub(".*;top=(OTU_.*)\\(.*", "\\1", OTUs$V3[i])} else {OTU_list[i] <- OTUs$V2[i]}
 
 }
+} else { # vsearch processing
 
 
-data <- data.frame("haplotype"=sub(";size=.*;", "",names(haplotypes)), "OTU"=OTU_list, stringsAsFactors=F)
+OTUs <- OTUs[OTUs$V1!="C",]
+
+OTUs$V2 <- OTUs$V2+1
+OTU_list <- paste("OTU_", OTUs$V2, sep="")
+
+if(poolsamples){
+haplotypes <- unlist(read.fasta(paste(folder, "/_data/1_derep/samples_pooled_+_denoised_renamed.txt", sep=""), forceDNAtolower=F, as.string=T,  whole.header=T))}
+
+}
+
+
+data <- data.frame("haplotype"=sub(";size=.*;?", "",names(haplotypes)), "OTU"=OTU_list, stringsAsFactors=F)
 
 for (i in 1:length(denoised_sequences)){
 sample <- names(read.fasta(denoised_sequences[i], whole.header=T))
-matched <- match(sub(";size=.*;", "", sample), data$haplotype)
+matched <- match(sub(";size=.*;?", "", sample), data$haplotype)
 abundance <- rep(0, nrow(data))
-abundance[matched] <- as.numeric(sub(".*;size=(.*);", "\\1", sample))
+abundance[matched] <- as.numeric(sub(".*;size=(.*);?", "\\1", sample))
 
 data <- cbind(data, abundance)
-names(data)[i+2] <- sub(".*_data/3_unoise/(.*)_denoised.txt", "\\1", denoised_sequences[i])
+names(data)[i+2] <- sub(".*_data/3_unoise/(.*)", "\\1", denoised_sequences[i])
+names(data)[i+2] <- sub(renameSamples, "\\1", names(data)[i+2])
 }
 #head(data)
+
 data <- cbind(data, "sequences"=unlist(haplotypes), stringsAsFactors=F)
 # sort by OTUs
 data <- data[order(suppressWarnings(as.numeric(sub("OTU_", "", data$OTU)))),]
@@ -415,6 +614,7 @@ names(data) <- sub(renameSamples, "\\1", names(data))
 if(length(empty_files)!=0){
 empty_files <- gsub("-", ".", empty_files)
 tempname <- empty_files
+tempname <- sub(renameSamples, "\\1", tempname)
 
 
 data2 <- data[,-c(ncol(data))]
