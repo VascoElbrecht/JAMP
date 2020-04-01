@@ -1,8 +1,10 @@
 # Bold web hack
 
 
-Bold_web_hack <- function(file=NA, folder=NULL, MM=c(0.98, 0.95, 0.90, 0.85)){
+Bold_web_hack <- function(file=NA, folder=NULL, MM=c(0.98, 0.95, 0.90, 0.85), db="all"){
 
+{if(db != "all" & db != "sp") { stop('Oops! Invalid  db argument. Choose either "all" or "sp"') }}
+	
 oldwd <- getwd()
 if(!is.null(folder)){
 dir.create(folder, showWarnings = FALSE)
@@ -37,31 +39,37 @@ temp <- data[OTU_start[i]:OTU_end[i]]
 
 OTU <- sub("Query: (.*) ", "\\1", data[OTU_start[i]])
 
-if(temp[5]=="Unable to match any records in the selected database. "){
-temp_tab <- data.frame("Phylum"=NA, "Class"=NA, "Order"=NA, "Family"=NA, "Genus"=NA, "Species"=NA, "Similarity"=NA, "Status"=NA, stringsAsFactors=F)
-write.csv(temp_tab, paste("OTUs/", OTU, ".csv", sep=""), row.names=F)
-} else {
-
 similarity <- suppressWarnings(as.numeric(temp))
 whois <- which(!is.na(similarity))
-whois_num <- whois
 
-Similarity <- similarity[whois]
-Status <- temp[whois+1]
+# set variables according to which Bold db was used: All or Species Level
+if(db=="all"){ 
+      
+  Similarity <- similarity[whois]
+  Status <- temp[whois+1]
+  a <- data.frame("NoMatch"=5, "Phylum"=0, "Class"=1, "Order"=2, "Family"=3, "Genus"=4, "Species"=5, "Subspecies"=6, stringsAsFactors=F)
+  whois <- c(which(temp =="Phylum\tClass\tOrder\tFamily\tGenus\tSpecies\tSubspecies\tSimilarity (%)\tStatus")+1, whois[-length(whois)]+2)
+}     
+if(db=="sp"){
+        
+  a <- data.frame("NoMatch"=3, "Phylum"=-6, "Class"=-5, "Order"=-4, "Family"=-3, "Genus"=-2, "Species"=-1, "Subspecies"=NA, stringsAsFactors=F)
+  whois <- whois[which(whois>which(temp =="Status"))] # to focus on "Top 20 matches" table
+  Similarity <- similarity[whois]
+  Status <- temp[whois+1]
+}
+    
+# extract taxonomy (or NA if no match)
+if(temp[a$NoMatch]=="Unable to match any records in the selected database. "){
+  temp_tab <- data.frame("Phylum"=NA, "Class"=NA, "Order"=NA, "Family"=NA, "Genus"=NA, "Species"=NA, "Similarity"=NA, "Status"=NA, stringsAsFactors=F)
 
-# get phylum
-
-whois <- c(which(temp =="Phylum\tClass\tOrder\tFamily\tGenus\tSpecies\tSubspecies\tSimilarity (%)\tStatus")+1, whois[-length(whois)]+2)
-
-
-# Phylum
-Phylum <- temp[whois]
-Class <- temp[whois+1]
-Order <- temp[whois+2]
-Family <- temp[whois+3]
-Genus <- temp[whois+4]
-Species <- temp[whois+5]
-Subspecies <- temp[whois+6] # ignore subspecies for now
+} else {
+  Phylum <- temp[whois+a$Phylum]
+  Class <- temp[whois+a$Class]
+  Order <- temp[whois+a$Order]
+  Family <- temp[whois+a$Family]
+  Genus <- temp[whois+a$Genus]
+  Species <- temp[whois+a$Species]
+  Subspecies <- temp[whois+a$Subspecies] # ignore subspecies for now
 
 temp_tab <- data.frame(Phylum, Class, Order, Family, Genus, Species, Similarity, Status, stringsAsFactors=F)
 
@@ -69,12 +77,12 @@ for (k in 1:nrow(temp_tab)){
 kill <- which(suppressWarnings(as.numeric(as.vector(unlist(temp_tab[k, 1:6]))))>0)[1]
 if(!is.na(kill)){
 temp_tab[k, kill:6] <- ""
-
+}
 }
 }
 
 write.csv(temp_tab, paste("OTUs/", OTU, ".csv", sep=""), row.names=F)
-}
+
 }
 
 
