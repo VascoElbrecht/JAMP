@@ -17,8 +17,8 @@ install.packages(c("bold", "XML", "seqinr", "devtools", "fastqcr"), dependencies
 # Load devtools and install package directly from GitHub
 library("devtools")
 install_github("VascoElbrecht/PrimerMiner", subdir="PrimerMiner")
-install_github("VascoElbrecht/JAMP", subdir="JAMP")
 install_github("tobiasgf/lulu")
+install_github("VascoElbrecht/JAMP", subdir="JAMP")
 ```
 You can also download the [latest release of JAMP](https://github.com/VascoElbrecht/JAMP/releases), extract and intal within R using `install.packages("JAMP", repos = NULL, type="source")`
 
