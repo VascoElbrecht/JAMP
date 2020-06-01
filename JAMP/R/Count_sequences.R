@@ -40,7 +40,8 @@ A <- NULL
 for (i in 1:length(files)){
 fasta_sequ <- readLines(files[i])
 fasta_sequ <- fasta_sequ[grep(">", fasta_sequ)]
-A[i] <- sum(as.numeric(sub(".*;size=(.*);?", "\\1", fasta_sequ)))
+A[i] <- sub(".*;size=(.*);?", "\\1", fasta_sequ)
+A[i] <- sum(as.numeric(sub(";", "", A[i])))
 }
 
 abundance <- as.numeric(sub(" ", "", A))
