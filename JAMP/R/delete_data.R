@@ -47,10 +47,10 @@ cat(file="log_deleted_files.txt", files_to_delete, append=T, sep="\n")
 
 if(ask){
 temp <- menu(c("y", "n"), title=paste("Will delete a total of ", sum(temp_num, na.rm=T), " files in ", length(!is.na(temp_num)), " folders.\nSee table below for details and verify that his is as supposed. You can also take a look in the \"log_deleted_files.txt\" to verify wich files shoudl be deleted!", sep="", "\n\n", paste(number_of_files_per_folder ," - ", folder, collapse="\n"), "\n\nWould you like to permanently DELETE these files? y = Yes, n = No"))
-} else {temp=2}
+} else {temp=1}
 
 if(temp==2){
-message("ABORTED! - No files deleted")
+stop("ABORTED! - No files deleted")
 }
 
 # actually delete files!
