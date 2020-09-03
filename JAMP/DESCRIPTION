@@ -1,8 +1,8 @@
 Package: JAMP
 Type: Package
 Title: Just Another Metabarcoding Pipeline
-Version: 0.67
-Date: 2018-12-22
+Version: 0.77
+Date: 2020-04-01
 Author: Vasco Elbrecht
 Maintainer: Vasco Elbrecht <luckylion07@googlemail.com>
 Description: Modular pipeline to process metabarcoding Illumina data. Optimised for fusion primer systems (in line barcodes), with frame shifting tags (see Elbrecht & Leese 2015, PlosONE). Still working on documentation, for support write @VascoElbrecht.
