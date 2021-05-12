@@ -90,7 +90,7 @@ write.csv(combos2, file= combinations, row.names=F)
 
 combos <- combos2
 
-temp <- paste("FileName detected! \"R1.txt\" and \"R2.txt\" added automatically to filenames. Please check the table used for primer combinations / filenames in \"", folder, "/combinations_auto_edited.csv\" for details.", sep="", "\n")
+temp <- paste("FileName detected! \"R1.fastq\" and \"R2.fastq\" added automatically to filenames. Please check the table used for primer combinations / filenames in \"", folder, "/combinations_auto_edited.csv\" for details.", sep="", "\n")
 message(temp)
 cat(file="log.txt", temp, append=T, sep="\n")
 

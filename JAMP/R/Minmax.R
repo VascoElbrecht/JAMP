@@ -39,7 +39,7 @@ max <- plusminus[1] + plusminus[2]
 
 
 # make cmd
-cmd <- paste("\"", files, "\" -o \"", folder, "/", new_names, "\" -f ", if(fastq){"fastq"}else{"fasta"}, if(!is.na(min[1])){" -m "}, if(!is.na(min[1])){min}, if(!is.na(min[1])){" -M "}, if(!is.na(min[1])){max}, sep="")
+cmd <- paste("\"", files, "\" -o \"", folder, "/", new_names, "\"", if(!is.na(min[1])){" -m "}, if(!is.na(min[1])){min}, if(!is.na(min[1])){" -M "}, if(!is.na(min[1])){max}, sep="")
 
 files_to_delete <- c(files_to_delete, paste(folder, "/", new_names, sep=""))
 

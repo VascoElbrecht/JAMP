@@ -1,15 +1,10 @@
 # Cutadapt v0.1
 
-Cutadapt <- function(files="latest", forward=NA, reverse=NA, bothsides=F, anchoring=T, fastq=T, LDist=F, cores=1, delete_data=T, ambsequ=F, error=0.1, exe="cutadapt", exeU="usearch"){
+Cutadapt <- function(files="latest", forward=NA, reverse=NA, bothsides=F, anchoring=T, LDist=F, cores=1, delete_data=T, ambsequ=F, error=0.1, exe="cutadapt", exe2="vsearch", fastq=T){
 
 # do checks
 FW_only <- F
 if (is.na(reverse[1])){FW_only <- T}
-
-
-
-
-
 
 
 
@@ -38,6 +33,7 @@ new_names <- paste(folder, "/_data/", new_names, sep="")
 if(!fastq){ #rename to fasta if fastq=F
 new_names <- sub(".fastq", ".fasta", new_names)
 }
+
 
 # get primer sequences / names
 primers <- read.csv(paste(system.file(package="JAMP"), "/primers.csv", sep=""), stringsAsFactors=F)
@@ -86,15 +82,15 @@ rw[i] <- paste(rev(comp(unlist(strsplit(rw[i], "")), forceToLower=F, ambiguous=T
 
 # add: write down used primers in log!
 if (FW_only){
-cmd1 <- paste("-g ", if(anchoring){"^"}, fw, " -o \"", new_names, "\" \"", files, "\"", " -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed --cores=", cores, if(ambsequ){" --match-read-wildcards"}, " --error-rate ", error, sep="") # forward adapter
+cmd1 <- paste("-g ", if(anchoring){"^"}, fw, " -o \"", new_names, "\" \"", files, "\"", " --discard-untrimmed --cores=", cores, if(ambsequ){" --match-read-wildcards"}, " --error-rate ", error, sep="") # forward adapter
 files_to_delete <- c(files_to_delete, new_names)
 
 temp <- paste("Starting to remove adapters (primers) on forward direction only ", length(cmd1), " files:", sep="")
 cat(file="log.txt", temp , append=T, sep="\n")
 message(temp)
 }else{
-cmd1 <- paste("-g ", if(anchoring){"^"}, fw, " -o ", folder, "/_data/temp.txt \"", files, "\"", " -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed --cores=", cores, if(ambsequ){" --match-read-wildcards"}, " --error-rate ", error, sep="") # forward adapter
-cmd2 <- paste("-a ", rw, if(anchoring){"$"}," -o \"", new_names, "\" ", folder, "/_data/temp.txt -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed --cores=", cores, if(ambsequ){" --match-read-wildcards"}, " --error-rate ", error, sep="") #rverse adapter
+cmd1 <- paste("-g ", if(anchoring){"^"}, fw, " -o ", folder, "/_data/temp.txt \"", files, "\"", " --discard-untrimmed --cores=", cores, if(ambsequ){" --match-read-wildcards"}, " --error-rate ", error, sep="") # forward adapter
+cmd2 <- paste("-a ", rw, if(anchoring){"$"}," -o \"", new_names, "\" ", folder, "/_data/temp.txt ", " --discard-untrimmed --cores=", cores, if(ambsequ){" --match-read-wildcards"}, " --error-rate ", error, sep="") #rverse adapter
 files_to_delete <- c(files_to_delete, new_names)
 
 temp <- paste("Starting to remove adapters (primers) on both ends in ", length(cmd1), " files:", sep="")
@@ -129,7 +125,7 @@ cat(file=log_names[i], A, append=T, sep="\n")
 #cat(file=log_names[i], A, append=T, sep="\n")
 
 # trimm RW
-rev_primer <- paste("-a ", rw[i], if(anchoring){"$"}," -o ", folder, "/_data/temp_A.txt ", folder, "/_data/temp.txt -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed --cores=", cores, sep="", if(ambsequ){" --match-read-wildcards"}, " --error-rate ", error) #rverse adapter
+rev_primer <- paste("-a ", rw[i], if(anchoring){"$"}," -o ", folder, "/_data/temp_A.txt ", folder, "/_data/temp.txt ", " --discard-untrimmed --cores=", cores, sep="", if(ambsequ){" --match-read-wildcards"}, " --error-rate ", error) #rverse adapter
 
 A <- system2(exe, rev_primer, stdout=T, stderr=T)
 cat(file=log_names[i], A, append=T, sep="\n")
@@ -137,20 +133,20 @@ cat(file=log_names[i], A, append=T, sep="\n")
 # build revcomp
 
 revcom_cmd <- paste("-fastx_revcomp ", files[i],  if(fastq){" -fastqout "} else {" -fastaout "}, folder, "/_data/temp2_RC.txt  -label_suffix _RC",  sep="")
-A <- system2(exeU, revcom_cmd, stdout=T, stderr=T)
+A <- system2(exe2, revcom_cmd, stdout=T, stderr=T)
 
-cat(file=log_names[i], paste("usearch ", revcom_cmd, sep=""), append=T, sep="\n")
+cat(file=log_names[i], paste(exe2, revcom_cmd, sep=""), append=T, sep="\n")
 cat(file=log_names[i], A, append=T, sep="\n")
 
 # cut primers again! simmillar commands
 
-fw_primer_cmd <- paste("-g ", if(anchoring){"^"}, fw[i], " -o ", folder, "/_data/temp.txt ", folder, "/_data/temp2_RC.txt", " -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed --cores=", cores, if(ambsequ){" --match-read-wildcards"}, sep="", " --error-rate ", error) # forward adapter
+fw_primer_cmd <- paste("-g ", if(anchoring){"^"}, fw[i], " -o ", folder, "/_data/temp.txt ", folder, "/_data/temp2_RC.txt", " --discard-untrimmed --cores=", cores, if(ambsequ){" --match-read-wildcards"}, sep="", " --error-rate ", error) # forward adapter
 
 A <- system2(exe, fw_primer_cmd, stdout=T, stderr=T)
 cat(file=log_names[i], A, append=T, sep="\n")
 
 
-rev_primer <- paste("-a ", rw[i], if(anchoring){"$"}," -o ", folder, "/_data/temp_B.txt ", folder, "/_data/temp.txt -f ", if(fastq){"fastq"}else{"fasta"}, " --discard-untrimmed --cores=", cores, if(ambsequ){" --match-read-wildcards"}, sep="", " --error-rate ", error) #rverse adapter
+rev_primer <- paste("-a ", rw[i], if(anchoring){"$"}," -o ", folder, "/_data/temp_B.txt ", folder, "/_data/temp.txt --discard-untrimmed --cores=", cores, if(ambsequ){" --match-read-wildcards"}, sep="", " --error-rate ", error) #rverse adapter
 
 A <- system2(exe, rev_primer, stdout=T, stderr=T)
 cat(file=log_names[i], A, append=T, sep="\n")
