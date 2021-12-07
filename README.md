@@ -1,17 +1,17 @@
-![JAMP logo](images/JAMP_logo.png)
+![JAMP logo](images/JAMP_logo.png =506x200)
 
-# JAMP
-**J**ust **A**nother **M**etabarcoding **P**ipeline  Twitter [@VascoElbrecht](https://twitter.com/VascoElbrecht)
+## JAMP introduction
+**J**ust **A**nother **M**etabarcoding **P**ipeline - Twitter: [@VascoElbrecht](https://twitter.com/VascoElbrecht)
 
 JAMP is modular metabarcoding pipeline, integrating different functions from VSEARCH, CUTADAPT and other programs. The pipeline is run as an R package and automatically generates the needed folders and summary statistics. 
 
-**End of 2021 update:** Currently updating the documentation and older functions for a more streamlined experience :simple_smile: .
+**End of 2021 update:** Currently updating the documentation and older functions for a more streamlined experience :smile: .
 
-For a a short tutorial on extracting haplotypes from metabarcoding datasets take a look at the [denoising quick guide](https://github.com/VascoElbrecht/JAMP/wiki/3)-Denoising-quick-guide!).
+For a a short tutorial on extracting haplotypes / ESVs from metabarcoding datasets take a look at the [denoising quick guide](https://github.com/VascoElbrecht/JAMP/wiki/3)-Denoising-quick-guide!).
 
 
 ## Initialling JAMP
-Please keep in mind that JAMP needs [Usearch](https://www.drive5.com/usearch/manual/), [Vsearch](https://github.com/torognes/vsearch), and [Cutadapt](cutadapt.readthedocs.io) installed to work properly. Thus Mac or linux based systems are recommended (and windows not officially supported!).
+Please keep in mind that JAMP needs [Vsearch](https://github.com/torognes/vsearch), and [Cutadapt](cutadapt.readthedocs.io) installed to work properly. Thus Mac or linux based systems are recommended (and windows not officially supported, but you can install e.g. a ubuntu shell on your windows system!).
 
 ### To install JAMP locally
 ```# Recommended method
@@ -33,6 +33,6 @@ cd JAMP-0.53
 sudo R CMD INSTALL JAMP
 ```
 
-### Licence
+## Licence
 
-**JAMP is for non profit and academic use only.** If you wish to use JAMP commercially, please kindly request permission from Vasco Elbrecht first. Thank you!
+**JAMP is for non profit and academic use only.** If you wish to use any aspects of JAMP commercially, please kindly request permission from [Vasco Elbrecht](mailto:luckylion07@googlemail.com) first. Thank you!
