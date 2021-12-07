@@ -1,4 +1,4 @@
-<img src="images/JAMP_logo.png" alt="JAMP logo" height="200"/>
+<img src="images/JAMP_logo.png" alt="JAMP logo" height="150"/>
 
 ## JAMP introduction
 **J**ust **A**nother **M**etabarcoding **P**ipeline - Twitter: [@VascoElbrecht](https://twitter.com/VascoElbrecht)
@@ -36,3 +36,11 @@ sudo R CMD INSTALL JAMP
 ## Licence
 
 **JAMP is for non profit and academic use only.** If you wish to use any aspects of JAMP commercially, please kindly request permission from [Vasco Elbrecht](mailto:luckylion07@googlemail.com) first. Thank you!
+
+
+{
+ resolve: 'gatsby-remark-images',
+ options: {
+   linkImagesToOriginal: false,
+ },
+}
