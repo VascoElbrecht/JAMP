@@ -1,4 +1,4 @@
-![JAMP logo](images/JAMP_logo.png =506x200)
+<img src="images/JAMP_logo.png" alt="JAMP logo" height="200"/>
 
 ## JAMP introduction
 **J**ust **A**nother **M**etabarcoding **P**ipeline - Twitter: [@VascoElbrecht](https://twitter.com/VascoElbrecht)
