@@ -1,11 +1,14 @@
-# JAMP
-**J**ust **A**nother **M**etabarcoding **P**ipeline - by Vasco Elbrecht - Twitter @luckylionde
+![JAMP logo](images/JAMP_logo.png)
 
-JAMP is a modular metabarcoding pipeline, integrating different functions from USEARCH, VSEARCH, CUTADAPT and other programs. The pipeline is run as an R package and automatically generates the needed folders and summary statistics. 
+# JAMP
+**J**ust **A**nother **M**etabarcoding **P**ipeline  Twitter [@VascoElbrecht](https://twitter.com/VascoElbrecht)
+
+JAMP is modular metabarcoding pipeline, integrating different functions from VSEARCH, CUTADAPT and other programs. The pipeline is run as an R package and automatically generates the needed folders and summary statistics. 
+
+**End of 2021 update:** Currently updating the documentation and older functions for a more streamlined experience :simple_smile: .
 
 For a a short tutorial on extracting haplotypes from metabarcoding datasets take a look at the [denoising quick guide](https://github.com/VascoElbrecht/JAMP/wiki/3)-Denoising-quick-guide!).
 
-**JAMP is for non profit and accademic use only.** If you wish to use JAMP comercially, please request permission from Vasco Elbrecht first. Thank you!
 
 ## Initialling JAMP
 Please keep in mind that JAMP needs [Usearch](https://www.drive5.com/usearch/manual/), [Vsearch](https://github.com/torognes/vsearch), and [Cutadapt](cutadapt.readthedocs.io) installed to work properly. Thus Mac or linux based systems are recommended (and windows not officially supported!).
@@ -30,4 +33,6 @@ cd JAMP-0.53
 sudo R CMD INSTALL JAMP
 ```
 
+### Licence
 
+**JAMP is for non profit and academic use only.** If you wish to use JAMP commercially, please kindly request permission from Vasco Elbrecht first. Thank you!
