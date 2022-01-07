@@ -3,7 +3,7 @@
 ## JAMP introduction
 **J**ust **A**nother **M**etabarcoding **P**ipeline - Twitter: [@VascoElbrecht](https://twitter.com/VascoElbrecht)
 
-JAMP is modular metabarcoding pipeline, integrating different functions from VSEARCH, CUTADAPT and other programs. The pipeline is run as an R package and automatically generates the needed folders and summary statistics. 
+JAMP is modular metabarcoding pipeline, integrating different functions from VSEARCH, CUTADAPT and other programs. The pipeline is run as an R package and automatically generates the needed folders and summary statistics for each processing step, allowing you to trouble shoot and adjust settings as needed. Checking the data and statistics after each processing step is a key element of JAMP and encouraged as it also gives you a better understanding of your data and the bioinformatic process.
 
 **End of 2021 update:** Currently updating the documentation and older functions for a more streamlined experience :smile: .
 

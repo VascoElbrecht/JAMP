@@ -48,7 +48,7 @@ system2("vsearch", "-fastx_subsample A_Demultiplexing_shifted/_data/N_debris_R1.
 } else { # check all reads in read 1 for PhiX
 system2("paste", " - - - - < A_Demultiplexing_shifted/_data/N_debris_R1.fastq | cut -f 1,2 | sed 's/^@/>/' | tr \"\t\" \"\n\" > A_Demultiplexing_shifted/_data/N_debris_R1.fasta")
 }
-system2("vsearch", "-usearch_global A_Demultiplexing_shifted/_data/N_debris_R1.fasta -db PhiX.fasta -id 0.9 -strand both -blast6out PhiX_table.txt -maxrejects 1 -maxaccepts 1")
+system2("vsearch", "-usearch_global A_Demultiplexing_shifted/_data/N_debris_R1.fasta -db PhiX.fasta -id 0.9 -strand both -blast6out PhiX_table.txt -maxrejects 1 -maxaccepts 1", stdout=T, stderr=T)
 
 
 # Paired end merging
@@ -79,7 +79,7 @@ file.rename("G_U_cluster_otus", "G_U_cluster_otus - 60k")
 #cluster OTUs (without subsetting)
 no_subset <- list.files("E_U_max_ee/_data", full.names=T)
 
-U_cluster_otus(files= no_subset, filter=0.01)
+Cluster_otus(files= no_subset, filter=0.01)
 
 # assign taxonomy to OTUs without sub setting! K_U_cluster_otus
 Bold_web_hack(file="K_bold_results.txt")

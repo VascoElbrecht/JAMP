@@ -1,7 +1,6 @@
 # U_cluster_otus v0.1
 
 Cluster_otus <- function(files="latest", minuniquesize=2, strand="plus", filter=0.01, filterN=1, exe="vsearch", otu_radius_pct=3, mapp_singletons=T, maxaccepts=1, maxrejects=32, delete_data=T, heatmap=T, threads=NA){
-#, unoise_min=NA - unoise denoising removed, no longer supported!
 
 folder <- Core(module="Cluster_otus", delete_data=delete_data)
 cat(file="log.txt", c("Version v0.3", "\n"), append=T, sep="\n")
@@ -10,17 +9,7 @@ message(" ")
 files_to_delete <- NULL
 
 if(exe=="usearch"){
-A <- system2(exe, stdout=T, stderr=T)
-version <- as.numeric(sub("usearch v(.+)\\.+.*\\..*_.*", "\\1", A[1]))
-
-if(otu_radius_pct!=3){
-if(version > 8){
-temp <-  paste("WARNING: You did set a custom clustering treshold of ", otu_radius_pct, " but are using Usearch version ", version, "! The custom treshold was removed with version 9 (nothing I can do about this), thus please provide a path in exe to Usearch8, to make this work. You can download the older version from the Usearch website or use vsearch. The script will stop now.", sep="")
-message(temp)
-cat(file="log.txt", temp, append=T, sep="\n")
-stop("Script stopped!")
-}
-}
+stop("Script stopped: Only works with Vserach!\nYou can download it here: https://github.com/torognes/vsearch\n\n")
 }
 
 
@@ -28,6 +17,8 @@ if (files[1]=="latest"){
 source(paste(folder, "/robots.txt", sep=""))
 files <- list.files(paste(last_data, "/_data", sep=""), full.names=T)
 }
+
+
 
 # check for empty files!
 empty <- !file.info(files)$size>0
@@ -39,6 +30,8 @@ cat(file="log.txt", temp , append=T, sep="\n")
 }
 excluded <- NULL
 excluded <- files[empty]
+
+
 
 # Dereplicate files using Vsearch
 if(mapp_singletons){
@@ -56,12 +49,9 @@ new_names <- sub("_data", paste("_data/1_derep_minsize_", minuniquesize, sep="")
 }
 new_names <- paste(folder, "/", new_names, sep="")
 
-if(exe=="usearch"){
-# might need to be changed!
-cmd <- paste("-derep_fulllength \"", files[!empty], "\" -output \"", new_names, "\" -sizeout -sizein", if(! mapp_singletons){paste(" -minuniquesize ", minuniquesize, sep="")}, sep="")
-}else{
+
 cmd <- paste("-derep_fulllength \"", files[!empty], "\" -output \"", new_names, "\" -sizeout -sizein", if(! mapp_singletons){paste(" -minuniquesize ", minuniquesize, sep="")}, if(!is.na(threads)){paste(" -threads ", threads, sep="")}, sep="", " -fasta_width 0")
-}
+
 
 files_to_delete <- c(files_to_delete, new_names)
 
@@ -83,42 +73,30 @@ message(meep)
 }
 
 
-# 2 make OTUs!
-# merge all files into one
+# To cluster into OTUs, merge all derep files into one
 
 dir.create(paste(folder, "/_data/2_OTU_clustering", sep=""))
 
-# HOT FIX 190227 - split cat
-if(length(new_names)<800){
+# make loop to merge all derep files into one, in chunks
+message("Merging dereplicated files into one for dereplication:")
 
-cmd <- paste(paste(new_names, collapse=" "), " > ", folder, "/_data/2_OTU_clustering/A_all_files_united.fasta", collapse="", sep="")
+# calculate steps needed, process in chunks
+CatChunk = 100
+Lchucks <- ceiling(length(new_names)/CatChunk)
+for(k in 1:Lchucks){
+
+selected <- new_names[(1+(CatChunk*(k-1))):(CatChunk*k)]
+selected <- selected[!is.na(selected)] # rm NAs
+
+# append to file
+cmd <- paste(paste(selected, collapse=" "), " >> ", folder, "/_data/2_OTU_clustering/A_all_files_united.fasta", collapse="", sep="")
 A <- system2("cat", cmd, stdout=T, stderr=T)
 
+message(if(Lchucks==k){length(new_names)} else {k*CatChunk}, "/", length(new_names))
+}
 
-files_to_delete <- c(files_to_delete, paste(folder, "/_data/2_OTU_clustering/A_all_files_united.fasta", sep="")) } else {
-# SPLIT
-# TEMP A
-cmd <- paste(paste(new_names[1:700], collapse=" "), " > ", folder, "/_data/2_OTU_clustering/A_all_files_TEMP_A.fasta", collapse="", sep="")
-A <- system2("cat", cmd, stdout=T, stderr=T)
-# TEMP B
-cmd <- paste(paste(new_names[701:length(new_names)], collapse=" "), " > ", folder, "/_data/2_OTU_clustering/A_all_files_TEMP_B.fasta", collapse="", sep="")
-A <- system2("cat", cmd, stdout=T, stderr=T)
+files_to_delete <- c(files_to_delete, paste(folder, "/_data/2_OTU_clustering/A_all_files_united.fasta", sep=""))
 
-message(length(new_names[1:700]))
-message(length(new_names[701:length(new_names)]))
-
-cmd <- paste(folder, "/_data/2_OTU_clustering/A_all_files_TEMP_A.fasta ", folder, "/_data/2_OTU_clustering/A_all_files_TEMP_B.fasta", " > ", folder, "/_data/2_OTU_clustering/A_all_files_united.fasta", collapse="", sep="")
-A <- system2("cat", cmd, stdout=T, stderr=T)
-
-
-
-} # end hot fix
-
-
-
-#check <- readLines("_data/2_OTU_clustering/A_all_files_united.fasta")
-#count <- as.numeric(sub(".*size=(.*)", "\\1", check))
-#sum(count, na.rm=T)
 
 # write logs
 
@@ -131,12 +109,9 @@ cat(file=paste(folder, "/_stats/2_OTU_clustering_log.txt", sep=""), temp, "", pa
 
 # dereplicate "A_all_files_united.fasta" using Vsearch!
 
-if(exe=="usearch"){
-# Needs to be updated
-cmd <- paste("-derep_fulllength ", folder, "/_data/2_OTU_clustering/A_all_files_united.fasta -output ", folder, "/_data/2_OTU_clustering/B_all_derep_min", minuniquesize, ".fasta -sizein -sizeout -minuniquesize ", minuniquesize, sep="")
-} else {
+
 cmd <- paste("-derep_fulllength ", folder, "/_data/2_OTU_clustering/A_all_files_united.fasta -output ", folder, "/_data/2_OTU_clustering/B_all_derep_min", minuniquesize, ".fasta -sizein -sizeout -minuniquesize ", minuniquesize, sep="", " -fasta_width 0")
-}
+
 
 filename_all_unique <- paste("B_all_derep_min", minuniquesize, ".fasta", sep="")
 
